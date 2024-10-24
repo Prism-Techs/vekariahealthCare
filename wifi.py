@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'login.ui'
+# Form implementation generated from reading ui file 'wifi.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -62,7 +62,7 @@ class Ui_Form(object):
         self.wifiIcon.setScaledContents(True)
         self.wifiIcon.setObjectName("wifiIcon")
         self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(870, 4, 41, 31))
+        self.label_10.setGeometry(QtCore.QRect(868, 5, 41, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
@@ -74,7 +74,7 @@ class Ui_Form(object):
         self.label_10.setScaledContents(True)
         self.label_10.setObjectName("label_10")
         self.label_4 = QtWidgets.QLabel(Form)
-        self.label_4.setGeometry(QtCore.QRect(0, 50, 1024, 40))
+        self.label_4.setGeometry(QtCore.QRect(10, 40, 1024, 40))
         font = QtGui.QFont()
         font.setFamily("Helvetica Rounded")
         font.setPointSize(18)
@@ -89,7 +89,7 @@ class Ui_Form(object):
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setObjectName("label_4")
         self.frame_2 = QtWidgets.QFrame(Form)
-        self.frame_2.setGeometry(QtCore.QRect(200, 115, 624, 430))
+        self.frame_2.setGeometry(QtCore.QRect(210, 110, 624, 391))
         self.frame_2.setStyleSheet("QFrame{\n"
 "background-color:#1f2836;\n"
 "border-radius:30px;\n"
@@ -101,13 +101,13 @@ class Ui_Form(object):
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.lineEdit = QtWidgets.QLineEdit(self.frame_2)
-        self.lineEdit.setGeometry(QtCore.QRect(62, 50, 500, 61))
+        self.lineEdit.setGeometry(QtCore.QRect(112, 50, 400, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
         self.lineEdit.setFont(font)
         self.lineEdit.setStyleSheet(" QLineEdit {\n"
 "                background-color: #334155;\n"
-"                border: none;\n"
+"                border:1px solid white;\n"
 "                border-radius: 15px;\n"
 "                padding: 5px;\n"
 "                padding-left: 30px;\n"
@@ -115,13 +115,13 @@ class Ui_Form(object):
 "            }")
         self.lineEdit.setObjectName("lineEdit")
         self.lineEdit_2 = QtWidgets.QLineEdit(self.frame_2)
-        self.lineEdit_2.setGeometry(QtCore.QRect(62, 140, 500, 61))
+        self.lineEdit_2.setGeometry(QtCore.QRect(112, 140, 400, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
         self.lineEdit_2.setFont(font)
         self.lineEdit_2.setStyleSheet(" QLineEdit {\n"
 "                background-color: #334155;\n"
-"                border: none;\n"
+"                border: 1px solid white;\n"
 "                border-radius: 15px;\n"
 "                padding: 5px;\n"
 "                padding-left: 30px;\n"
@@ -129,7 +129,7 @@ class Ui_Form(object):
 "            }")
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.pushButton = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton.setGeometry(QtCore.QRect(230, 350, 161, 51))
+        self.pushButton.setGeometry(QtCore.QRect(333, 280, 181, 51))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
         font.setPointSize(16)
@@ -146,71 +146,49 @@ class Ui_Form(object):
 "            }\n"
 "")
         self.pushButton.setObjectName("pushButton")
-        self.label_7 = QtWidgets.QLabel(self.frame_2)
-        self.label_7.setGeometry(QtCore.QRect(112, 210, 400, 71))
+        self.pushButton_2 = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_2.setGeometry(QtCore.QRect(500, 70, 93, 28))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.setIcon(QtGui.QIcon("refreshbutton.png"))
+        self.pushButton_2.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border-radius: 20px;
+            }
+           
+        """)
+        self.pushButton_3 = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_3.setGeometry(QtCore.QRect(118, 280, 181, 51))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(True)
         font.setWeight(75)
-        self.label_7.setFont(font)
-        self.label_7.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.label_7.setStyleSheet("QFrame{\n"
-"border:none;\n"
-"color:#f2f5f3;\n"
-"}")
-        self.label_7.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_7.setObjectName("label_7")
-        self.frame_3 = QtWidgets.QFrame(self.frame_2)
-        self.frame_3.setGeometry(QtCore.QRect(110, 270, 491, 41))
-        self.frame_3.setStyleSheet("border:none;")
-        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_3.setObjectName("frame_3")
-        self.radioButton = QtWidgets.QRadioButton(self.frame_3)
-        self.radioButton.setGeometry(QtCore.QRect(11, 11, 106, 19))
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setStyleSheet(" QPushButton {\n"
+"                background-color: #1f2836;\n"
+"                color: white;\n"
+"                border: none;\n"
+"                border-radius: 25px;\n"
+"                padding: 10px;\n"
+"                border:1px solid white;\n"
+"            }\n"
+"")
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.label_5 = QtWidgets.QLabel(Form)
+        self.label_5.setGeometry(QtCore.QRect(930, 577, 71, 20))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.radioButton.setFont(font)
-        self.radioButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.radioButton.setStyleSheet("QRadioButton{\n"
-"color:white;\n"
-"background:none;\n"
-"}")
-        self.radioButton.setChecked(False)
-        self.radioButton.setObjectName("radioButton")
-        self.radioButton_2 = QtWidgets.QRadioButton(self.frame_3)
-        self.radioButton_2.setEnabled(True)
-        self.radioButton_2.setGeometry(QtCore.QRect(190, 11, 80, 19))
+        self.label_5.setFont(font)
+        self.label_5.setStyleSheet("color:white;")
+        self.label_5.setObjectName("label_5")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(956, 558, 55, 16))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.radioButton_2.setFont(font)
-        self.radioButton_2.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.radioButton_2.setStyleSheet("QRadioButton{\n"
-"color:white;\n"
-"background:none;\n"
-"}")
-        self.radioButton_2.setChecked(True)
-        self.radioButton_2.setObjectName("radioButton_2")
-        self.radioButton_3 = QtWidgets.QRadioButton(self.frame_3)
-        self.radioButton_3.setGeometry(QtCore.QRect(328, 11, 71, 19))
-        font = QtGui.QFont()
-        font.setFamily("Helvetica Neue")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.radioButton_3.setFont(font)
-        self.radioButton_3.setStyleSheet("QRadioButton{\n"
-"color:white;\n"
-"background:none;\n"
-"}")
-        self.radioButton_3.setObjectName("radioButton_3")
+        self.label.setFont(font)
+        self.label.setStyleSheet("color:white;")
+        self.label.setObjectName("label")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -221,15 +199,22 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Vekaria Healthcare"))
         self.label_3.setText(_translate("Form", "V1.0"))
         self.label_4.setText(_translate("Form", "Macular Densitometer"))
-        self.lineEdit.setText(_translate("Form", "Username"))
+        self.lineEdit.setText(_translate("Form", "Wi-Fi Name"))
         self.lineEdit_2.setText(_translate("Form", "Password"))
-        self.pushButton.setText(_translate("Form", "LOGIN"))
-        self.label_7.setText(_translate("Form", "Operation Mode"))
-        self.radioButton.setText(_translate("Form", "Eye Camp"))
-        self.radioButton_2.setText(_translate("Form", "Clinic"))
-        self.radioButton_3.setText(_translate("Form", "Demo"))
+        self.pushButton.setText(_translate("Form", "CONNECT"))
+        # self.pushButton_2.setText(_translate("Form", "PushButton"))
+        self.pushButton_3.setText(_translate("Form", "FORGET"))
+        self.label_5.setText(_translate("Form", "12-10-2024"))
+        self.label.setText(_translate("Form", "19:53"))
 import vekarialogo_rc
 import wifi_rc
 
 
-
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())

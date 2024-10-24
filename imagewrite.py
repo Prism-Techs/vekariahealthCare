@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\image+writeup.ui'
+# Form implementation generated from reading ui file 'image+writeup.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -9,26 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
-from PyQt5.QtGui import QFont
 
 
 class Ui_Form(object):
     def setupUi(self, Form):
-        # Set form to be frameless
-        Form.setWindowFlags(Qt.FramelessWindowHint)
-        Form.setAttribute(Qt.WA_TranslucentBackground)
-        
-        # Set base properties
         Form.setObjectName("Form")
         Form.resize(1024, 600)
-        
-
-        Form.setStyleSheet("background-color:black;")
+        Form.setStyleSheet("background-color:#101826;")
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
-        self.frame.setStyleSheet("background-color:#1f2836;")
+        self.frame.setStyleSheet("background-color:black;")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
@@ -64,18 +54,27 @@ class Ui_Form(object):
         self.label_9.setPixmap(QtGui.QPixmap(":/newPrefix/Vekaria Healthcare Logo/VHC Logo.png"))
         self.label_9.setScaledContents(True)
         self.label_9.setObjectName("label_9")
-        self.wifiIcon = WifiStatusLabel(self.frame)
-        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
+        self.wifiIcon = QtWidgets.QLabel(self.frame)
+        self.wifiIcon.setGeometry(QtCore.QRect(860, 0, 51, 41))
+        self.wifiIcon.setStyleSheet("color:white;")
+        self.wifiIcon.setText("")
+        self.wifiIcon.setPixmap(QtGui.QPixmap(":/wifilogo/wifi.png"))
+        self.wifiIcon.setScaledContents(True)
+        self.wifiIcon.setObjectName("wifiIcon")
+        self.label_10 = QtWidgets.QLabel(self.frame)
+        self.label_10.setGeometry(QtCore.QRect(868, 5, 41, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
-        self.wifiIcon.setFont(font)
-        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-        self.wifiIcon.clicked.connect(self.open_wifi_page)
+        self.label_10.setFont(font)
+        self.label_10.setText("")
+        self.label_10.setPixmap(QtGui.QPixmap("icons/logo12.png"))
+        self.label_10.setScaledContents(True)
+        self.label_10.setObjectName("label_10")
         self.frame_2 = QtWidgets.QFrame(Form)
-        self.frame_2.setGeometry(QtCore.QRect(0, 40, 1024, 551))
+        self.frame_2.setGeometry(QtCore.QRect(0, 40, 1024, 560))
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
@@ -83,7 +82,7 @@ class Ui_Form(object):
         self.label.setGeometry(QtCore.QRect(50, 110, 391, 331))
         self.label.setStyleSheet("background:none;")
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/vlogo/macular_densitometer_logo.png"))
+        self.label.setPixmap(QtGui.QPixmap("icons/macular_densitometer_logo.png"))
         self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
@@ -113,10 +112,6 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
-    def open_wifi_page(self):
-        self.wifi_page = WifiPage()
-        self.wifi_page.show()
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

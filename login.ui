@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:black;</string>
+   <string notr="true">background-color:#101826;</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -26,7 +26,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color:#1f2836;</string>
+    <string notr="true">background-color:black;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -109,6 +109,28 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="wifiIcon">
+    <property name="geometry">
+     <rect>
+      <x>860</x>
+      <y>0</y>
+      <width>51</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:white;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../Wifi/wifi.qrc">:/wifilogo/wifi.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
@@ -130,7 +152,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="icons/vekarialogo.qrc">:/vlogo/macular_densitometer_logo.png</pixmap>
+     <pixmap>icons/logo12.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -194,7 +216,7 @@ color:white;</string>
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QLineEdit" name="username">
+   <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -222,7 +244,7 @@ color:white;</string>
      <string>Username</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="password">
+   <widget class="QLineEdit" name="lineEdit_2">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -250,7 +272,7 @@ color:white;</string>
      <string>Password</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="login">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -261,57 +283,21 @@ color:white;</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <family>Helvetica Neue</family>
+      <pointsize>16</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-    QPushButton {
-        background-color: transparent;
-        color: white;
-        border: 1px solid white;
-        padding: 10px 20px;
-        font-size: 24px;
-        border-radius: 1px;
-        font-weight: bold;
-        transition: all 0.3s;
-        margin: 2px;
-        /* Add subtle initial shadow */
-        border-bottom: 1px solid white;
-        border-right: 1px solid white;
-    }
-    
-    QPushButton:hover {
-        background-color: rgba(33, 150, 243, 0.1);
-        border: 2px solid #64B5F6;
-        color: #64B5F6;
-        /* Enhanced hover effect */
-        border-bottom: 4px solid #42A5F5;
-        border-right: 3px solid #42A5F5;
-        margin: 2px;
-    }
-    
-    QPushButton:pressed {
-        background-color: rgba(33, 150, 243, 0.2);
-        border: 2px solid white;
-        /* Create pressed effect */
-        border-bottom: 2px solid white;
-        border-right: 2px solid white;
-        margin-top: 4px;
-        margin-left: 2px;
-        padding-top: 11px;
-        padding-left: 21px;
-    }
-    
-    QPushButton:disabled {
-        background-color: transparent;
-        color: #B0B0B0;
-        border: 2px solid #B0B0B0;
-        border-bottom: 4px solid #909090;
-        border-right: 3px solid #909090;
-    }
+     <string notr="true"> QPushButton {
+                background-color: #1f2836;
+                color: white;
+                border: none;
+                border-radius: 25px;
+                padding: 10px;
+				border:1px solid white;
+            }
 </string>
     </property>
     <property name="text">
@@ -471,7 +457,7 @@ background:none;
     </widget>
    </widget>
   </widget>
-  <widget class="QLabel" name="Time">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>960</x>
@@ -492,7 +478,7 @@ background:none;
     <string>19:53</string>
    </property>
   </widget>
-  <widget class="QLabel" name="date">
+  <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
      <x>934</x>
@@ -517,6 +503,7 @@ background:none;
  <resources>
   <include location="icons/vekarialogo.qrc"/>
   <include location="../Wifi/wifi.qrc"/>
+  <include location="C:/Users/veds5/.designer/backup/icons/vekarialogo.qrc"/>
  </resources>
  <connections/>
 </ui>

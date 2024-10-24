@@ -3,20 +3,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QPixmap
-# from login import Ui_Form
+from login import Ui_Form
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve, QEvent
 from PyQt5.QtGui import QPixmap
-# from imagewrite import Ui_Form as WriteUPImageForm
-from wifi_checker import main as wifi_checker_main
-from Patient_checker import run_in_thread
-# from . import login_page
-from PyQt5.QtWidgets import QMessageBox
-from datetime import datetime
-import json
-from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-# from pages import Login_page
+from imagewrite import Ui_Form as WriteUPImageForm
+
+
 
 class LoadingScreen(QWidget):
     def __init__(self):
@@ -25,11 +19,10 @@ class LoadingScreen(QWidget):
         self.setFixedSize(1024, 600)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setGeometry(0, 0, 1024, 600)
-        wifi_checker_main()
-        run_in_thread("patient_data","http://15.2.2.254:8888/patient/sync/",'wifi_status.json')
 
         # Replace 'path/to/your/logo.png' with the actual path to your logo
         self.pixmap = QPixmap('logo.png')
@@ -38,6 +31,7 @@ class LoadingScreen(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.animate_logo)
         self.timer.start(50)  # Adjust for faster/slower animation
+
         self.counter = 0
 
     def animate_logo(self):
@@ -61,14 +55,13 @@ class LoadingScreen(QWidget):
 
     def next_page(self):
         # Show WriteUPImageForm
-        # self.writeup_form = QWidget()
-        # self.writeup_form.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)  # Remove window decorations
-        # self.writeup_form.setFixedSize(1024, 600)  # Set size to match display
-        # self.writeup_ui = WriteUPImageForm()
-        # self.writeup_ui.setupUi(self.writeup_form)
-        # self.writeup_form.installEventFilter(self)
-        # self.writeup_form.show()
-        pass
+        self.writeup_form = QWidget()
+        self.writeup_form.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)  # Remove window decorations
+        self.writeup_form.setFixedSize(1024, 600)  # Set size to match display
+        self.writeup_ui = WriteUPImageForm()
+        self.writeup_ui.setupUi(self.writeup_form)
+        self.writeup_form.installEventFilter(self)
+        self.writeup_form.show()
 
     def eventFilter(self, obj, event):
         if obj == self.writeup_form and event.type() in [QEvent.MouseButtonPress, QEvent.TouchBegin]:
@@ -79,7 +72,7 @@ class LoadingScreen(QWidget):
     def show_login_form(self):
         # Create login form
         self.login_form = QWidget()
-        self.login_ui = Login_page()
+        self.login_ui = Ui_Form()
         self.login_ui.setupUi(self.login_form)
 
         # Set up fade-in animation for login form
@@ -101,9 +94,6 @@ class LoadingScreen(QWidget):
         self.login_form.show()
         self.fade_in_animation.start()
         self.fade_out_animation.start()
-
-
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
