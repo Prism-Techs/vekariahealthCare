@@ -20,8 +20,7 @@ class Ui_Form(object):
         Form.setWindowFlags(Qt.FramelessWindowHint)
         self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
-        self.current_focused_widget = None
-        self.keyboard_process = None        
+       
         self.json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
         # Create directory if it doesn't exist
         if not os.path.exists(self.json_path):
@@ -343,7 +342,7 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-        self.kb.createAlphaKey()
+        self.kb.main()
         # Add this to the setupUi method
 
         self.retranslateUi(Form)
@@ -463,16 +462,7 @@ class Ui_Form(object):
         self.radioButton_3.setText(_translate("Form", "Demo"))
 
 
-    def handle_focus_in(self, event, widget):
-        """Handle focus in event for text fields"""
-        if self.current_focused_widget != widget:
-            self.current_focused_widget = widget
-            self.show_keyboard()
-            
-    def handle_focus_out(self, event):
-        """Handle focus out event for text fields"""
-        if not self.username.hasFocus() and not self.password.hasFocus():
-            self.hide_keyboard()
+
 
 import vekarialogo_rc
 import wifi_rc
