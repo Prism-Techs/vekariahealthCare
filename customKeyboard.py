@@ -1,7 +1,6 @@
 import os
 import subprocess
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
 
 class RPiKeyboard(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -13,41 +12,35 @@ class RPiKeyboard(QtWidgets.QWidget):
 
     def show_keyboard(self):
         try:
-            # Set Onboard to stay on top using dconf or gsettings
+            # Set Onboard to stay on top using gsettings
             subprocess.run([
-                'sudo', 'gsettings', 'set', 
+                'gsettings', 'set', 
                 'org.onboard', 'force-to-top', 'true'
             ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
             
             subprocess.run([
-                'sudo', 'gsettings', 'set',
+                'gsettings', 'set',
                 'org.onboard', 'window-state-sticky', 'true'
             ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         except:
             pass
 
-        # Prompt for superuser password
-        password, ok = QtWidgets.QInputDialog.getText(self, "Superuser Password", "Please enter your password:", QtWidgets.QLineEdit.Password)
-        if ok:
-            # Launch onboard with stay-on-top flags and elevated permissions
-            self.keyboard_process = subprocess.Popen([
-                'sudo', '-S', 'onboard',
-                '--force-to-top',
-                '--state', 'SHOWING'
-            ], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            self.keyboard_process.communicate(password.encode())
+        # Launch onboard with stay-on-top flags
+        self.keyboard_process = subprocess.Popen([
+            'onboard',
+            '--force-to-top',
+            '--state', 'SHOWING'
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-            # Give a moment for keyboard to appear then ensure it's on top
-            QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
-        else:
-            QMessageBox.warning(self, "Error", "Password is required to show the keyboard.")
+        # Give a moment for keyboard to appear then ensure it's on top
+        QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
 
     def ensure_keyboard_on_top(self):
         """Make sure keyboard stays on top"""
         try:
             # Use xdotool to force keyboard window to top
             subprocess.run([
-                'sudo', 'xdotool', 'search', '--name', 'Onboard',
+                'xdotool', 'search', '--name', 'Onboard',
                 'windowraise'
             ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
         except:
@@ -62,7 +55,7 @@ class RPiKeyboard(QtWidgets.QWidget):
                 
             # Kill any running onboard process
             try:
-                subprocess.run(['sudo', 'killall', 'onboard'], 
+                subprocess.run(['killall', 'onboard'], 
                             stderr=subprocess.DEVNULL, 
                             stdout=subprocess.DEVNULL)
             except:
