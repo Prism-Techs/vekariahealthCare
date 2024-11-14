@@ -342,7 +342,6 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-        self.kb.main()
         # Add this to the setupUi method
 # Add this to the setupUi method
         self.custom_keyboard = CustomKeyboard(self.frame_2, self.username, self)
