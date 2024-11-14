@@ -63,7 +63,7 @@ class Ui_Form(object):
         font.setWeight(75)
         self.label_10.setFont(font)
         self.label_10.setText("")
-        self.label_10.setPixmap(QtGui.QPixmap(".\\icons/logo12.png"))
+        self.label_10.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
         self.label_10.setScaledContents(True)
         self.label_10.setObjectName("label_10")
         self.label_4 = QtWidgets.QLabel(Form)

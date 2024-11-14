@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="vlogo">
+    <file>logo12.png</file>
     <file>vekaria_healthcare_pvt_ltd_cover.jpg</file>
   </qresource>
   <qresource prefix="vlogo2">
