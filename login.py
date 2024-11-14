@@ -404,17 +404,45 @@ class Ui_Form(object):
                 # Kill any existing keyboard instance
                 self.hide_keyboard()
                 
-                # Launch basic onboard keyboard
-                self.keyboard_process = subprocess.Popen(
-                    ['onboard'],
-                    stdout=subprocess.DEVNULL, 
-                    stderr=subprocess.DEVNULL
-                )
+                # Set Onboard to stay on top using dconf or gsettings
+                try:
+                    subprocess.run([
+                        'gsettings', 'set', 
+                        'org.onboard', 'force-to-top', 'true'
+                    ], stderr=subprocess.DEVNULL)
+                    
+                    subprocess.run([
+                        'gsettings', 'set',
+                        'org.onboard', 'window-state-sticky', 'true'
+                    ], stderr=subprocess.DEVNULL)
+                except:
+                    pass
+
+                # Launch onboard with stay-on-top flags
+                self.keyboard_process = subprocess.Popen([
+                    'onboard',
+                    '--force-to-top',
+                    '--state', 'SHOWING'
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                
+                # Give a moment for keyboard to appear then ensure it's on top
+                QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
                 
                 self.keyboard_visible = True
                     
         except Exception as e:
             print(f"Error showing keyboard: {e}")
+
+    def ensure_keyboard_on_top(self):
+        """Make sure keyboard stays on top"""
+        try:
+            # Use xdotool to force keyboard window to top
+            subprocess.run([
+                'xdotool', 'search', '--name', 'Onboard',
+                'windowraise'
+            ], stderr=subprocess.DEVNULL)
+        except:
+            pass
 
     def hide_keyboard(self):
         """Hide the onboard keyboard"""
