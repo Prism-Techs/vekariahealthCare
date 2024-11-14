@@ -10,6 +10,8 @@ class CustomKeyboard(QtWidgets.QWidget):
         self.uppercase = False
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.layout = QtWidgets.QGridLayout()
+        self.setLayout(self.layout)
         self.create_keyboard()
 
     def select(self, value):
@@ -39,9 +41,6 @@ class CustomKeyboard(QtWidgets.QWidget):
         globaladc.buzzer_1()
 
     def create_keyboard(self):
-        layout = QtWidgets.QGridLayout()
-        self.setLayout(layout)
-
         alphabets = [
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
             ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Back'],
@@ -72,7 +71,7 @@ class CustomKeyboard(QtWidgets.QWidget):
                         background-color: #333;
                     }
                 """)
-                layout.addWidget(button, y, row.index(text), 1, columnspan)
+                self.layout.addWidget(button, y, row.index(text), 1, columnspan)
 
         self.setGeometry(self.parent.x() + 20, self.parent.y() + 400, self.width(), self.height())
 

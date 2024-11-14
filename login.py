@@ -344,9 +344,10 @@ class Ui_Form(object):
         self.update_datetime()
         # Add this to the setupUi method
 # Add this to the setupUi method
+# Add this to the setupUi method
         self.custom_keyboard = CustomKeyboard(self.frame_2, self.username, self)
-        self.username.mousePressEvent = lambda event: self.custom_keyboard.create_keyboard()
-        self.password.mousePressEvent = lambda event: self.custom_keyboard.create_keyboard()
+        self.username.mousePressEvent = lambda event: self.custom_keyboard.show()
+        self.password.mousePressEvent = lambda event: self.custom_keyboard.show()
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
