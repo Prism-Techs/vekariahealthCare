@@ -217,6 +217,8 @@ class Ui_Form(object):
 "        border-right: 3px solid #909090;\n"
 "    }")
         self.login.setObjectName("login")
+        globaladc.flicker_Prepair()
+
 
         self.label_7 = QtWidgets.QLabel(self.frame_2)
         self.label_7.setGeometry(QtCore.QRect(112, 210, 400, 71))
