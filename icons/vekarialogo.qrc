@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="vlogo">
+    <file>macular_densitometer_logo.png</file>
     <file>logo12.png</file>
     <file>vekaria_healthcare_pvt_ltd_cover.jpg</file>
   </qresource>
