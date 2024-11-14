@@ -404,20 +404,12 @@ class Ui_Form(object):
                 # Kill any existing keyboard instance
                 self.hide_keyboard()
                 
-                # Calculate keyboard position to be at bottom of screen
-                screen = QtWidgets.QApplication.desktop().screenGeometry()
-                keyboard_height = 300
-                y_position = screen.height() - keyboard_height
-                
-                # Launch onboard with specific settings
-                self.keyboard_process = subprocess.Popen([
-                    'onboard',
-                    '--size', f'{screen.width()}x{keyboard_height}',
-                    '-x', '0',
-                    '-y', str(y_position),
-                    '--layout', 'Full',
-                    '--theme', 'Nightshade'  # Dark theme to match your UI
-                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                # Launch basic onboard keyboard
+                self.keyboard_process = subprocess.Popen(
+                    ['onboard'],
+                    stdout=subprocess.DEVNULL, 
+                    stderr=subprocess.DEVNULL
+                )
                 
                 self.keyboard_visible = True
                     
