@@ -2,6 +2,12 @@ from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import subprocess
+from datetime import datetime
+import json
+from PyQt5.QtWidgets import QMessageBox
+from tkinter import messagebox
+from database  import DatabaseConnection
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -12,7 +18,11 @@ class Ui_Form(object):
         
         # Initialize keyboard tracking variables
         self.current_focused_widget = None
-        self.keyboard_process = None
+        self.keyboard_process = None        
+        self.json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
+        # Create directory if it doesn't exist
+        if not os.path.exists(self.json_path):
+            os.makedirs(self.json_path)
 
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
@@ -20,6 +30,10 @@ class Ui_Form(object):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
+
+        #database initalize
+        self.db = DatabaseConnection()
+        self.db.connect()
 
         self.label_2 = QtWidgets.QLabel(self.frame)
         self.label_2.setGeometry(QtCore.QRect(60, 0, 281, 41))
@@ -331,8 +345,56 @@ class Ui_Form(object):
         self.password.focusInEvent = lambda event: self.handle_focus_in(event, self.password)
         self.password.focusOutEvent = lambda event: self.handle_focus_out(event)
         self.retranslateUi(Form)
+        self.login.clicked.connect(self.handle_login)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+    def show_styled_message_box(self, title, text, icon=QMessageBox.Information):
+        """Show a custom styled message box"""
+        msg = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        msg.setIcon(icon)
+        
+        # Set custom stylesheet
+        msg.setStyleSheet("""
+            QMessageBox {
+                background-color: #1f2836;
+            }
+            QMessageBox QLabel {
+                color: white;
+                font-family: 'Helvetica Rounded';
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 300px;
+                min-height: 50px;
+            }
+            QPushButton {
+                background-color: transparent;
+                color: white;
+                border: 1px solid white;
+                padding: 5px 15px;
+                font-family: 'Helvetica Rounded';
+                font-size: 14px;
+                font-weight: bold;
+                border-radius: 3px;
+                min-width: 80px;
+            }
+            QPushButton:hover {
+                background-color: rgba(33, 150, 243, 0.1);
+                border: 1px solid #64B5F6;
+                color: #64B5F6;
+            }
+            QPushButton:pressed {
+                background-color: rgba(33, 150, 243, 0.2);
+                border: 1px solid white;
+            }
+        """)
+        
+        # Center the message box on the screen
+        center_point = self.frame.geometry().center()
+        msg.move(center_point.x() - msg.width()/2, center_point.y() - msg.height()/2)
+        
+        return msg.exec_()
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
@@ -408,6 +470,70 @@ class Ui_Form(object):
         """Clean up keyboard process when closing the application"""
         self.hide_keyboard()
         event.accept()
+
+
+    def generate_user_json(self, user_data):
+        """Generate JSON file with user information"""
+        try:
+            # Create user info dictionary
+            user_info = {
+                "username": user_data['username'],
+                "first_name": user_data['first_name'],
+                "last_name": user_data['last_name'],
+                "title": user_data['title'] if user_data['title'] else "",
+                "login_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "is_doctor": user_data['is_doctor'],
+                "is_operator": user_data['is_operator']
+            }
+
+            # Create filename with timestamp
+            filename = f"user_{user_data['username']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            filepath = os.path.join(self.json_path, filename)
+
+            # Write to JSON file
+            with open(filepath, 'w') as json_file:
+                json.dump(user_info, json_file, indent=4)
+
+            # Also create/update a latest user file
+            latest_filepath = os.path.join(self.json_path, "latest_user.json")
+            with open(latest_filepath, 'w') as json_file:
+                json.dump(user_info, json_file, indent=4)
+
+            return filepath
+        except Exception as e:
+            print(f"Error generating user JSON: {e}")
+            return None
+
+    def handle_login(self):
+        """Handle login button click"""
+        username = self.username.text().strip()
+        password = self.password.text().strip()
+        
+        if not username or not password:
+            messagebox.showwarning('Error', 'Please enter both username and password')
+            return
+            
+        # Get selected operation mode
+        if self.radioButton.isChecked():
+            operation_mode = "Eye Camp"
+        elif self.radioButton_2.isChecked():
+            operation_mode = "Clinic"
+        else:
+            operation_mode = "Demo"
+            
+        # Verify login
+        user = self.db.verify_login(username, password)
+        
+        if user:
+            # Generate JSON file
+            json_file = self.generate_user_json(user)
+            if json_file:
+                messagebox.showinfo('Success', 
+                    f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
+            else:
+                messagebox.showwarning('Warning', 'Login successful but failed to save user data')
+        else:
+            messagebox.showerror('Error', 'Invalid username or password')
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
