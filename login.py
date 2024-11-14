@@ -9,7 +9,7 @@ from tkinter import messagebox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-
+from customKeyboard import KeyBoard as CustomKeyboard
 
 
 class Ui_Form(object):
@@ -340,11 +340,10 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-        self.username.focusInEvent = lambda event: self.show_keyboard()
-        self.username.focusOutEvent = lambda event: self.check_focus_and_hide()
-        
-        self.password.focusInEvent = lambda event: self.show_keyboard()
-        self.password.focusOutEvent = lambda event: self.check_focus_and_hide()
+
+        self.custom_keyboard = CustomKeyboard(Form, self.username, Form)
+        self.username.bind('<FocusIn>', lambda event: self.custom_keyboard.create_keyboard())
+        self.password.bind('<FocusIn>', lambda event: self.custom_keyboard.create_keyboard())
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
@@ -364,105 +363,8 @@ class Ui_Form(object):
         self.Time.setText(current_datetime.toString('HH:mm'))
         self.date.setText(current_datetime.toString('dd-MM-yyyy'))
 
-    def eventFilter(self, obj, event):
-        """Handle focus events for text input fields"""
-        if obj in [self.username, self.password]:
-            if event.type() == QtCore.QEvent.FocusIn:
-                self.handle_focus_in(obj)
-            elif event.type() == QtCore.QEvent.FocusOut:
-                # Only hide keyboard if focus is not moving to another input field
-                if not self.username.hasFocus() and not self.password.hasFocus():
-                    self.hide_keyboard()
-        return super().eventFilter(obj, event)
 
-    def handle_focus_in(self, event, widget):
-        """Handle focus in event for text fields"""
-        if self.current_focused_widget != widget:
-            self.current_focused_widget = widget
-            self.show_keyboard()
 
-    def handle_focus_out(self, event):
-        """Handle focus out event for text fields"""
-        if not self.username.hasFocus() and not self.password.hasFocus():
-            self.hide_keyboard()
-
-    def check_focus_and_hide(self):
-        """Check if focus is in any input field before hiding keyboard"""
-        # Use QTimer to delay the check slightly to allow focus to settle
-        QtCore.QTimer.singleShot(100, self._check_focus)
-
-    def _check_focus(self):
-        """Check if any input field has focus"""
-        focused_widget = QtWidgets.QApplication.focusWidget()
-        if focused_widget not in [self.username, self.password]:
-            self.hide_keyboard()
-
-    def show_keyboard(self):
-        """Show the onboard keyboard"""
-        try:
-            if not getattr(self, 'keyboard_visible', False):
-                # Kill any existing keyboard instance
-                self.hide_keyboard()
-                
-                # Set Onboard to stay on top using dconf or gsettings
-                try:
-                    subprocess.run([
-                        'gsettings', 'set', 
-                        'org.onboard', 'force-to-top', 'true'
-                    ], stderr=subprocess.DEVNULL)
-                    
-                    subprocess.run([
-                        'gsettings', 'set',
-                        'org.onboard', 'window-state-sticky', 'true'
-                    ], stderr=subprocess.DEVNULL)
-                except:
-                    pass
-
-                # Launch onboard with stay-on-top flags
-                self.keyboard_process = subprocess.Popen([
-                    'onboard',
-                    '--force-to-top',
-                    '--state', 'SHOWING'
-                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                
-                # Give a moment for keyboard to appear then ensure it's on top
-                QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
-                
-                self.keyboard_visible = True
-                    
-        except Exception as e:
-            print(f"Error showing keyboard: {e}")
-
-    def ensure_keyboard_on_top(self):
-        """Make sure keyboard stays on top"""
-        try:
-            # Use xdotool to force keyboard window to top
-            subprocess.run([
-                'xdotool', 'search', '--name', 'Onboard',
-                'windowraise'
-            ], stderr=subprocess.DEVNULL)
-        except:
-            pass
-
-    def hide_keyboard(self):
-        """Hide the onboard keyboard"""
-        try:
-            if hasattr(self, 'keyboard_process') and self.keyboard_process:
-                self.keyboard_process.terminate()
-                self.keyboard_process = None
-                
-            # Kill any running onboard process
-            try:
-                subprocess.run(['killall', 'onboard'], 
-                            stderr=subprocess.DEVNULL, 
-                            stdout=subprocess.DEVNULL)
-            except:
-                pass
-                
-            self.keyboard_visible = False
-                
-        except Exception as e:
-            print(f"Error hiding keyboard: {e}")
 
     def closeEvent(self, event):
         """Clean up keyboard process when closing"""
