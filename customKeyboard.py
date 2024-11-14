@@ -19,7 +19,7 @@ class CustomKeyboard(QtWidgets.QWidget):
             value = ''
             globaladc.get_print("enter pressed")
             self.mainwindow.setFocus()
-            self.close()
+            self.hide()
         elif value == 'Tab':
             value = '\t'
 
@@ -74,7 +74,11 @@ class CustomKeyboard(QtWidgets.QWidget):
                 """)
                 layout.addWidget(button, y, row.index(text), 1, columnspan)
 
-        x = self.parent.x() + 20
-        y = self.parent.y() + 400
-        self.move(x, y)
-        self.show()
+        self.setGeometry(self.parent.x() + 20, self.parent.y() + 400, self.width(), self.height())
+
+    def showEvent(self, event):
+        self.create_keyboard()
+        super().showEvent(event)
+
+    def hideEvent(self, event):
+        super().hideEvent(event)
