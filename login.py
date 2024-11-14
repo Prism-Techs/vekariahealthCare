@@ -9,7 +9,7 @@ from tkinter import messagebox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-from customKeyboard import KeyBoard as CustomKeyboard
+from customKeyboard import KeyBoard
 
 
 class Ui_Form(object):
@@ -26,6 +26,8 @@ class Ui_Form(object):
         # Create directory if it doesn't exist
         if not os.path.exists(self.json_path):
             os.makedirs(self.json_path)
+
+        kb = KeyBoard()
 
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
@@ -342,10 +344,7 @@ class Ui_Form(object):
         self.update_datetime()
 
         # Add this to the setupUi method
-        self.custom_keyboard = CustomKeyboard(self.frame, self.username, self)
-        # self.username.focusInEvent = lambda event: self.custom_keyboard.create_keyboard()
-        # self.password.focusInEvent = lambda event: self.custom_keyboard.create_keyboard()
-        self.username.focusInEvent = lambda event: self.custom_keyboard.create_keyboard()
+
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
