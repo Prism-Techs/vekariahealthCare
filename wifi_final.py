@@ -118,20 +118,39 @@ class Ui_Form(object):
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
-        self.wifi_name = QtWidgets.QLineEdit(self.frame_2)
+        self.wifi_name = QtWidgets.QComboBox(self.frame_2)
         self.wifi_name.setGeometry(QtCore.QRect(112, 50, 400, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
         self.wifi_name.setFont(font)
-        self.wifi_name.setStyleSheet(" QLineEdit {\n"
-"                background-color: #334155;\n"
-"                border:1px solid white;\n"
-"                border-radius: 15px;\n"
-"                padding: 5px;\n"
-"                padding-left: 30px;\n"
-"                color: #94a3b8;\n"
-"            }")
+        self.wifi_name.setStyleSheet("""
+        QComboBox {
+                background-color: #334155;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px;
+                padding-left: 30px;
+                color: #94a3b8;
+        }
+        QComboBox::drop-down {
+                border: none;
+                width: 50px;
+        }
+        QComboBox::down-arrow {
+                image: url(dropdown-arrow.png);
+                width: 20px;
+                height: 20px;
+        }
+        QComboBox QAbstractItemView {
+                background-color: #334155;
+                border: 1px solid white;
+                selection-background-color: #1f2836;
+                color: white;
+                padding: 5px;
+        }
+        """)
         self.wifi_name.setObjectName("wifi_name")
+        self.wifi_name.setPlaceholderText("Select WiFi Network")
         self.password = QtWidgets.QLineEdit(self.frame_2)
         self.password.setGeometry(QtCore.QRect(112, 140, 400, 61))
         font = QtGui.QFont()
@@ -506,7 +525,7 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Vekaria Healthcare"))
         self.label_3.setText(_translate("Form", "V1.0"))
         self.label_4.setText(_translate("Form", "Macular Densitometer"))
-        self.wifi_name.setPlaceholderText(_translate("Form", "Wi-Fi Name"))
+        # self.wifi_name.setPlaceholderText(_translate("Form", "Wi-Fi Name"))
         self.password.setPlaceholderText(_translate("Form", "Password"))
         self.connect.setText(_translate("Form", "CONNECT"))
         self.forget.setText(_translate("Form", "FORGET"))
