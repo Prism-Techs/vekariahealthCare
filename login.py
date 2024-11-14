@@ -11,7 +11,7 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
 # from buzzer import buzzer
-from globalvar import globaladc as buzzer
+from globalvar import  buzzer
 
 from flicker_controller import FlickerController
 
