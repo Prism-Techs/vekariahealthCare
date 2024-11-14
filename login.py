@@ -13,7 +13,7 @@ from customKeyboard import RPiKeyboard
 # from buzzer import buzzer
 from globalvar import  globaladc as buzzer
 
-from flicker_controller import FlickerController
+# from flicker_controller import FlickerController
 
 
 class Ui_Form(object):
@@ -371,9 +371,10 @@ class Ui_Form(object):
 
 
     def show_flicker_controller(self):
-        self.flicker_controller = FlickerController(self)
-        self.flicker_controller.show()
-        self.hide()
+        # self.flicker_controller = FlickerController(self)
+        # self.flicker_controller.show()
+        # self.hide()
+        pass
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
