@@ -39,4 +39,4 @@ class GPIOManager:
             self.pwm.stop()
         except:
             pass
-        GPIO.cleanup()
+        # GPIO.cleanup()
