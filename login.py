@@ -10,9 +10,9 @@ from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
+from buzzer import buzzer
 
-from flicker_demo import FlickerController
-from flicker_demo import globaladc as buzzer
+from flicker_controller import FlickerController
 
 
 class Ui_Form(object):
@@ -369,6 +369,11 @@ class Ui_Form(object):
             self.wifi_window.activateWindow()
 
 
+    def show_flicker_controller(self):
+        self.flicker_controller = FlickerController(self)
+        self.flicker_controller.show()
+        self.hide()
+
     def update_datetime(self):
         """Update the date and time labels with current values"""
         current_datetime = QDateTime.currentDateTime()
@@ -482,9 +487,7 @@ class Ui_Form(object):
                     f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
 
                 # Create and show the FlickerController instance
-                self.flicker_controller = FlickerController(self)
-                self.flicker_controller.show()
-                self.hide()
+                self.show_flicker_controller()
             else:
                 messagebox.showwarning('Warning', 'Login successful but failed to save user data')
         else:
