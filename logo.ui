@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#101826;</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:black;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>0</y>
+      <width>281</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Helvetica Neue</family>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:white;</string>
+    </property>
+    <property name="text">
+     <string>Vekaria Healthcare</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>0</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Helvetica Neue</family>
+      <pointsize>14</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:white;</string>
+    </property>
+    <property name="text">
+     <string>V1.0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>8</y>
+      <width>44</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="icons/vekarialogo.qrc">:/newPrefix/Vekaria Healthcare Logo/VHC Logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="wifiIcon">
+    <property name="geometry">
+     <rect>
+      <x>860</x>
+      <y>0</y>
+      <width>51</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:white;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../Wifi/wifi.qrc">:/wifilogo/wifi.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>868</x>
+      <y>5</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>icons/logo12.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>1021</width>
+     <height>561</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>C:/Users/veds5/Desktop/VHC logo for Start.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>false</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="icons/vekarialogo.qrc"/>
+  <include location="../Wifi/wifi.qrc"/>
+ </resources>
+ <connections/>
+</ui>
