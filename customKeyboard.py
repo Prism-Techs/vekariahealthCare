@@ -124,7 +124,7 @@ class KeyBoard:
                     x += columnspan
 
 
-    def main():
+    def main(self):
         root = tk.Tk()
         root.title('Test Keyboard')
         kb = KeyBoard()
