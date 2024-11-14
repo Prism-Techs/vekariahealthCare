@@ -213,7 +213,7 @@ class Ui_Form(object):
         self.label_12 = QtWidgets.QLabel(self.frame_4)
         self.label_12.setGeometry(QtCore.QRect(870, 4, 41, 31))
         # Update the pixmap path to use the resource system
-        self.label_12.setPixmap(QtGui.QPixmap(":/icons/icons/logo12.png"))
+        self.label_12.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
         self.label_12.setScaledContents(True)
         self.label_12.setObjectName("label_12")
         self.frame_5 = QtWidgets.QFrame(Form)
