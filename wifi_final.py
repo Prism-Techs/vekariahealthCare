@@ -407,7 +407,7 @@ class Ui_Form(object):
 
                         # Clear and populate the combo box
                         self.wifi_name.clear()
-                        self.wifi_name.addItem("Select WiFi Network")  # Default item
+                        # self.wifi_name.addItem("Select WiFi Network")  # Default item
                 if networks:
                         for network in networks:
                                 self.wifi_name.addItem(network)
