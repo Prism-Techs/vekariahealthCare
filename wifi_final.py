@@ -18,47 +18,27 @@ import os
 import threading
 import time
 import re
+from wifi_update import WifiStatusLabel
 
-
-class WifiStatusLabel(QtWidgets.QLabel):
-    """Custom QLabel to draw red cross when disconnected"""
+class WifiPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.is_connected = False
-        # Store the original pixmap
-        self._original_pixmap = None
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
 
-    def setPixmap(self, pixmap):
-        self._original_pixmap = pixmap
-        super().setPixmap(pixmap)
-        self.update()  # Request repaint
+    def closeEvent(self, event):
+        # Clean up any resources when window is closed
+        if hasattr(self.ui, 'status_timer'):
+            self.ui.status_timer.stop()
+        event.accept()
 
-    def paintEvent(self, event):
-        if self._original_pixmap is None:
-            return
-        
-        # Create a painter for the label
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
-        
-        # Draw the original pixmap
-        painter.drawPixmap(self.rect(), self._original_pixmap)
-        
-        # If disconnected, draw the red cross
-        if not self.is_connected:
-            try:
-                pen = QPen(QColor('red'))
-                pen.setWidth(3)
-                painter.setPen(pen)
-                # Draw only one diagonal line
-                painter.drawLine(0, self.height(), self.width(), 0)
-            finally:
-                painter.end()  # Ensure painter is properly closed
+# Option 2: Function-based approach
+def show_wifi_page():
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    return Form
 
-    def update_connection_status(self, is_connected):
-        """Update connection status and trigger repaint"""
-        self.is_connected = is_connected
-        self.update()  # Request repaint
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -104,16 +84,15 @@ class Ui_Form(object):
         self.label_9.setScaledContents(True)
         self.label_9.setObjectName("label_9")
         self.wifiIcon = WifiStatusLabel(self.frame)
-        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
+        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 34))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
         self.wifiIcon.setFont(font)
-        self.wifiIcon.setText("")
         self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-        self.wifiIcon.setScaledContents(True)
+        # self.wifiIcon.clicked.connect(self.scan_wifi_networks)
         self.wifiIcon.setObjectName("wifiIcon")
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(10, 40, 1024, 40))

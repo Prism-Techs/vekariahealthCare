@@ -7,7 +7,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import threading
 import time
 from globalvar import globaladc
-
+from wifi_update import WifiStatusLabel
+from wifi_final import WifiPage
 
 
 class PeriodicThread(threading.Thread):
@@ -170,6 +171,8 @@ class FlickerController(QtWidgets.QWidget):
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
+        self.wifi_window = None  # Initialize as None
+
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:#000000;")
         self.frame_4 = QtWidgets.QFrame(Form)
@@ -485,6 +488,14 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+
+    def open_wifi_page(self):
+        if self.wifi_window is None:
+            self.wifi_window = WifiPage()
+            self.wifi_window.show()
+        else:
+            self.wifi_window.activateWindow()
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

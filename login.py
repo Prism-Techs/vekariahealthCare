@@ -7,6 +7,9 @@ import json
 from PyQt5.QtWidgets import QMessageBox
 from tkinter import messagebox
 from database  import DatabaseConnection
+from wifi_update import WifiStatusLabel
+from wifi_final import WifiPage
+
 
 
 class Ui_Form(object):
@@ -15,7 +18,7 @@ class Ui_Form(object):
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:black;")
         Form.setWindowFlags(Qt.FramelessWindowHint)
-        
+        self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
         self.current_focused_widget = None
         self.keyboard_process = None        
@@ -70,19 +73,17 @@ class Ui_Form(object):
         self.label_9.setScaledContents(True)
         self.label_9.setObjectName("label_9")
 
-        self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(870, 4, 41, 31))
+        self.wifiIcon = WifiStatusLabel(self.frame)
+        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
-        self.label_10.setFont(font)
-        self.label_10.setText("")
-        self.label_10.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-
-        self.label_10.setScaledContents(True)
-        self.label_10.setObjectName("label_10")
+        self.wifiIcon.setFont(font)
+        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
+        self.wifiIcon.clicked.connect(self.open_wifi_page)
+        # self.wifiIcon.icked.connect(self.wifi_update)
 
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(0, 50, 1024, 40))
@@ -345,8 +346,17 @@ class Ui_Form(object):
         self.password.focusInEvent = lambda event: self.handle_focus_in(event, self.password)
         self.password.focusOutEvent = lambda event: self.handle_focus_out(event)
         self.retranslateUi(Form)
+        self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def open_wifi_page(self):
+        if self.wifi_window is None:
+            self.wifi_window = WifiPage()
+            self.wifi_window.show()
+        else:
+            self.wifi_window.activateWindow()
+
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
@@ -392,7 +402,7 @@ class Ui_Form(object):
                 '--layout', 'Full',
                 '--size', f'{screen.width()}x{keyboard_height}',
                 '--x', '0',
-                '--y', str(y_position),
+                '-y', str(y_position),
                 '--dock-window-enabled'
             ])
         except Exception as e:
