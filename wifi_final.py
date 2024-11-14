@@ -25,16 +25,40 @@ class WifiStatusLabel(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.is_connected = False
+        # Store the original pixmap
+        self._original_pixmap = None
 
+    def setPixmap(self, pixmap):
+        self._original_pixmap = pixmap
+        super().setPixmap(pixmap)
+        self.update()  # Request repaint
 
     def paintEvent(self, event):
-        super().paintEvent(event)
+        if self._original_pixmap is None:
+            return
+        
+        # Create a painter for the label
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        
+        # Draw the original pixmap
+        painter.drawPixmap(self.rect(), self._original_pixmap)
+        
+        # If disconnected, draw the red cross
         if not self.is_connected:
-            painter = QPainter(self)
-            pen = QPen(QColor('red'))
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawLine(0, self.height(), self.width(), 0)
+            try:
+                pen = QPen(QColor('red'))
+                pen.setWidth(3)
+                painter.setPen(pen)
+                # Draw only one diagonal line
+                painter.drawLine(0, self.height(), self.width(), 0)
+            finally:
+                painter.end()  # Ensure painter is properly closed
+
+    def update_connection_status(self, is_connected):
+        """Update connection status and trigger repaint"""
+        self.is_connected = is_connected
+        self.update()  # Request repaint
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -514,27 +538,25 @@ network={{
     def check_wifi_status(self):
         """Check current WiFi status and update UI and JSON"""
         try:
-            current_wifi = self.get_current_wifi()
-            is_connected = bool(current_wifi)
-            
-            # Update icon and connection status
-            self.wifiIcon.is_connected = is_connected
-            if is_connected:
-                self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-            else:
-                self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-            
-            # Force repaint to update red cross
-            self.wifiIcon.repaint()
-            
-            # Update JSON status
-            self.update_wifi_status_json(is_connected)
-            
+                current_wifi = self.get_current_wifi()
+                is_connected = bool(current_wifi)
+                
+                # Update icon and connection status
+                if is_connected:
+                        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
+                else:
+                        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
+                
+                # Update connection status
+                self.wifiIcon.update_connection_status(is_connected)
+                
+                # Update JSON status
+                self.update_wifi_status_json(is_connected)
+                
         except Exception as e:
-            print(f"Error checking WiFi status: {e}")
-            self.wifiIcon.is_connected = False
-            self.wifiIcon.repaint()
-            self.update_wifi_status_json(False)
+                print(f"Error checking WiFi status: {e}")
+                self.wifiIcon.update_connection_status(False)
+                self.update_wifi_status_json(False)
 
     def update_wifi_status_json(self, is_connected):
         """Update WiFi status in JSON file"""
