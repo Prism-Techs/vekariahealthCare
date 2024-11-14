@@ -27,7 +27,8 @@ class Ui_Form(object):
         if not os.path.exists(self.json_path):
             os.makedirs(self.json_path)
 
-        kb = KeyBoard()
+        self.kb = KeyBoard()
+        
 
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
