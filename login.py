@@ -340,8 +340,11 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-        self.username.installEventFilter(self)
-        self.password.installEventFilter(self)
+        self.username.focusInEvent = lambda event: self.show_keyboard()
+        self.username.focusOutEvent = lambda event: self.check_focus_and_hide()
+        
+        self.password.focusInEvent = lambda event: self.show_keyboard()
+        self.password.focusOutEvent = lambda event: self.check_focus_and_hide()
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
@@ -383,37 +386,80 @@ class Ui_Form(object):
         if not self.username.hasFocus() and not self.password.hasFocus():
             self.hide_keyboard()
 
+    def check_focus_and_hide(self):
+        """Check if focus is in any input field before hiding keyboard"""
+        # Use QTimer to delay the check slightly to allow focus to settle
+        QtCore.QTimer.singleShot(100, self._check_focus)
+
+    def _check_focus(self):
+        """Check if any input field has focus"""
+        focused_widget = QtWidgets.QApplication.focusWidget()
+        if focused_widget not in [self.username, self.password]:
+            self.hide_keyboard()
+
     def show_keyboard(self):
+
         """Show the matchbox-keyboard"""
         try:
-            # Kill any existing keyboard instance
-            self.hide_keyboard()
-            
-            # Launch matchbox-keyboard
-            env = os.environ.copy()
-            env['DISPLAY'] = ':0.0'  # Ensure correct display
-            
-            self.keyboard_process = subprocess.Popen(
-                ['matchbox-keyboard'],
-                env=env,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-            
+            if not getattr(self, 'keyboard_visible', False):
+                # Kill any existing keyboard instance
+                self.hide_keyboard()
+                
+                # Launch matchbox-keyboard
+                env = os.environ.copy()
+                env['DISPLAY'] = ':0.0'  # Ensure correct display
+                
+                try:
+                    # Try matchbox-keyboard first
+                    self.keyboard_process = subprocess.Popen(
+                        ['matchbox-keyboard'],
+                        env=env,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL
+                    )
+                except FileNotFoundError:
+                    try:
+                        # Try florence as backup
+                        self.keyboard_process = subprocess.Popen(
+                            ['florence'],
+                            env=env,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL
+                        )
+                    except FileNotFoundError:
+                        # Finally try onboard
+                        self.keyboard_process = subprocess.Popen(
+                            ['onboard'],
+                            env=env,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL
+                        )
+                
+                self.keyboard_visible = True
+                
         except Exception as e:
             print(f"Error showing keyboard: {e}")
 
     def hide_keyboard(self):
         """Hide the matchbox-keyboard"""
         try:
-            if self.keyboard_process:
+            if hasattr(self, 'keyboard_process') and self.keyboard_process:
                 self.keyboard_process.terminate()
                 self.keyboard_process = None
-            subprocess.run(
-                ['killall', 'matchbox-keyboard'],
-                stderr=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL
-            )
+                
+            # Try to kill all possible keyboard processes
+            for keyboard in ['matchbox-keyboard', 'florence', 'onboard']:
+                try:
+                    subprocess.run(
+                        ['killall', keyboard],
+                        stderr=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL
+                    )
+                except:
+                    pass
+                
+            self.keyboard_visible = False
+                
         except Exception as e:
             print(f"Error hiding keyboard: {e}")
 
