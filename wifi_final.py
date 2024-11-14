@@ -500,7 +500,7 @@ class Ui_Form(object):
                 
                 # Write new configuration
                 with open('/tmp/wpa_supplicant.conf', 'w') as f:
-                f.writelines(new_config_lines)
+                        f.writelines(new_config_lines)
                 
                 # Copy new configuration to system
                 subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
