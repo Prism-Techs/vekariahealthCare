@@ -150,7 +150,6 @@ class Ui_Form(object):
         }
         """)
         self.wifi_name.setObjectName("wifi_name")
-        self.wifi_name.setPlaceholderText("Select WiFi Network")
         self.password = QtWidgets.QLineEdit(self.frame_2)
         self.password.setGeometry(QtCore.QRect(112, 140, 400, 61))
         font = QtGui.QFont()
@@ -391,23 +390,34 @@ class Ui_Form(object):
     def scan_wifi_networks(self):
         """Scan available WiFi networks"""
         try:
-            result = subprocess.run(['iwlist', 'wlan0', 'scan'], 
-                                  capture_output=True, text=True)
-            networks = []
-            
-            for line in result.stdout.split('\n'):
-                if 'ESSID' in line:
-                    essid = line.split('ESSID:"')[1].split('"')[0]
-                    if essid:
-                        networks.append(essid)
-            
-            self.wifi_name.clear()
-            self.wifi_name.setText("")  # Clear current text
-            if networks:
-                self.wifi_name.setText(networks[0])  # Set first network as default
+                self.wifi_name.clear()
+                self.wifi_name.addItem("Scanning...")
+                QtWidgets.QApplication.processEvents()
+
+                # Get list of networks
+                result = subprocess.run(['sudo', 'iwlist', 'wlan0', 'scan'], 
+                                capture_output=True, text=True)
+                
+                networks = []
+                for line in result.stdout.split('\n'):
+                        if 'ESSID:' in line:
+                                essid = line.split('ESSID:"')[1].split('"')[0]
+                                if essid:  # Only add non-empty SSIDs
+                                        networks.append(essid)
+
+                        # Clear and populate the combo box
+                        self.wifi_name.clear()
+                        self.wifi_name.addItem("Select WiFi Network")  # Default item
+                if networks:
+                        for network in networks:
+                                self.wifi_name.addItem(network)
+                else:
+                        self.wifi_name.addItem("No networks found")
                 
         except Exception as e:
-            self.show_message("Error", f"Failed to scan networks: {str(e)}")
+                print(f"Error scanning networks: {e}")
+                self.wifi_name.clear()
+                self.wifi_name.addItem("Error scanning networks")
 
     def connect_wifi(self):
         """Connect to selected WiFi network"""
@@ -529,6 +539,8 @@ class Ui_Form(object):
         self.password.setPlaceholderText(_translate("Form", "Password"))
         self.connect.setText(_translate("Form", "CONNECT"))
         self.forget.setText(_translate("Form", "FORGET"))
+        self.wifi_name.addItem("Select WiFi Network")
+
         # self.date.setText(_translate("Form", "12-10-2024"))
         # self.time.setText(_translate("Form", "19:53"))
 import vekarialogo_rc
