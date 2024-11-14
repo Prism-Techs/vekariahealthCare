@@ -398,65 +398,46 @@ class Ui_Form(object):
             self.hide_keyboard()
 
     def show_keyboard(self):
-
-        """Show the matchbox-keyboard"""
+        """Show the onboard keyboard"""
         try:
             if not getattr(self, 'keyboard_visible', False):
                 # Kill any existing keyboard instance
                 self.hide_keyboard()
                 
-                # Launch matchbox-keyboard
-                env = os.environ.copy()
-                env['DISPLAY'] = ':0.0'  # Ensure correct display
+                # Calculate keyboard position to be at bottom of screen
+                screen = QtWidgets.QApplication.desktop().screenGeometry()
+                keyboard_height = 300
+                y_position = screen.height() - keyboard_height
                 
-                try:
-                    # Try matchbox-keyboard first
-                    self.keyboard_process = subprocess.Popen(
-                        ['matchbox-keyboard'],
-                        env=env,
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL
-                    )
-                except FileNotFoundError:
-                    try:
-                        # Try florence as backup
-                        self.keyboard_process = subprocess.Popen(
-                            ['florence'],
-                            env=env,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL
-                        )
-                    except FileNotFoundError:
-                        # Finally try onboard
-                        self.keyboard_process = subprocess.Popen(
-                            ['onboard'],
-                            env=env,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL
-                        )
+                # Launch onboard with specific settings
+                self.keyboard_process = subprocess.Popen([
+                    'onboard',
+                    '--size', f'{screen.width()}x{keyboard_height}',
+                    '-x', '0',
+                    '-y', str(y_position),
+                    '--layout', 'Full',
+                    '--theme', 'Nightshade'  # Dark theme to match your UI
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 
                 self.keyboard_visible = True
-                
+                    
         except Exception as e:
             print(f"Error showing keyboard: {e}")
 
     def hide_keyboard(self):
-        """Hide the matchbox-keyboard"""
+        """Hide the onboard keyboard"""
         try:
             if hasattr(self, 'keyboard_process') and self.keyboard_process:
                 self.keyboard_process.terminate()
                 self.keyboard_process = None
                 
-            # Try to kill all possible keyboard processes
-            for keyboard in ['matchbox-keyboard', 'florence', 'onboard']:
-                try:
-                    subprocess.run(
-                        ['killall', keyboard],
-                        stderr=subprocess.DEVNULL,
-                        stdout=subprocess.DEVNULL
-                    )
-                except:
-                    pass
+            # Kill any running onboard process
+            try:
+                subprocess.run(['killall', 'onboard'], 
+                            stderr=subprocess.DEVNULL, 
+                            stdout=subprocess.DEVNULL)
+            except:
+                pass
                 
             self.keyboard_visible = False
                 
