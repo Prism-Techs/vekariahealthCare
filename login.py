@@ -403,7 +403,7 @@ class Ui_Form(object):
                 '--size', f'{screen.width()}x{keyboard_height}',
                 '--x', '0',
                 '-y', str(y_position),
-                '--dock-window-enabled'
+                '-dock-window-enabled'
             ])
         except Exception as e:
             print(f"Error showing keyboard: {e}")
