@@ -343,7 +343,7 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-
+        self.username.focusInEvent(lambda event: self.kb.createNumaKey())
         # Add this to the setupUi method
 
         self.retranslateUi(Form)
