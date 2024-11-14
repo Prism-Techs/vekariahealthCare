@@ -346,8 +346,11 @@ class Ui_Form(object):
         # Add this to the setupUi method
 # Add this to the setupUi method
 # Add this to the setupUi method
-        self.username.mousePressEvent = lambda event: self.rpi_keyboard.show()
-        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show()
+        self.rpi_keyboard = RPiKeyboard(Form)
+        self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
+        self.rpi_keyboard.username_field = self.username
+        self.username.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
