@@ -340,11 +340,8 @@ class Ui_Form(object):
         
         # Initial datetime update
         self.update_datetime()
-        self.username.focusInEvent = lambda event: self.handle_focus_in(event, self.username)
-        self.username.focusOutEvent = lambda event: self.handle_focus_out(event)
-        
-        self.password.focusInEvent = lambda event: self.handle_focus_in(event, self.password)
-        self.password.focusOutEvent = lambda event: self.handle_focus_out(event)
+        self.username.installEventFilter(self)
+        self.password.installEventFilter(self)
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
