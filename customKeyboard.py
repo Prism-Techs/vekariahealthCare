@@ -1,83 +1,70 @@
+import os
+import subprocess
 from PyQt5 import QtCore, QtWidgets
-from globalvar import globaladc
 
-class CustomKeyboard(QtWidgets.QWidget):
-    def __init__(self, parent, entry, mainwindow):
+class RPiKeyboard(QtWidgets.QWidget):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.parent = parent
-        self.entry = entry
-        self.mainwindow = mainwindow
-        self.uppercase = False
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.layout = QtWidgets.QGridLayout()
+        self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
         self.create_keyboard()
 
-    def select(self, value):
-        if value == "Space":
-            value = ' '
-        elif value == 'Enter':
-            value = ''
-            globaladc.get_print("enter pressed")
-            self.mainwindow.setFocus()
-            self.hide()
-        elif value == 'Tab':
-            value = '\t'
-
-        if value == "Back" or value == '<-':
-            if isinstance(self.entry, QtWidgets.QLineEdit):
-                self.entry.backspace()
-            else: # QtWidgets.QTextEdit
-                cursor = self.entry.textCursor()
-                cursor.deletePreviousChar()
-                self.entry.setTextCursor(cursor)
-        elif value in ('Caps Lock', 'Shift'):
-            self.uppercase = not self.uppercase
-        else:
-            if self.uppercase:
-                value = value.upper()
-            self.entry.insert(value)
-        globaladc.buzzer_1()
-
     def create_keyboard(self):
-        alphabets = [
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Back'],
-            ['Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Enter'],
-            ['Space']
-        ]
+        try:
+            # Set Onboard to stay on top using dconf or gsettings
+            subprocess.run([
+                'gsettings', 'set', 
+                'org.onboard', 'force-to-top', 'true'
+            ], stderr=subprocess.DEVNULL)
+            
+            subprocess.run([
+                'gsettings', 'set',
+                'org.onboard', 'window-state-sticky', 'true'
+            ], stderr=subprocess.DEVNULL)
+        except:
+            pass
 
-        for y, row in enumerate(alphabets):
-            for text in row:
-                width = 8
-                if text == 'Space':
-                    width = 80
-                    columnspan = 16
-                else:
-                    columnspan = 1
-                button = QtWidgets.QPushButton(text)
-                button.setFixedWidth(width * 10)
-                button.clicked.connect(lambda checked, value=text: self.select(value))
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: black;
-                        color: white;
-                        border: none;
-                        padding: 5px;
-                        font-size: 24px;
-                    }
-                    QPushButton:hover {
-                        background-color: #333;
-                    }
-                """)
-                self.layout.addWidget(button, y, row.index(text), 1, columnspan)
+        # Launch onboard with stay-on-top flags
+        self.keyboard_process = subprocess.Popen([
+            'onboard',
+            '--force-to-top',
+            '--state', 'SHOWING'
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        self.setGeometry(self.parent.x() + 20, self.parent.y() + 400, self.width(), self.height())
+        # Give a moment for keyboard to appear then ensure it's on top
+        QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
 
-    def showEvent(self, event):
-        self.create_keyboard()
-        super().showEvent(event)
+    def ensure_keyboard_on_top(self):
+        """Make sure keyboard stays on top"""
+        try:
+            # Use xdotool to force keyboard window to top
+            subprocess.run([
+                'xdotool', 'search', '--name', 'Onboard',
+                'windowraise'
+            ], stderr=subprocess.DEVNULL)
+        except:
+            pass
 
-    def hideEvent(self, event):
-        super().hideEvent(event)
+    def hide_keyboard(self):
+        """Hide the onboard keyboard"""
+        try:
+            if hasattr(self, 'keyboard_process') and self.keyboard_process:
+                self.keyboard_process.terminate()
+                self.keyboard_process = None
+                
+            # Kill any running onboard process
+            try:
+                subprocess.run(['killall', 'onboard'], 
+                            stderr=subprocess.DEVNULL, 
+                            stdout=subprocess.DEVNULL)
+            except:
+                pass
+        except Exception as e:
+            print(f"Error hiding keyboard: {e}")
+
+    def closeEvent(self, event):
+        """Clean up keyboard process when closing"""
+        self.hide_keyboard()
+        event.accept()

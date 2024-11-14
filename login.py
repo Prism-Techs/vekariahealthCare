@@ -9,7 +9,7 @@ from tkinter import messagebox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-from customKeyboard import CustomKeyboard
+from customKeyboard import RPiKeyboard
 
 
 class Ui_Form(object):
@@ -25,7 +25,8 @@ class Ui_Form(object):
         # Create directory if it doesn't exist
         if not os.path.exists(self.json_path):
             os.makedirs(self.json_path)
-
+        self.rpi_keyboard = RPiKeyboard()
+        self.rpi_keyboard.show()
         
         
 
@@ -345,9 +346,8 @@ class Ui_Form(object):
         # Add this to the setupUi method
 # Add this to the setupUi method
 # Add this to the setupUi method
-        self.custom_keyboard = CustomKeyboard(self.frame_2, self.username, self)
-        self.username.mousePressEvent = lambda event: self.custom_keyboard.show()
-        self.password.mousePressEvent = lambda event: self.custom_keyboard.show()
+        self.username.mousePressEvent = lambda event: self.rpi_keyboard.show()
+        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show()
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
