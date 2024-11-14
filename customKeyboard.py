@@ -1,4 +1,3 @@
-import os
 import subprocess
 from PyQt5 import QtCore, QtWidgets
 
@@ -11,43 +10,26 @@ class RPiKeyboard(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def show_keyboard(self):
-        try:
-            # Set Onboard to stay on top using gsettings
-            subprocess.run([
-                'gsettings', 'set', 
-                'org.onboard', 'force-to-top', 'true'
-            ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-            
-            subprocess.run([
-                'gsettings', 'set',
-                'org.onboard', 'window-state-sticky', 'true'
-            ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        except:
-            pass
-
-        # Launch onboard with stay-on-top flags
+        # Launch onboard without unsupported options
         self.keyboard_process = subprocess.Popen([
-            'onboard',
-            '--force-to-top',
-            '--state', 'SHOWING'
+            'onboard'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # Give a moment for keyboard to appear then ensure it's on top
+        # Wait a moment and raise the window to the top using xdotool
         QtCore.QTimer.singleShot(500, self.ensure_keyboard_on_top)
 
     def ensure_keyboard_on_top(self):
-        """Make sure keyboard stays on top"""
+        """Ensure the Onboard keyboard window stays on top using xdotool."""
         try:
-            # Use xdotool to force keyboard window to top
             subprocess.run([
                 'xdotool', 'search', '--name', 'Onboard',
                 'windowraise'
             ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        except:
-            pass
+        except Exception as e:
+            print(f"Error raising Onboard window: {e}")
 
     def hide_keyboard(self):
-        """Hide the onboard keyboard"""
+        """Hide the onboard keyboard."""
         try:
             if hasattr(self, 'keyboard_process') and self.keyboard_process:
                 self.keyboard_process.terminate()
@@ -64,6 +46,6 @@ class RPiKeyboard(QtWidgets.QWidget):
             print(f"Error hiding keyboard: {e}")
 
     def closeEvent(self, event):
-        """Clean up keyboard process when closing"""
+        """Clean up keyboard process when closing."""
         self.hide_keyboard()
         event.accept()
