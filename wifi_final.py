@@ -421,7 +421,7 @@ class Ui_Form(object):
 
     def connect_wifi(self):
         """Connect to selected WiFi network"""
-        ssid = self.wifi_name.text().strip()
+        ssid =self.wifi_name.currentText().strip()
         password = self.password.text().strip()
         
         if not ssid:
@@ -464,7 +464,7 @@ class Ui_Form(object):
 
     def forget_wifi(self):
         """Forget selected WiFi network"""
-        ssid = self.wifi_name.text().strip()
+        ssid = self.wifi_name.currentText().strip()
         
         if not ssid:
             self.show_message("Error", "Please select a network to forget")
