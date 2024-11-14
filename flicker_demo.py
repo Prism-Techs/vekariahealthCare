@@ -506,6 +506,9 @@ class Ui_Form(object):
         self.pushButton_7.setText(_translate("Form", "CFF Para-Fovea"))
         self.pushButton_8.setText(_translate("Form", "BRK Para-Fovea"))
         self.pushButton_9.setText(_translate("Form", "Test Result"))
+
+
+
 import vekarialogo_rc
 import wifi_rc
 
