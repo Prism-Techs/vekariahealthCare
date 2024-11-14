@@ -1,4 +1,4 @@
-from gpio_manager import GPIOManager
+# from gpio_manager import GPIOManager
+from dac_lib_soft import mup4728
 
-globaladc = GPIOManager()
-buzzer = globaladc  # Assuming the buzzer is also connected to a GPIO pin
+globaladc  = mup4728(0x61)
