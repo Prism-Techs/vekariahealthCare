@@ -341,9 +341,10 @@ class Ui_Form(object):
         # Initial datetime update
         self.update_datetime()
 
-        self.custom_keyboard = CustomKeyboard(Form, self.username, Form)
-        self.username.bind('<FocusIn>', lambda event: self.custom_keyboard.create_keyboard())
-        self.password.bind('<FocusIn>', lambda event: self.custom_keyboard.create_keyboard())
+        # Add this to the setupUi method
+        self.custom_keyboard = CustomKeyboard(self.frame_2, self.username, self)
+        self.username.focusInEvent = lambda event: self.custom_keyboard.create_keyboard()
+        self.password.focusInEvent = lambda event: self.custom_keyboard.create_keyboard()
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
