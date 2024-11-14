@@ -375,48 +375,55 @@ class Ui_Form(object):
                     self.hide_keyboard()
         return super().eventFilter(obj, event)
 
-    def handle_focus_in(self, widget):
+    def handle_focus_in(self, event, widget):
         """Handle focus in event for text fields"""
         if self.current_focused_widget != widget:
             self.current_focused_widget = widget
             self.show_keyboard()
 
+    def handle_focus_out(self, event):
+        """Handle focus out event for text fields"""
+        if not self.username.hasFocus() and not self.password.hasFocus():
+            self.hide_keyboard()
+
     def show_keyboard(self):
-        """Show the on-screen keyboard"""
+        """Show the matchbox-keyboard"""
         try:
             # Kill any existing keyboard instance
             self.hide_keyboard()
             
-            # Calculate keyboard position to be at bottom of screen
-            screen = QtWidgets.QApplication.primaryScreen().geometry()
-            keyboard_height = 200  # Adjust this value based on your needs
-            y_position = screen.height() - keyboard_height
+            # Launch matchbox-keyboard
+            env = os.environ.copy()
+            env['DISPLAY'] = ':0.0'  # Ensure correct display
             
-            # Set environment variables for keyboard
-            os.environ['ONBOARD_WINDOW_STATE_STICKY'] = '1'
-            os.environ['ONBOARD_XEMBED_ASPECT_CHANGE'] = '1'
+            self.keyboard_process = subprocess.Popen(
+                ['matchbox-keyboard'],
+                env=env,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
             
-            # Launch keyboard with specific positioning
-            self.keyboard_process = subprocess.Popen([
-                'onboard',
-                '--layout', 'Full',
-                '--size', f'{screen.width()}x{keyboard_height}',
-                '--x', '0',
-                '-y', str(y_position),
-                '-dock-window-enabled'
-            ])
         except Exception as e:
             print(f"Error showing keyboard: {e}")
 
     def hide_keyboard(self):
-        """Hide the on-screen keyboard"""
+        """Hide the matchbox-keyboard"""
         try:
             if self.keyboard_process:
                 self.keyboard_process.terminate()
                 self.keyboard_process = None
-            subprocess.run(['killall', 'onboard'], stderr=subprocess.DEVNULL)
+            subprocess.run(
+                ['killall', 'matchbox-keyboard'],
+                stderr=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL
+            )
         except Exception as e:
             print(f"Error hiding keyboard: {e}")
+
+    def closeEvent(self, event):
+        """Clean up keyboard process when closing"""
+        self.hide_keyboard()
+        event.accept()
 
     def toggle_password_visibility(self):
         """Toggle password field visibility"""
@@ -428,10 +435,6 @@ class Ui_Form(object):
             self.password.setEchoMode(QtWidgets.QLineEdit.Password)
             self.togglePassword.setText("👁")
 
-    def closeEvent(self, event):
-        """Clean up keyboard process when closing the application"""
-        self.hide_keyboard()
-        event.accept()
 
 
     def generate_user_json(self, user_data):
