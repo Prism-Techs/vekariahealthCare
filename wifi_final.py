@@ -466,33 +466,62 @@ class Ui_Form(object):
         """Forget selected WiFi network"""
         ssid = self.wifi_name.currentText().strip()
         
-        if not ssid:
-            self.show_message("Error", "Please select a network to forget")
-            return
-            
-        try:
-            with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'r') as f:
-                config = f.read()
-            
-            new_config = re.sub(
-                f'network={{\n\s*ssid="{ssid}"[^}}]*}}',
-                '',
-                config,
-                flags=re.MULTILINE
-            )
-            
-            with open('/tmp/wpa_supplicant.conf', 'w') as f:
-                f.write(new_config)
+        if not ssid or ssid == "Select WiFi Network":
+                self.show_message("Error", "Please select a network to forget")
+                return
                 
-            subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
-                          '/etc/wpa_supplicant/wpa_supplicant.conf'])
-            
-            self.check_wifi_status()
-            self.show_message("Success", f"Forgotten network: {ssid}")
-            self.scan_wifi_networks()
-            
+        try:
+                # Create a backup of current configuration
+                subprocess.run(['sudo', 'cp', '/etc/wpa_supplicant/wpa_supplicant.conf', 
+                        '/etc/wpa_supplicant/wpa_supplicant.conf.bak'])
+                
+                # Read existing configuration
+                with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'r') as f:
+                        config_lines = f.readlines()
+                        
+                        # Create new configuration without the selected network
+                        new_config_lines = []
+                        skip_network = False
+                for line in config_lines:
+                        if 'network={' in line:
+                                skip_network = False
+                                # Read ahead to check if this is the network to forget
+                                temp_lines = []
+                                temp_lines.append(line)
+                        elif skip_network:
+                                if '}' in line:
+                                        skip_network = False
+                                        continue
+                        elif f'ssid="{ssid}"' in line:
+                                skip_network = True
+                                continue
+                        elif not skip_network:
+                                new_config_lines.append(line)
+                
+                # Write new configuration
+                with open('/tmp/wpa_supplicant.conf', 'w') as f:
+                f.writelines(new_config_lines)
+                
+                # Copy new configuration to system
+                subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
+                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
+                
+                # Reconfigure wireless interface
+                subprocess.run(['sudo', 'wpa_cli', '-i', 'wlan0', 'reconfigure'])
+                
+                # Update status and interface
+                self.check_wifi_status()
+                self.show_message("Success", f"Forgotten network: {ssid}")
+                
+                # Rescan networks
+                self.scan_wifi_networks()
+                
         except Exception as e:
-            self.show_message("Error", f"Failed to forget network: {str(e)}")
+                print(f"Error forgetting network: {e}")
+                self.show_message("Error", f"Failed to forget network: {str(e)}")
+                # Restore backup if something went wrong
+                subprocess.run(['sudo', 'cp', '/etc/wpa_supplicant/wpa_supplicant.conf.bak',
+                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
 
     def get_current_wifi(self):
         """Get current connected WiFi name"""
