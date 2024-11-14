@@ -11,7 +11,7 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
 # from buzzer import buzzer
-from globalvar import  globaladc as buzzer
+from globalvar import  globaladc
 
 # from flicker_controller import FlickerController
 
@@ -362,7 +362,7 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def open_wifi_page(self):
-        buzzer.buzzer_1()
+        globaladc.buzzer_1()
         if self.wifi_window is None:
             self.wifi_window = WifiPage()
             self.wifi_window.show()
@@ -462,7 +462,7 @@ class Ui_Form(object):
             return None
     def handle_login(self):
         """Handle login button click"""
-        buzzer.buzzer_1()
+        globaladc.buzzer_1()
         username = self.username.text().strip()
         password = self.password.text().strip()
 
