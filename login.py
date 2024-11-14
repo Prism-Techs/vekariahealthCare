@@ -348,54 +348,6 @@ class Ui_Form(object):
         self.login.clicked.connect(self.handle_login)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def show_styled_message_box(self, title, text, icon=QMessageBox.Information):
-        """Show a custom styled message box"""
-        msg = QMessageBox()
-        msg.setWindowTitle(title)
-        msg.setText(text)
-        msg.setIcon(icon)
-        
-        # Set custom stylesheet
-        msg.setStyleSheet("""
-            QMessageBox {
-                background-color: #1f2836;
-            }
-            QMessageBox QLabel {
-                color: white;
-                font-family: 'Helvetica Rounded';
-                font-size: 16px;
-                font-weight: bold;
-                min-width: 300px;
-                min-height: 50px;
-            }
-            QPushButton {
-                background-color: transparent;
-                color: white;
-                border: 1px solid white;
-                padding: 5px 15px;
-                font-family: 'Helvetica Rounded';
-                font-size: 14px;
-                font-weight: bold;
-                border-radius: 3px;
-                min-width: 80px;
-            }
-            QPushButton:hover {
-                background-color: rgba(33, 150, 243, 0.1);
-                border: 1px solid #64B5F6;
-                color: #64B5F6;
-            }
-            QPushButton:pressed {
-                background-color: rgba(33, 150, 243, 0.2);
-                border: 1px solid white;
-            }
-        """)
-        
-        # Center the message box on the screen
-        center_point = self.frame.geometry().center()
-        msg.move(center_point.x() - msg.width()/2, center_point.y() - msg.height()/2)
-        
-        return msg.exec_()
-
     def update_datetime(self):
         """Update the date and time labels with current values"""
         current_datetime = QDateTime.currentDateTime()
