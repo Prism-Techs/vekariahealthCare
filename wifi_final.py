@@ -347,20 +347,169 @@ class Ui_Form(object):
             self.password.setEchoMode(QtWidgets.QLineEdit.Password)
             self.togglePassword.setText("👁")
 
-    def update_wifi_status_json(self, is_connected):
-        """Update WiFi status in JSON file"""
+    def connect_wifi(self):
+        """Connect to selected WiFi network"""
+        ssid = self.wifi_name.currentText().strip()
+        password = self.password.text().strip()
+        
+        if not ssid or ssid == "Select WiFi Network":
+            self.show_message("Error", "Please select a network")
+            return
+                
         try:
-            status = {
-                "wifi_connected": is_connected,
-                "last_updated": QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss"),
-                "network_name": self.get_current_wifi() if is_connected else None
-            }
+            # Create wpa_supplicant configuration
+            wpa_config = f'''
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+
+network={{
+    ssid="{ssid}"
+    psk="{password}"
+    key_mgmt=WPA-PSK
+}}
+'''
+            # Write to temporary file
+            with open('/tmp/wpa_supplicant.conf', 'w') as f:
+                f.write(wpa_config)
             
-            with open(self.wifi_status_file, 'w') as f:
-                json.dump(status, f, indent=4)
+            # Copy to system location
+            subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
+                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
+
+            # Restart WiFi using systemctl
+            subprocess.run(['sudo', 'systemctl', 'restart', 'wpa_supplicant'])
+            subprocess.run(['sudo', 'systemctl', 'restart', 'dhcpcd'])
+            
+            # Wait for connection
+            def check_connection():
+                for _ in range(20):  # Try for 20 seconds
+                    if self.is_connected(ssid):
+                        self.check_wifi_status()
+                        self.show_message("Success", f"Connected to {ssid}")
+                        return
+                    time.sleep(1)
+                self.check_wifi_status()
+                self.show_message("Error", "Failed to connect to network")
+            
+            threading.Thread(target=check_connection).start()
+            
+        except Exception as e:
+            self.check_wifi_status()
+            self.show_message("Error", f"Failed to connect: {str(e)}")
+
+    def forget_wifi(self):
+        """Forget selected WiFi network"""
+        ssid = self.wifi_name.currentText().strip()
+        
+        if not ssid or ssid == "Select WiFi Network":
+            self.show_message("Error", "Please select a network to forget")
+            return
+                
+        try:
+            # Disconnect from current network first
+            subprocess.run(['sudo', 'wpa_cli', '-i', 'wlan0', 'disconnect'])
+            
+            # Read existing configuration
+            with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'r') as f:
+                config_lines = f.readlines()
+            
+            # Create new configuration without the selected network
+            new_config_lines = []
+            skip_network = False
+            network_found = False
+            
+            for line in config_lines:
+                if 'network={' in line:
+                    skip_network = False
+                    temp_line = line
+                elif skip_network:
+                    if '}' in line:
+                        skip_network = False
+                    continue
+                elif f'ssid="{ssid}"' in line:
+                    skip_network = True
+                    network_found = True
+                    continue
+                elif not skip_network:
+                    new_config_lines.append(line)
+            
+            if not network_found:
+                self.show_message("Error", "Network not found in saved configurations")
+                return
+
+            # Write new configuration
+            with open('/tmp/wpa_supplicant.conf', 'w') as f:
+                f.writelines(new_config_lines)
+            
+            # Copy new configuration
+            subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
+                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
+            
+            # Restart WiFi services
+            subprocess.run(['sudo', 'systemctl', 'restart', 'wpa_supplicant'])
+            subprocess.run(['sudo', 'systemctl', 'restart', 'dhcpcd'])
+            
+            # Update status
+            self.check_wifi_status()
+            self.show_message("Success", f"Forgotten network: {ssid}")
+            
+            # Rescan networks
+            time.sleep(2)  # Give some time for services to restart
+            self.scan_wifi_networks()
+            
+        except Exception as e:
+            print(f"Error forgetting network: {e}")
+            self.show_message("Error", f"Failed to forget network: {str(e)}")
+
+    def get_current_wifi(self):
+        """Get current connected WiFi name"""
+        try:
+            result = subprocess.run(['iwgetid', 'wlan0', '-r'], 
+                                capture_output=True, text=True)
+            return result.stdout.strip()
+        except:
+            return None
+
+    def is_connected(self, ssid):
+        """Check if connected to specific network"""
+        current = self.get_current_wifi()
+        return current == ssid
+
+    def scan_wifi_networks(self):
+        """Scan available WiFi networks"""
+        try:
+            self.wifi_name.clear()
+            self.wifi_name.addItem("Scanning...")
+            QtWidgets.QApplication.processEvents()
+
+            # Force a new scan
+            subprocess.run(['sudo', 'iwlist', 'wlan0', 'scan'])
+            time.sleep(1)  # Give time for scan to complete
+            
+            # Get scan results
+            result = subprocess.run(['sudo', 'iwlist', 'wlan0', 'scan'], 
+                                capture_output=True, text=True)
+            
+            networks = []
+            for line in result.stdout.split('\n'):
+                if 'ESSID:' in line:
+                    essid = line.split('ESSID:"')[1].split('"')[0]
+                    if essid and essid not in networks:  # Avoid duplicates
+                        networks.append(essid)
+
+            self.wifi_name.clear()
+            if networks:
+                self.wifi_name.addItem("Select WiFi Network")
+                for network in networks:
+                    self.wifi_name.addItem(network)
+            else:
+                self.wifi_name.addItem("No networks found")
                 
         except Exception as e:
-            print(f"Error updating WiFi status JSON: {e}")
+            print(f"Error scanning networks: {e}")
+            self.wifi_name.clear()
+            self.wifi_name.addItem("Error scanning networks")
 
     def check_wifi_status(self):
         """Check current WiFi status and update UI and JSON"""
@@ -387,154 +536,20 @@ class Ui_Form(object):
             self.wifiIcon.repaint()
             self.update_wifi_status_json(False)
 
-    def scan_wifi_networks(self):
-        """Scan available WiFi networks"""
+    def update_wifi_status_json(self, is_connected):
+        """Update WiFi status in JSON file"""
         try:
-                self.wifi_name.clear()
-                self.wifi_name.addItem("Scanning...")
-                QtWidgets.QApplication.processEvents()
-
-                # Get list of networks
-                result = subprocess.run(['sudo', 'iwlist', 'wlan0', 'scan'], 
-                                capture_output=True, text=True)
-                
-                networks = []
-                for line in result.stdout.split('\n'):
-                        if 'ESSID:' in line:
-                                essid = line.split('ESSID:"')[1].split('"')[0]
-                                if essid:  # Only add non-empty SSIDs
-                                        networks.append(essid)
-
-                        # Clear and populate the combo box
-                        self.wifi_name.clear()
-                        # self.wifi_name.addItem("Select WiFi Network")  # Default item
-                if networks:
-                        for network in networks:
-                                self.wifi_name.addItem(network)
-                else:
-                        self.wifi_name.addItem("No networks found")
+            status = {
+                "wifi_connected": is_connected,
+                "last_updated": QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss"),
+                "network_name": self.get_current_wifi() if is_connected else None
+            }
+            
+            with open(self.wifi_status_file, 'w') as f:
+                json.dump(status, f, indent=4)
                 
         except Exception as e:
-                print(f"Error scanning networks: {e}")
-                self.wifi_name.clear()
-                self.wifi_name.addItem("Error scanning networks")
-
-    def connect_wifi(self):
-        """Connect to selected WiFi network"""
-        ssid =self.wifi_name.currentText().strip()
-        password = self.password.text().strip()
-        
-        if not ssid:
-            self.show_message("Error", "Please enter a network name")
-            return
-            
-        try:
-            wpa_config = f'''
-            network={{
-                ssid="{ssid}"
-                psk="{password}"
-                key_mgmt=WPA-PSK
-            }}
-            '''
-            
-            with open('/tmp/wpa_supplicant.conf', 'w') as f:
-                f.write(wpa_config)
-            
-            subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
-                          '/etc/wpa_supplicant/wpa_supplicant.conf'])
-            
-            subprocess.run(['sudo', 'ifdown', 'wlan0'])
-            subprocess.run(['sudo', 'ifup', 'wlan0'])
-            
-            def check_connection():
-                for _ in range(20):  # Try for 20 seconds
-                    if self.is_connected(ssid):
-                        self.check_wifi_status()
-                        self.show_message("Success", f"Connected to {ssid}")
-                        return
-                    time.sleep(1)
-                self.check_wifi_status()
-                self.show_message("Error", "Failed to connect to network")
-            
-            threading.Thread(target=check_connection).start()
-            
-        except Exception as e:
-            self.check_wifi_status()
-            self.show_message("Error", f"Failed to connect: {str(e)}")
-
-    def forget_wifi(self):
-        """Forget selected WiFi network"""
-        ssid = self.wifi_name.currentText().strip()
-        
-        if not ssid or ssid == "Select WiFi Network":
-                self.show_message("Error", "Please select a network to forget")
-                return
-                
-        try:
-                # Create a backup of current configuration
-                subprocess.run(['sudo', 'cp', '/etc/wpa_supplicant/wpa_supplicant.conf', 
-                        '/etc/wpa_supplicant/wpa_supplicant.conf.bak'])
-                
-                # Read existing configuration
-                with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'r') as f:
-                        config_lines = f.readlines()
-                        
-                        # Create new configuration without the selected network
-                        new_config_lines = []
-                        skip_network = False
-                for line in config_lines:
-                        if 'network={' in line:
-                                skip_network = False
-                                # Read ahead to check if this is the network to forget
-                                temp_lines = []
-                                temp_lines.append(line)
-                        elif skip_network:
-                                if '}' in line:
-                                        skip_network = False
-                                        continue
-                        elif f'ssid="{ssid}"' in line:
-                                skip_network = True
-                                continue
-                        elif not skip_network:
-                                new_config_lines.append(line)
-                
-                # Write new configuration
-                with open('/tmp/wpa_supplicant.conf', 'w') as f:
-                        f.writelines(new_config_lines)
-                
-                # Copy new configuration to system
-                subprocess.run(['sudo', 'cp', '/tmp/wpa_supplicant.conf', 
-                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
-                
-                # Reconfigure wireless interface
-                subprocess.run(['sudo', 'wpa_cli', '-i', 'wlan0', 'reconfigure'])
-                
-                # Update status and interface
-                self.check_wifi_status()
-                self.show_message("Success", f"Forgotten network: {ssid}")
-                
-                # Rescan networks
-                self.scan_wifi_networks()
-                
-        except Exception as e:
-                print(f"Error forgetting network: {e}")
-                self.show_message("Error", f"Failed to forget network: {str(e)}")
-                # Restore backup if something went wrong
-                subprocess.run(['sudo', 'cp', '/etc/wpa_supplicant/wpa_supplicant.conf.bak',
-                        '/etc/wpa_supplicant/wpa_supplicant.conf'])
-
-    def get_current_wifi(self):
-        """Get current connected WiFi name"""
-        try:
-            result = subprocess.run(['iwgetid', '-r'], capture_output=True, text=True)
-            return result.stdout.strip()
-        except:
-            return None
-
-    def is_connected(self, ssid):
-        """Check if connected to specific network"""
-        current = self.get_current_wifi()
-        return current == ssid
+            print(f"Error updating WiFi status JSON: {e}")
 
     def show_message(self, title, message):
         """Show styled message box"""
