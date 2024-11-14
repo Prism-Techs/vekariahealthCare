@@ -12,6 +12,27 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from datetime import datetime
 import os,subprocess
 
+
+def resource_path(relative_path):
+    """
+    Get absolute path to resource, works for dev and for PyInstaller.
+    
+    Args:
+        relative_path (str): The relative path to the resource file
+        
+    Returns:
+        str: The absolute path to the resource
+    """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # If not running as bundled exe, use the script's directory
+        base_path = os.path.abspath(os.path.dirname(__file__))
+    
+    return os.path.join(base_path, relative_path)
+
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -67,7 +88,7 @@ class Ui_Form(object):
         font.setWeight(75)
         self.label_10.setFont(font)
         self.label_10.setText("")
-        self.label_10.setPixmap(QtGui.QPixmap(".\\icons/logo12.png"))
+        self.label_10.setPixmap(QtGui.QPixmap(resource_path("icons/logo12.png")))
         self.label_10.setScaledContents(True)
         self.label_10.setObjectName("label_10")
         self.label_4 = QtWidgets.QLabel(Form)
@@ -374,7 +395,7 @@ class LoginForm(QtWidgets.QWidget):
             if window_id:
                 subprocess.run([
                     'xdotool', 'windowmove',
-                    window_id.strip(),
+                    window_id.strip,
                     '0',
                     '300'
                 ])
