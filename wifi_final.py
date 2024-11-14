@@ -205,7 +205,7 @@ class Ui_Form(object):
         self.refresh.setStyleSheet("background:transparent;")
         self.refresh.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(".\\icons/refreshbutton.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/vlogo/refreshbutton.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.refresh.setIcon(icon)
         self.refresh.setAutoDefault(True)
         self.refresh.setObjectName("refresh")
@@ -308,9 +308,15 @@ class Ui_Form(object):
         self.check_wifi_status()
         self.scan_wifi_networks()
 
-
+        self.update_datetime() 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def update_datetime(self):
+        """Update the date and time labels with current values"""
+        current_datetime = QDateTime.currentDateTime()
+        self.time.setText(current_datetime.toString('HH:mm'))
+        self.date.setText(current_datetime.toString('dd-MM-yyyy'))
 
 
     def toggle_password_visibility(self):
@@ -504,8 +510,8 @@ class Ui_Form(object):
         self.password.setPlaceholderText(_translate("Form", "Password"))
         self.connect.setText(_translate("Form", "CONNECT"))
         self.forget.setText(_translate("Form", "FORGET"))
-        self.date.setText(_translate("Form", "12-10-2024"))
-        self.time.setText(_translate("Form", "19:53"))
+        # self.date.setText(_translate("Form", "12-10-2024"))
+        # self.time.setText(_translate("Form", "19:53"))
 import vekarialogo_rc
 import wifi_rc
 
