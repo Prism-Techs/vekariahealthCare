@@ -5,10 +5,18 @@ class GPIOManager:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         self.flik_pin = 18  # Set the appropriate GPIO pin for the flicker
-        GPIO.setup(self.flik_pin, GPIO.OUT)
-        self.pwm = GPIO.PWM(self.flik_pin, 100)  # Set the PWM frequency
-        self.pwm.start(0)
+        self.setup_pwm()
         self.dac = mup4728(0x61)
+
+    def setup_pwm(self):
+        try:
+            # Check if the PWM object already exists
+            self.pwm = GPIO.PWM(self.flik_pin, 100)
+        except RuntimeError:
+            # If the PWM object already exists, clean up the GPIO first
+            self.cleanup()
+            self.pwm = GPIO.PWM(self.flik_pin, 100)
+        self.pwm.start(0)
 
     def fliker(self, depth):
         self.pwm.ChangeDutyCycle(depth)
@@ -27,5 +35,8 @@ class GPIOManager:
         return 0.5
 
     def cleanup(self):
-        self.pwm.stop()
+        try:
+            self.pwm.stop()
+        except:
+            pass
         GPIO.cleanup()
