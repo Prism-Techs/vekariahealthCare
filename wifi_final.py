@@ -19,6 +19,8 @@ import threading
 import time
 import re
 from wifi_update import WifiStatusLabel
+from customKeyboard import RPiKeyboard
+from buzzer import buzzer
 
 class WifiPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -53,6 +55,8 @@ class Ui_Form(object):
         self.frame.setObjectName("frame")
         self.label_2 = QtWidgets.QLabel(self.frame)
         self.label_2.setGeometry(QtCore.QRect(60, 0, 281, 41))
+
+
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
         font.setPointSize(16)
@@ -324,7 +328,13 @@ class Ui_Form(object):
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.check_wifi_status)
         self.status_timer.start(5000)  # Check every 5 seconds
+        self.rpi_keyboard = RPiKeyboard(Form)
+        self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
+        self.rpi_keyboard.username_field = self.username
+        self.wifi_name.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         
+
         # Initial checks
         self.check_wifi_status()
         self.scan_wifi_networks()
@@ -351,6 +361,7 @@ class Ui_Form(object):
             self.togglePassword.setText("👁")
 
     def connect_wifi(self):
+        buzzer.buzzer_1()
         """Connect to selected WiFi network"""
         ssid = self.wifi_name.currentText().strip()
         password = self.password.text().strip()
@@ -402,6 +413,7 @@ network={{
             self.show_message("Error", f"Failed to connect: {str(e)}")
 
     def forget_wifi(self):
+        buzzer.buzzer_1()
         """Forget selected WiFi network"""
         ssid = self.wifi_name.currentText().strip()
         

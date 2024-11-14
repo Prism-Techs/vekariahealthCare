@@ -10,6 +10,8 @@ from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
+from buzzer import buzzer
+from flicker_demo import FlickerController
 
 
 class Ui_Form(object):
@@ -351,12 +353,14 @@ class Ui_Form(object):
         self.rpi_keyboard.username_field = self.username
         self.username.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+        
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.login.clicked.connect(self.handle_login)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def open_wifi_page(self):
+        buzzer.buzzer_1()
         if self.wifi_window is None:
             self.wifi_window = WifiPage()
             self.wifi_window.show()
@@ -370,7 +374,34 @@ class Ui_Form(object):
         self.Time.setText(current_datetime.toString('HH:mm'))
         self.date.setText(current_datetime.toString('dd-MM-yyyy'))
 
+    def check_wifi_status(self):
+        """
+        Check the WiFi connection status based on the 'wifi_status.json' file.
+        Perform different actions based on the connection status.
 
+        Args:
+            app_dir (str): The directory where the 'wifi_status.json' file is located.
+
+        Returns:
+            None
+        """
+        wifi_status_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wifi_status.json')
+
+        if os.path.exists(wifi_status_file):
+            try:
+                with open(wifi_status_file, 'r') as f:
+                    wifi_status = json.load(f)
+
+                if wifi_status['wifi_connected']:
+                    # Perform actions when WiFi is connected
+                    print("WiFi is connected. You can proceed with your application.")
+                else:
+                    # Perform actions when WiFi is not connected
+                    print("WiFi is not connected. Please connect to the network.")
+            except (FileNotFoundError, json.JSONDecodeError):
+                print("Error: Could not read the 'wifi_status.json' file.")
+        else:
+            print("Error: 'wifi_status.json' file not found.")
 
 
     def closeEvent(self, event):
@@ -421,16 +452,16 @@ class Ui_Form(object):
         except Exception as e:
             print(f"Error generating user JSON: {e}")
             return None
-
     def handle_login(self):
         """Handle login button click"""
+        buzzer.buzzer_1()
         username = self.username.text().strip()
         password = self.password.text().strip()
-        
+
         if not username or not password:
             messagebox.showwarning('Error', 'Please enter both username and password')
             return
-            
+
         # Get selected operation mode
         if self.radioButton.isChecked():
             operation_mode = "Eye Camp"
@@ -438,16 +469,21 @@ class Ui_Form(object):
             operation_mode = "Clinic"
         else:
             operation_mode = "Demo"
-            
+
         # Verify login
         user = self.db.verify_login(username, password)
-        
+
         if user:
             # Generate JSON file
             json_file = self.generate_user_json(user)
             if json_file:
-                messagebox.showinfo('Success', 
+                messagebox.showinfo('Success',
                     f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
+
+                # Create and show the FlickerController instance
+                self.flicker_controller = FlickerController(self)
+                self.flicker_controller.show()
+                self.hide()
             else:
                 messagebox.showwarning('Warning', 'Login successful but failed to save user data')
         else:
