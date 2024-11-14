@@ -378,38 +378,102 @@ class LoginForm(QtWidgets.QWidget):
         self.ui.date.setText(current_time.strftime("%d-%m-%Y"))
 
     def show_keyboard(self):
+        """Show the Raspberry Pi onboard keyboard"""
         try:
-            if not os.path.exists('/usr/bin/matchbox-keyboard'):
-                subprocess.run(['sudo', 'apt-get', 'install', '-y', 'matchbox-keyboard'])
+            # Check if onboard is installed
+            if not os.path.exists('/usr/bin/onboard'):
+                subprocess.run(['sudo', 'apt-get', 'install', '-y', 'onboard'])
             
+            # Kill any existing keyboard process
             self.hide_keyboard()
-            self.keyboard_process = subprocess.Popen(['matchbox-keyboard'])
-            QtCore.QTimer.singleShot(500, self.position_keyboard)
+            
+            # Start onboard keyboard with specific settings
+            self.keyboard_process = subprocess.Popen([
+                'onboard',
+                '--size=800x250',  # Set keyboard size
+                '--x=112',         # X position (centered)
+                '--y=300',         # Y position (bottom)
+                '--layout=Full Keyboard',  # Use full keyboard layout
+                '--theme=Nightshade'      # Dark theme to match your UI
+            ])
             
         except Exception as e:
             print(f"Error showing keyboard: {e}")
 
-    def position_keyboard(self):
-        try:
-            window_id = subprocess.check_output(['xdotool', 'search', '--name', 'matchbox-keyboard'])
-            if window_id:
-                subprocess.run([
-                    'xdotool', 'windowmove',
-                    window_id.strip,
-                    '0',
-                    '300'
-                ])
-        except Exception as e:
-            print(f"Error positioning keyboard: {e}")
-
     def hide_keyboard(self):
+        """Hide the onboard keyboard"""
         try:
             if self.keyboard_process:
                 self.keyboard_process.terminate()
                 self.keyboard_process = None
-            subprocess.run(['killall', 'matchbox-keyboard'], stderr=subprocess.DEVNULL)
+            subprocess.run(['killall', 'onboard'], stderr=subprocess.DEVNULL)
         except Exception as e:
             print(f"Error hiding keyboard: {e}")
+
+    def eventFilter(self, obj, event):
+        """Handle focus events for showing/hiding keyboard"""
+        if obj in [self.ui.username, self.ui.password]:
+            if event.type() == QtCore.QEvent.FocusIn:
+                self.show_keyboard()
+            elif event.type() == QtCore.QEvent.FocusOut:
+                # Only hide if neither input has focus
+                if not self.ui.username.hasFocus() and not self.ui.password.hasFocus():
+                    self.hide_keyboard()
+        return super().eventFilter(obj, event)
+
+    def setup_onboard_config(self):
+        """Setup onboard keyboard configuration"""
+        config_dir = os.path.expanduser('~/.config/onboard')
+        os.makedirs(config_dir, exist_ok=True)
+        
+        config_file = os.path.join(config_dir, 'onboard.conf')
+        
+        # Create custom configuration
+        config_content = """
+[main]
+key-size=94
+touch-feedback=false
+key-label-font=ubuntu
+theme=Nightshade
+layout=Full Keyboard
+
+[window]
+window-state-sticky=true
+force-to-top=true
+window-decoration=false
+background-transparency=10
+
+[auto-show]
+hide-on-key-press=true
+"""
+        try:
+            with open(config_file, 'w') as f:
+                f.write(config_content)
+        except Exception as e:
+            print(f"Error creating onboard config: {e}")
+
+    def install_keyboard(self):
+        """Install onboard keyboard if not present"""
+        try:
+            result = subprocess.run(['which', 'onboard'], capture_output=True, text=True)
+            if not result.stdout:
+                print("Installing onboard keyboard...")
+                subprocess.run(['sudo', 'apt-get', 'update'])
+                subprocess.run(['sudo', 'apt-get', 'install', '-y', 'onboard'])
+                self.setup_onboard_config()
+                print("Onboard keyboard installed successfully")
+            return True
+        except Exception as e:
+            print(f"Error installing keyboard: {e}")
+            return False
+
+    def closeEvent(self, event):
+        """Clean up when closing"""
+        self.hide_keyboard()
+        if hasattr(self, 'timer'):
+            self.timer.stop()
+        event.accept()
+
 
     def handle_first_click(self, line_edit, default_text):
         if line_edit.text() == default_text:
@@ -438,13 +502,16 @@ class LoginForm(QtWidgets.QWidget):
             """)
 
     def eventFilter(self, obj, event):
+        """Handle focus events for showing/hiding keyboard"""
         if obj in [self.ui.username, self.ui.password]:
             if event.type() == QtCore.QEvent.FocusIn:
                 self.show_keyboard()
             elif event.type() == QtCore.QEvent.FocusOut:
+                # Only hide if neither input has focus
                 if not self.ui.username.hasFocus() and not self.ui.password.hasFocus():
                     self.hide_keyboard()
         return super().eventFilter(obj, event)
+
 
     def closeEvent(self, event):
         self.hide_keyboard()
