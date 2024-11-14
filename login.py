@@ -10,8 +10,9 @@ from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
-from buzzer import buzzer
+
 from flicker_demo import FlickerController
+from flicker_demo import globaladc as buzzer
 
 
 class Ui_Form(object):
