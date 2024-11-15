@@ -768,6 +768,11 @@ class Ui_Form(object):
         self.eye_side_group.addButton(self.eye_L)
         self.pushButton_2.clicked.connect(self.save_patient_data)
 
+        #diabetes group
+        self.diabetes_group = QtWidgets.QButtonGroup(self.frame_2)      
+        self.diabetes_group.addButton(self.Dia_yes)
+        self.diabetes_group.addButton(self.Dia_no)
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 

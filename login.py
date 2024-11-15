@@ -13,8 +13,9 @@ from customKeyboard import RPiKeyboard
 # from buzzer import buzzer
 from globalvar import  globaladc as buzzer
 
-from flicker_demo import FlickerController
+# from flicker_demo import FlickerController
 
+from doctor import Ui_Form as doctor_page
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -515,7 +516,12 @@ class Ui_Form(object):
                     f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
 
                 # Create and show the FlickerController instance
-                self.show_flicker_controller()
+                # self.show_flicker_controller()
+                self.form.hide()
+                self.doctor_window = QtWidgets.QWidget()
+                self.doctor_ui = doctor_page()  # From doctor.py
+                self.doctor_ui.setupUi(self.doctor_window)
+                self.doctor_window.show()
             else:
                 messagebox.showwarning('Warning', 'Login successful but failed to save user data')
         else:
