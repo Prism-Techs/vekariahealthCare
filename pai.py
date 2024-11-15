@@ -17,6 +17,8 @@ import json
 from datetime import datetime
 from PyQt5.QtWidgets import QMessageBox
 import os
+from flicker_demo import FlickerController
+import subprocess
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -25,6 +27,7 @@ class Ui_Form(object):
         Form.setStyleSheet("background-color:black;\n"
 "border:none;")
         self.frame_2 = QtWidgets.QFrame(Form)
+        self.form  = Form
         self.frame_2.setGeometry(QtCore.QRect(20, 120, 981, 460))
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -773,8 +776,28 @@ class Ui_Form(object):
         self.diabetes_group.addButton(self.Dia_yes)
         self.diabetes_group.addButton(self.Dia_no)
 
+        text_edits = [
+                self.textEdit, self.textEdit_2, self.textEdit_3,
+                self.textEdit_4, self.textEdit_5, self.textEdit_6,
+                self.Diabetes_text, self.Diabetes_text_2
+        ]
+
+        for text_edit in text_edits:
+                text_edit.focusInEvent = lambda e, edit=text_edit: self.show_keyboard(e, edit)
+                text_edit.focusOutEvent = lambda e, edit=text_edit: self.hide_keyboard(e, edit)
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def show_keyboard(self, event, text_edit):
+        """Show onboard keyboard when text edit gains focus"""
+        subprocess.Popen(['onboard'])
+        text_edit.original_focusInEvent(event) if hasattr(text_edit, 'original_focusInEvent') else None
+
+    def hide_keyboard(self, event, text_edit):
+        """Hide onboard keyboard when text edit loses focus"""
+        subprocess.run(['killall', 'onboard'])
+        text_edit.original_focusOutEvent(event) if hasattr(text_edit, 'original_focusOutEvent') else None
 
     def open_wifi_page(self):
         buzzer.buzzer_1()
@@ -818,6 +841,12 @@ class Ui_Form(object):
                 
                 with open(filepath, 'w') as f:
                         json.dump(patient_data, f, indent=4)
+
+                self.form.hide()
+                self.flickerCon = QtWidgets.QWidget()
+                self.flickerCon = FlickerController()  # From doctor.py
+                self.flickerCon.setupUi(self.flickerCon)
+                self.flickerCon.show()
                 
                 QMessageBox.information(None, "Success", "Patient data saved successfully!")
                 

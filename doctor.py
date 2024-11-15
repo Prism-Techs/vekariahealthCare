@@ -14,12 +14,14 @@ import os,json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
+from pai import Ui_Form as Patient_info_page
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:#101826;")
+        self.form = Form
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
         self.frame.setStyleSheet("background-color:black;")
@@ -276,6 +278,7 @@ class Ui_Form(object):
         self.userInfoLabel.setObjectName("userInfoLabel")
 
         self.wifi_window = None
+        self.pushButton_3.clicked.connect(self.testMode)
         self.check_user_role()
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -354,6 +357,11 @@ class Ui_Form(object):
 
     def testMode(self):
         buzzer.buzzer_1()
+        self.form.hide()
+        self.patient_info = QtWidgets.QWidget()
+        self.patient_info = Patient_info_page()  # From doctor.py
+        self.patient_info.setupUi(self.patient_info)
+        self.patient_info.show()
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
