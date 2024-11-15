@@ -361,7 +361,7 @@ class Ui_Form(object):
         self.patient_info_widow = QtWidgets.QWidget()
         self.patient_info = Patient_info_page()  
         self.patient_info.setupUi(self.patient_info_widow)
-        self.patient_info.show()
+        self.patient_info_widow.show()
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
