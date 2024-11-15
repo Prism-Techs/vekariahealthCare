@@ -358,9 +358,9 @@ class Ui_Form(object):
     def testMode(self):
         buzzer.buzzer_1()
         self.form.hide()
-        self.patient_info = QtWidgets.QWidget()
-        self.patient_info = Patient_info_page()  # From doctor.py
-        self.patient_info.setupUi(self.patient_info)
+        self.patient_info_widow = QtWidgets.QWidget()
+        self.patient_info = Patient_info_page()  
+        self.patient_info.setupUi(self.patient_info_widow)
         self.patient_info.show()
 
     def update_datetime(self):

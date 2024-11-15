@@ -843,9 +843,9 @@ class Ui_Form(object):
                         json.dump(patient_data, f, indent=4)
 
                 self.form.hide()
-                self.flickerCon = QtWidgets.QWidget()
+                self.flickerCon_window = QtWidgets.QWidget()
                 self.flickerCon = FlickerController()  # From doctor.py
-                self.flickerCon.setupUi(self.flickerCon)
+                self.flickerCon.setupUi(self.flickerCon_window)
                 self.flickerCon.show()
                 
                 QMessageBox.information(None, "Success", "Patient data saved successfully!")
