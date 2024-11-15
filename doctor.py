@@ -13,12 +13,11 @@ from wifi_final import WifiPage
 import os,json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-
+from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:#101826;")
         self.frame = QtWidgets.QFrame(Form)
@@ -278,22 +277,26 @@ class Ui_Form(object):
                 with open(json_path, 'r') as file:
                     user_data = json.load(file)
                 
-                # Convert numeric values (1/0) to boolean and check for permissions
-                is_doctor = user_data.get('is_doctor', 0) == 1
-                is_admin = user_data.get('is_admin', 0) == 1
+                # Check if user is an operator
+                is_operator = user_data.get('is_operator', 0) == 1
                 
-                # Show create user button only for admin and doctor
-                self.pushButton.setVisible(is_doctor or is_admin)
+                # Hide create user button only for operators
+                self.pushButton.setVisible(not is_operator)
                 
                 # Show other buttons for everyone
                 self.pushButton_2.setVisible(True)  # View Reports
                 self.pushButton_3.setVisible(True)  # Test Mode
                 
-                # Adjust layout if create user button is hidden
-                if not self.pushButton.isVisible():
-                    # Move other buttons up
-                    self.pushButton_2.setGeometry(QtCore.QRect(347, 150, 330, 61))  # Original position of Create User
-                    self.pushButton_3.setGeometry(QtCore.QRect(347, 280, 330, 61))  # Original position of View Reports
+                if is_operator:
+                    # If operator: move buttons up (original Create User and View Reports positions)
+                    self.pushButton_2.setGeometry(QtCore.QRect(347, 150, 330, 61))  # Move View Reports up
+                    self.pushButton_3.setGeometry(QtCore.QRect(347, 280, 330, 61))  # Move Test Mode up
+                else:
+                    # If not operator: set original positions for all buttons
+                    self.pushButton.setGeometry(QtCore.QRect(347, 150, 330, 61))   # Create User at top
+                    self.pushButton_2.setGeometry(QtCore.QRect(347, 280, 330, 61))  # View Reports in middle
+                    self.pushButton_3.setGeometry(QtCore.QRect(347, 410, 330, 61))  # Test Mode at bottom
+                
             else:
                 # If no user data found, show error and hide all buttons
                 QMessageBox.warning(self.form, 'Error', 'No user data found. Please log in again.')
@@ -323,6 +326,12 @@ class Ui_Form(object):
 
     def testMode(self):
         buzzer.buzzer_1()
+
+    def update_datetime(self):
+        """Update the date and time labels with current values"""
+        current_datetime = QDateTime.currentDateTime()
+        self.label.setText(current_datetime.toString('HH:mm'))
+        self.label_5.setText(current_datetime.toString('dd-MM-yyyy'))
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
