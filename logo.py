@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve, QEvent
 from PyQt5.QtGui import QPixmap
 from imagewrite import Ui_Form as WriteUPImageForm
+from globalvar import globaladc
 
 
 
@@ -19,7 +20,8 @@ class LoadingScreen(QWidget):
         self.setFixedSize(1024, 600)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-
+        globaladc.buzzer_3()
+        globaladc.fan_on()
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setGeometry(0, 0, 1024, 600)

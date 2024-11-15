@@ -13,7 +13,7 @@ from customKeyboard import RPiKeyboard
 # from buzzer import buzzer
 from globalvar import  globaladc as buzzer
 
-from flicker_controller import FlickerController
+from flicker_demo import FlickerController
 
 
 class Ui_Form(object):
@@ -371,10 +371,36 @@ class Ui_Form(object):
 
 
     def show_flicker_controller(self):
-        self.flicker_controller = FlickerController(self)
-        self.flicker_controller.show()
-        self.hide()
+        """Show the flicker controller page"""
+        # Hide the login form
+        Form.hide()  # This refers to the main form that contains the login UI
+        
+        # Create and show the flicker controller
+        self.flicker_window = FlickerController()
+        
+        # Connect the home button to return to login
+        self.flicker_window.ui.pushButton_2.clicked.connect(self.return_to_login)
+        
+        # Show the flicker controller
+        self.flicker_window.show()
         # pass
+
+    def return_to_login(self):
+        """Return to login page when home button is clicked"""
+        # Hide flicker controller
+        if hasattr(self, 'flicker_window'):
+            self.flicker_window.hide()
+            self.flicker_window.deleteLater()
+            self.flicker_window = None
+        
+        # Clear the login form
+        self.username.clear()
+        self.password.clear()
+        self.radioButton_2.setChecked(True)  # Reset to Clinic mode
+        
+        # Show the login form again
+        Form.show()
+
 
     def update_datetime(self):
         """Update the date and time labels with current values"""
