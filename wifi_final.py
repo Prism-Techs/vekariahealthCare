@@ -20,7 +20,7 @@ import time
 import re
 from wifi_update import WifiStatusLabel
 from customKeyboard import RPiKeyboard
-from buzzer import buzzer
+from globalvar import globaladc as buzzer
 
 class WifiPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
