@@ -213,7 +213,7 @@ class Ui_Form(object):
         self.label_11.setPixmap(QtGui.QPixmap(":/newPrefix/Vekaria Healthcare Logo/VHC Logo.png"))
         self.label_11.setScaledContents(True)
         self.label_11.setObjectName("label_11")
-        self.wifiIcon = WifiStatusLabel(self.frame)
+        self.wifiIcon = WifiStatusLabel(self.frame_4)
         self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
