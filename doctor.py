@@ -366,7 +366,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_2.setText(_translate("Form", "Vekaria Healthcare"))
         self.label_3.setText(_translate("Form", "V1.0"))
-        self.label_4.setText(_translate("Form", "Doctor\'s  Page"))
+        self.label_4.setText(_translate("Form", "Operation\'s  Page"))
         # self.label.setText(_translate("Form", "19:53"))
         # self.userInfoLabel.setText(_translate("Form", "Welcome"))
         # self.label_5.setText(_translate("Form", "12-10-2024"))
