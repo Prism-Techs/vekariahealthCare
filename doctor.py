@@ -263,6 +263,18 @@ class Ui_Form(object):
 "")
         self.pushButton_3.setObjectName("pushButton_3")
 
+        self.userInfoLabel = QtWidgets.QLabel(Form)
+        self.userInfoLabel.setGeometry(QtCore.QRect(20, 150, 280, 40))
+        font = QtGui.QFont()
+        font.setFamily("Helvetica Neue")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.userInfoLabel.setFont(font)
+        self.userInfoLabel.setStyleSheet("color: white;")
+        self.userInfoLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.userInfoLabel.setObjectName("userInfoLabel")
+
         self.wifi_window = None
         self.check_user_role()
         self.retranslateUi(Form)
@@ -280,6 +292,22 @@ class Ui_Form(object):
                 # Check if user is an operator
                 is_operator = user_data.get('is_operator', 0) == 1
                 
+                                # Check if user is an operator
+                is_operator = user_data.get('is_operator', 0) == 1
+                
+                # Set user info label
+                title = user_data.get('title', '')
+                first_name = user_data.get('first_name', '')
+                last_name = user_data.get('last_name', '')
+                
+                # Format user info with title if available
+                if title:
+                    user_info = f"Welcome,\n{title} {first_name} {last_name}"
+                else:
+                    user_info = f"Welcome,\n{first_name} {last_name}"
+                
+                self.userInfoLabel.setText(user_info)
+
                 # Hide create user button only for operators
                 self.pushButton.setVisible(not is_operator)
                 
@@ -339,8 +367,9 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Vekaria Healthcare"))
         self.label_3.setText(_translate("Form", "V1.0"))
         self.label_4.setText(_translate("Form", "Doctor\'s  Page"))
-        self.label.setText(_translate("Form", "19:53"))
-        self.label_5.setText(_translate("Form", "12-10-2024"))
+        # self.label.setText(_translate("Form", "19:53"))
+        self.userInfoLabel.setText(_translate("Form", "Welcome"))
+        # self.label_5.setText(_translate("Form", "12-10-2024"))
         self.pushButton.setText(_translate("Form", "Create User"))
         self.pushButton_2.setText(_translate("Form", "View Reports"))
         self.pushButton_3.setText(_translate("Form", "Test Mode"))
