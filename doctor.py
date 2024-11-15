@@ -368,7 +368,7 @@ class Ui_Form(object):
         self.label_3.setText(_translate("Form", "V1.0"))
         self.label_4.setText(_translate("Form", "Doctor\'s  Page"))
         # self.label.setText(_translate("Form", "19:53"))
-        self.userInfoLabel.setText(_translate("Form", "Welcome"))
+        # self.userInfoLabel.setText(_translate("Form", "Welcome"))
         # self.label_5.setText(_translate("Form", "12-10-2024"))
         self.pushButton.setText(_translate("Form", "Create User"))
         self.pushButton_2.setText(_translate("Form", "View Reports"))
