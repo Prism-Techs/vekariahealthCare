@@ -269,7 +269,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
         
-
     def check_user_role(self):
         """Check user role from latest_user.json and show/hide buttons accordingly"""
         try:
@@ -279,8 +278,12 @@ class Ui_Form(object):
                 with open(json_path, 'r') as file:
                     user_data = json.load(file)
                 
+                # Convert numeric values (1/0) to boolean and check for permissions
+                is_doctor = user_data.get('is_doctor', 0) == 1
+                is_admin = user_data.get('is_admin', 0) == 1
+                
                 # Show create user button only for admin and doctor
-                self.pushButton.setVisible(user_data.get('is_doctor', True) or user_data.get('is_admin', True))
+                self.pushButton.setVisible(is_doctor or is_admin)
                 
                 # Show other buttons for everyone
                 self.pushButton_2.setVisible(True)  # View Reports
