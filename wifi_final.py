@@ -331,7 +331,7 @@ class Ui_Form(object):
         self.rpi_keyboard = RPiKeyboard(Form)
         self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
         self.rpi_keyboard.username_field = self.wifi_name
-        self.wifi_name.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+        # self.wifi_name.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         
 
