@@ -280,7 +280,7 @@ class Ui_Form(object):
                     user_data = json.load(file)
                 
                 # Show create user button only for admin and doctor
-                self.pushButton.setVisible(user_data.get('is_doctor', False) or user_data.get('is_admin', False))
+                self.pushButton.setVisible(user_data.get('is_doctor', True) or user_data.get('is_admin', True))
                 
                 # Show other buttons for everyone
                 self.pushButton_2.setVisible(True)  # View Reports
