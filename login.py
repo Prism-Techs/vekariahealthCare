@@ -24,7 +24,7 @@ class Ui_Form(object):
         # Form.setWindowFlags(Qt.FramelessWindowHint)
         self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
-       
+        self.form = Form
         self.json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data")
         # Create directory if it doesn't exist
         if not os.path.exists(self.json_path):
@@ -373,7 +373,7 @@ class Ui_Form(object):
     def show_flicker_controller(self):
         """Show the flicker controller page"""
         # Hide the login form
-        Form.hide()  # This refers to the main form that contains the login UI
+        self.form.hide()  # This refers to the main form that contains the login UI
         
         # Create and show the flicker controller
         self.flicker_window = FlickerController()
@@ -399,7 +399,7 @@ class Ui_Form(object):
         self.radioButton_2.setChecked(True)  # Reset to Clinic mode
         
         # Show the login form again
-        Form.show()
+        self.form.show()
 
 
     def update_datetime(self):
