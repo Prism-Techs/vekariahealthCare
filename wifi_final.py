@@ -330,7 +330,7 @@ class Ui_Form(object):
         self.status_timer.start(5000)  # Check every 5 seconds
         self.rpi_keyboard = RPiKeyboard(Form)
         self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
-        self.rpi_keyboard.username_field = self.username
+        self.rpi_keyboard.username_field = self.wifi_name
         self.wifi_name.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
         
