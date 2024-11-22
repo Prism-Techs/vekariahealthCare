@@ -5,6 +5,9 @@ from PyQt5.QtCore import Qt, QTimer, QDateTime, QFileSystemWatcher
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
+
+
+
 class WifiStatusLabel(QtWidgets.QPushButton):
     """Custom QPushButton to draw red cross when disconnected and monitor wifi status"""
     

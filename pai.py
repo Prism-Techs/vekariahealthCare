@@ -829,11 +829,12 @@ class Ui_Form(object):
                         "has_diabetes": "Yes" if self.Dia_yes.isChecked() else "No",
                         "value": self.Diabetes_text.toPlainText().strip()
                 },
-                "eye_side": "R" if self.eye_R.isChecked() else "L"
+                "eye_side": "R" if self.eye_R.isChecked() else "L",
+                "is_sync":False
                 }
                 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"patient_{patient_data['first_name']}_{timestamp}.json"
+                filename = f"patient_{patient_data['first_name']}.json"
                 filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "patient_data", filename)
                 
                 # Create directory if it doesn't exist
