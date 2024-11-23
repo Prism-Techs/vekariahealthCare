@@ -21,37 +21,29 @@ class MultiValueBlock(QWidget):
         shadow.setColor(QColor(0, 0, 0, 180))
         self.setGraphicsEffect(shadow)
         
-        # Style the widget
+        # Style the widget with pure black background
         self.setStyleSheet("""
             MultiValueBlock {
-                background-color: #2c3e50;
+                background-color: #043770;
                 border-radius: 8px;
             }
         """)
-        
-        # Make widget accept mouse hover events
-        self.setMouseTracking(True)
         
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         
-        # Create gradient background
-        gradient = QLinearGradient(0, 0, 0, self.height())
-        gradient.setColorAt(0, QColor('#34495e'))
-        gradient.setColorAt(1, QColor('#2c3e50'))
-        
-        # Draw main background with gradient
-        painter.setBrush(gradient)
+        # Draw main background
+        painter.setBrush(QColor('#043770'))
         painter.setPen(Qt.NoPen)
         painter.drawRoundedRect(0, 0, self.width(), self.height(), 8, 8)
         
         # Draw 3D effect edges
-        painter.setPen(QPen(QColor(255, 255, 255, 30), 2))
+        painter.setPen(QPen(QColor(255, 255, 255, 40), 2))
         painter.drawLine(2, 2, self.width()-2, 2)  # Top highlight
         painter.drawLine(2, 2, 2, self.height()-2)  # Left highlight
         
-        painter.setPen(QPen(QColor(0, 0, 0, 60), 2))
+        painter.setPen(QPen(QColor(255, 255, 255, 20), 2))
         painter.drawLine(self.width()-2, 2, self.width()-2, self.height()-2)  # Right shadow
         painter.drawLine(2, self.height()-2, self.width()-2, self.height()-2)  # Bottom shadow
         
@@ -71,14 +63,7 @@ class MultiValueBlock(QWidget):
             y_pos = int(i * text_height)
             text_rect = QRect(0, y_pos, self.width(), int(text_height))
             
-            # Draw text with shadow effect
-            # Draw text shadow
-            painter.setPen(QColor(0, 0, 0, 100))
-            shadow_rect = QRect(text_rect)
-            shadow_rect.translate(1, 1)
-            painter.drawText(shadow_rect, Qt.AlignCenter, str(value))
-            
-            # Draw main text
+            # Draw text (pure white)
             painter.setPen(QColor('white'))
             painter.drawText(text_rect, Qt.AlignCenter, str(value))
             
@@ -86,13 +71,8 @@ class MultiValueBlock(QWidget):
             if i < len(self.values) - 1:
                 line_y = int((i + 1) * text_height)
                 
-                # Draw bold separator line with 3D effect
-                # Bottom shadow
-                painter.setPen(QPen(QColor(0, 0, 0, 120), 3))
-                painter.drawLine(8, line_y + 1, self.width() - 8, line_y + 1)
-                
-                # Main line
-                painter.setPen(QPen(QColor(255, 255, 255, 180), 2))
+                # Draw bold white separator line
+                painter.setPen(QPen(QColor('white'), 2))
                 painter.drawLine(8, line_y, self.width() - 8, line_y)
 
     def setValues(self, values):
@@ -118,7 +98,6 @@ class MainWindow(QMainWindow):
         
         # Create block
         self.value_block = MultiValueBlock()
-        self.value_block.setValues(["25.6", "25.6", "25.6", "25.6",'24.89'])
         
         # Center the block
         container = QWidget()
@@ -131,13 +110,13 @@ class MainWindow(QMainWindow):
         # Set window size
         self.setMinimumSize(200, 300)
         
-        # Set background color for the window
+        # Set pure black background for the window
         self.setStyleSheet("""
             QMainWindow {
-                background-color: black;
+                background-color: grey;
             }
             QWidget {
-                background-color: black;
+                background-color: grey;
             }
         """)
 
