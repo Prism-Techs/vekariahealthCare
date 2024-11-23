@@ -113,10 +113,10 @@ class MainWindow(QMainWindow):
         # Set pure black background for the window
         self.setStyleSheet("""
             QMainWindow {
-                background-color: grey;
+                background-color: black;
             }
             QWidget {
-                background-color: grey;
+                background-color: black;
             }
         """)
 
