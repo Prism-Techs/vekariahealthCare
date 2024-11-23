@@ -745,6 +745,8 @@ class Ui_Form(object):
         self.label_18.setScaledContents(True)
         self.label_18.setObjectName("label_18")
 
+        
+
         #gender group
         self.gender_group = QtWidgets.QButtonGroup(self.frame_2)
         self.gender_group.addButton(self.male)
@@ -810,6 +812,7 @@ class Ui_Form(object):
     def save_patient_data(self):
         buzzer.buzzer_1()
         try:
+                
                 patient_data = {
                 "first_name": self.textEdit.toPlainText().strip(),
                 "middle_name": self.textEdit_2.toPlainText().strip(),
@@ -830,7 +833,8 @@ class Ui_Form(object):
                         "value": self.Diabetes_text.toPlainText().strip()
                 },
                 "eye_side": "R" if self.eye_R.isChecked() else "L",
-                "is_sync":False
+                "is_sync":False,
+                "handler_id":0
                 }
                 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
