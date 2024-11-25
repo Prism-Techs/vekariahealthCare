@@ -95,6 +95,19 @@ class VirtualKeyboard(QDialog):
             ["123", "Space", "-", "_", "/", "Cancel"]
         ]
 
+        self.keyboard_widget = QtWidgets.QWidget()
+        self.keyboard_layout = QGridLayout(self.keyboard_widget)
+
+        # Remove vertical and horizontal spacing
+        self.keyboard_layout.setSpacing(0)
+
+        # Remove margins around the keyboard layout
+        self.keyboard_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.container_layout.addWidget(self.keyboard_widget)
+
+        self.create_buttons(self.keyboard_layout)
+
         self.symbol_keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
             ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+"],
