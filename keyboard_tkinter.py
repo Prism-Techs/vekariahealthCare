@@ -3,30 +3,32 @@ from globalvar import globaladc
 
 class KeyBoard:
 
-    def select(self, entry, window, mainwindow, value, ucase=None):        
-        uppercase =ucase
+    def select(self, entry, window, mainwindow, value, ucase=None):
+        uppercase = ucase
         if value == "Space":
             value = ' '
         elif value == 'Enter':
             value = ''
             globaladc.get_print("enter pressed")
-            mainwindow.focus_force()
+            mainwindow.focusForce()  # Call the PyQt5 method to regain focus
             window.destroy()
         elif value == 'Tab':
             value = '\t'
 
         if value == "Back" or value == '<-':
-            if isinstance(entry, tk.Entry):
-                entry.delete(len(entry.get())-1, 'end')
-            #elif isinstance(entry, tk.Text):
-            else: # tk.Text
-                entry.delete('end - 2c', 'end')
+            if hasattr(entry, 'text'):  # Check if the entry is a QLineEdit
+                entry.setText(entry.text()[:-1])
+            else:  # Assume it's a tkinter.Entry
+                entry.delete(len(entry.get()) - 1, 'end')
         elif value in ('Caps Lock', 'Shift'):
-            uppercase = not uppercase # change True to False, or False to True
+            uppercase = not uppercase
         else:
             if uppercase:
                 value = value.upper()
-            entry.insert('end', value)
+            if hasattr(entry, 'text'):  # Check if the entry is a QLineEdit
+                entry.setText(entry.text() + value)
+            else:
+                entry.insert('end', value)
         globaladc.buzzer_1()
 
    # create a Alpah and numeric keyboard

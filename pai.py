@@ -735,19 +735,6 @@ class Patient_UI(object):
         self.wifiIcon.setFont(font)
         self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
         self.wifiIcon.clicked.connect(self.open_wifi_page)
-        self.label_18 = QtWidgets.QLabel(self.frame_4)
-        self.label_18.setGeometry(QtCore.QRect(870, 4, 41, 31))
-        font = QtGui.QFont()
-        font.setFamily("Times New Roman")
-        font.setPointSize(20)
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_18.setFont(font)
-        self.label_18.setText("")
-        self.label_18.setPixmap(QtGui.QPixmap("../vekariahealthCare/icons/logo12.png"))
-        self.label_18.setScaledContents(True)
-        self.label_18.setObjectName("label_18")
-
         
 
         #gender group

@@ -11,14 +11,32 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
 from globalvar import  globaladc as buzzer
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QLineEdit
+import tkinter as tk
+from keyboard_tkinter import KeyBoard
+
+class CustomLineEdit(QLineEdit):
+    def __init__(self, keyboard):
+        super().__init__()
+        self.keyboard = keyboard  # Reference to the tkinter keyboard
+
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        # Create and show the tkinter keyboard
+        root = tk.Tk()  # Initialize tkinter root
+        root.withdraw()  # Hide tkinter root window
+        self.keyboard.createAlphaKey(root, self)
+        root.mainloop()  # Start the tkinter loop
 
 
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
+        self.tkKeyboard = KeyBoard()
         Form.setStyleSheet("background-color:black;")
-        Form.setWindowFlags(Qt.WindowStaysOnBottomHint)
+        Form.setWindowFlags(Qt.FramelessWindowHint |  Qt.WindowStaysOnBottomHint)
         # Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
@@ -120,8 +138,9 @@ class Ui_Form(object):
         self.frame_2.setObjectName("frame_2")
 
         # Username field setup
-        self.username = QtWidgets.QLineEdit(self.frame_2)
+        self.username = CustomLineEdit(self.tkKeyboard)
         self.username.setGeometry(QtCore.QRect(62, 50, 500, 61))
+
         font = QtGui.QFont()
         font.setPointSize(18)
         self.username.setFont(font)
@@ -137,7 +156,7 @@ class Ui_Form(object):
         # self.username.installEventFilter(self)
 
         # Password field setup
-        self.password = QtWidgets.QLineEdit(self.frame_2)
+        self.password = CustomLineEdit(self.tkKeyboard)
         self.password.setGeometry(QtCore.QRect(62, 140, 500, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
