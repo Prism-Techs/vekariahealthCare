@@ -19,8 +19,37 @@ import threading
 import time
 import re
 from wifi_update import WifiStatusLabel
-from customKeyboard import RPiKeyboard
+from customKeyboard import VirtualKeyboard
 from globalvar import globaladc as buzzer
+
+
+class CustomLineEdit(QtWidgets.QLineEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.keyboard = None
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        # Show keyboard on mouse press
+        self.show_keyboard()
+
+    def show_keyboard(self):
+        if self.keyboard is None or not self.keyboard.isVisible():
+            keyboard_width = 800
+            keyboard_height = 400
+            
+            # Get main window geometry
+            main_window = self.window()
+            window_rect = main_window.geometry()
+            
+            # Calculate keyboard position
+            keyboard_x = window_rect.x() + (window_rect.width() - keyboard_width) // 2
+            keyboard_y = window_rect.y() + window_rect.height() - keyboard_height - 50
+            
+            self.keyboard = VirtualKeyboard(self, main_window)
+            self.keyboard.setFixedSize(keyboard_width, keyboard_height)
+            self.keyboard.move(keyboard_x, keyboard_y)
+            self.keyboard.show()
 
 class WifiPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -158,7 +187,7 @@ class Ui_Form(object):
         }
         """)
         self.wifi_name.setObjectName("wifi_name")
-        self.password = QtWidgets.QLineEdit(self.frame_2)
+        self.password = CustomLineEdit(self.frame_2)
         self.password.setGeometry(QtCore.QRect(112, 140, 400, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
