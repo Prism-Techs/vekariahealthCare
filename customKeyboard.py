@@ -48,7 +48,7 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QWidget()
         self.title_bar_layout = QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(1, 1, 10, 5)
+        self.title_bar_layout.setContentsMargins(0,0,0,0)
         
         self.title_label = QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
