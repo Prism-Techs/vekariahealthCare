@@ -127,6 +127,8 @@ class VirtualKeyboard(QDialog):
             self.move(event.globalPos() - self.offset)
             event.accept()
 
+            
+
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.dragging = False
