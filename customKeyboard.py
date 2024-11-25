@@ -48,11 +48,16 @@ class VirtualKeyboard(QDialog):
         # Add size grip
         self.size_grip = QSizeGrip(self)
         self.size_grip.setStyleSheet("background: transparent;")
-        self.size_grip.setFixedHeight(50)
-        size_grip_layout = QtWidgets.QHBoxLayout()
-        size_grip_layout.setContentsMargins(0, 0, 0, 0)
 
-        size_grip_layout.addStretch()
+        # Use a layout that doesn’t add extra spacing
+        size_grip_layout = QtWidgets.QHBoxLayout()
+        size_grip_layout.setContentsMargins(0, 0, 0, 0)  # Make sure no margins are added
+        size_grip_layout.setSpacing(0)  # Ensure no spacing is added
+
+        # Optionally remove the stretch if it's causing unwanted vertical space
+        # size_grip_layout.addStretch()
+
+        # Add the size grip widget to the layout
         size_grip_layout.addWidget(self.size_grip)
         self.container_layout.addLayout(size_grip_layout)
         
