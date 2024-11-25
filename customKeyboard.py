@@ -16,8 +16,7 @@ class VirtualKeyboard(QDialog):
         
         # Main layout
         self.main_layout = QtWidgets.QVBoxLayout(self)
-        self.main_layout.setContentsMargins(self.resize_margin, self.resize_margin, 
-                                          self.resize_margin, self.resize_margin)
+        
         
         # Create a container widget with border styling
         self.container = QtWidgets.QWidget()
