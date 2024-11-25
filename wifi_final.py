@@ -19,37 +19,10 @@ import threading
 import time
 import re
 from wifi_update import WifiStatusLabel
-from customKeyboard import VirtualKeyboard
+from CustomLineEdit import CustomLineEdit
 from globalvar import globaladc as buzzer
 
 
-class CustomLineEdit(QtWidgets.QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.keyboard = None
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        # Show keyboard on mouse press
-        self.show_keyboard()
-
-    def show_keyboard(self):
-        if self.keyboard is None or not self.keyboard.isVisible():
-            keyboard_width = 800
-            keyboard_height = 400
-            
-            # Get main window geometry
-            main_window = self.window()
-            window_rect = main_window.geometry()
-            
-            # Calculate keyboard position
-            keyboard_x = window_rect.x() + (window_rect.width() - keyboard_width) // 2
-            keyboard_y = window_rect.y() + window_rect.height() - keyboard_height - 50
-            
-            self.keyboard = VirtualKeyboard(self, main_window)
-            self.keyboard.setFixedSize(keyboard_width, keyboard_height)
-            self.keyboard.move(keyboard_x, keyboard_y)
-            self.keyboard.show()
 
 class WifiPage(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -358,11 +331,7 @@ class Ui_Form(object):
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.check_wifi_status)
         self.status_timer.start(5000)  # Check every 5 seconds
-        self.rpi_keyboard = RPiKeyboard(Form)
-        self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
-        self.rpi_keyboard.username_field = self.wifi_name
-        # self.wifi_name.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
-        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+
         
 
         # Initial checks

@@ -9,37 +9,11 @@ from PyQt5.QtWidgets import QMessageBox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-from customKeyboard import VirtualKeyboard
 from globalvar import  globaladc as buzzer
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QLineEdit
+from CustomLineEdit import CustomLineEdit
 
-
-class CustomLineEdit(QtWidgets.QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.keyboard = None
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        self.show_keyboard()
-
-    def show_keyboard(self):
-        if self.keyboard is None or not self.keyboard.isVisible():
-            keyboard_width = 800
-            keyboard_height = 280  # Reduced height to fit better
-            
-            # Get the screen geometry
-            screen = QtWidgets.QApplication.desktop().screenGeometry()
-            
-            # Calculate keyboard position to appear above the login form
-            keyboard_x = (screen.width() - keyboard_width) // 2
-            keyboard_y = 115  # Position it just above the login form
-            
-            self.keyboard = VirtualKeyboard(self)
-            self.keyboard.setFixedSize(keyboard_width, keyboard_height)
-            self.keyboard.move(keyboard_x, keyboard_y)
-            self.keyboard.show()
 
 class Ui_Form(object):
     def setupUi(self, Form):
