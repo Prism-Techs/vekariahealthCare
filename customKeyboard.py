@@ -105,6 +105,13 @@ class VirtualKeyboard(QDialog):
             ["ABC", "Space", "-", "_", "/", "Cancel"]
         ]
 
+        self.current_keys = keys
+        # self.create_buttons(self.keyboard_layout)
+
+
+
+
+
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
 
