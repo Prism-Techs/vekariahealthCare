@@ -1,48 +1,79 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout
-
-class CustomLineEdit(QtWidgets.QLineEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.keyboard = None
-
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        # Show keyboard on mouse press
-        self.show_keyboard()
-
-    def show_keyboard(self):
-        if self.keyboard is None or not self.keyboard.isVisible():
-            keyboard_width = 800
-            keyboard_height = 400
-            
-            # Get main window geometry
-            main_window = self.window()
-            window_rect = main_window.geometry()
-            
-            # Calculate keyboard position
-            keyboard_x = window_rect.x() + (window_rect.width() - keyboard_width) // 2
-            keyboard_y = window_rect.y() + window_rect.height() - keyboard_height - 50
-            
-            self.keyboard = VirtualKeyboard(self, main_window)
-            self.keyboard.setFixedSize(keyboard_width, keyboard_height)
-            self.keyboard.move(keyboard_x, keyboard_y)
-            self.keyboard.show()
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QSizeGrip
 
 class VirtualKeyboard(QDialog):
     def __init__(self, target_widget, parent=None):
         super().__init__(parent)
         self.target_widget = target_widget
         self.uppercase = False
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setStyleSheet("background-color: #1e293b; color: white;")
+        # Remove WindowStaysOnTopHint to allow proper dragging
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.dragging = False
+        self.offset = QPoint()
+        self.resize_margin = 10  # Resize border width
+        
+        # Main layout
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.setContentsMargins(self.resize_margin, self.resize_margin, 
+                                          self.resize_margin, self.resize_margin)
+        
+        # Create a container widget with border styling
+        self.container = QtWidgets.QWidget()
+        self.container.setObjectName("container")
+        self.main_layout.addWidget(self.container)
+        
+        # Title bar
+        self.title_bar = QtWidgets.QWidget()
+        self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
+        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
+        self.title_label = QtWidgets.QLabel("Virtual Keyboard")
+        self.title_label.setStyleSheet("color: white; font-weight: bold;")
+        self.title_bar_layout.addWidget(self.title_label)
+        
+        # Container layout
+        self.container_layout = QtWidgets.QVBoxLayout(self.container)
+        self.container_layout.setContentsMargins(0, 0, 0, 0)
+        self.container_layout.addWidget(self.title_bar)
+        
+        # Add keyboard grid
+        self.keyboard_widget = QtWidgets.QWidget()
+        self.keyboard_layout = QGridLayout(self.keyboard_widget)
+        self.keyboard_layout.setSpacing(5)
+        self.container_layout.addWidget(self.keyboard_widget)
+        
+        # Add size grip
+        self.size_grip = QSizeGrip(self)
+        self.size_grip.setStyleSheet("background: transparent;")
+        size_grip_layout = QtWidgets.QHBoxLayout()
+        size_grip_layout.setContentsMargins(0, 0, 0, 0)
+        size_grip_layout.addStretch()
+        size_grip_layout.addWidget(self.size_grip)
+        self.container_layout.addLayout(size_grip_layout)
+        
+        # Set styles
+        self.setStyleSheet("""
+            QDialog {
+                background: transparent;
+            }
+            #container {
+                background-color: #1e293b;
+                border: 1px solid #475569;
+                border-radius: 10px;
+            }
+            QPushButton {
+                color: white;
+                border-radius: 5px;
+                min-width: 40px;
+                min-height: 40px;
+            }
+        """)
+        
         self.init_ui()
 
     def init_ui(self):
-        layout = QGridLayout(self)
-        layout.setSpacing(5)
-
+        self.setMinimumSize(600, 300)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -61,7 +92,7 @@ class VirtualKeyboard(QDialog):
         ]
 
         self.current_keys = keys
-        self.create_buttons(layout)
+        self.create_buttons(self.keyboard_layout)
 
     def create_buttons(self, layout):
         for i in reversed(range(layout.count())): 
@@ -70,7 +101,6 @@ class VirtualKeyboard(QDialog):
         for row_index, row in enumerate(self.current_keys):
             for col_index, key in enumerate(row):
                 button = QPushButton(key)
-                button.setFixedSize(60, 50)
                 
                 if key in ["Back", "Enter", "Shift", "123", "ABC", "Cancel", "Space"]:
                     button.setStyleSheet(
@@ -85,6 +115,22 @@ class VirtualKeyboard(QDialog):
                 
                 button.clicked.connect(lambda _, k=key: self.key_pressed(k))
                 layout.addWidget(button, row_index, col_index)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragging = True
+            self.offset = event.globalPos() - self.pos()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if self.dragging and event.buttons() & Qt.LeftButton:
+            self.move(event.globalPos() - self.offset)
+            event.accept()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragging = False
+            event.accept()
 
     def key_pressed(self, key):
         try:
@@ -102,13 +148,13 @@ class VirtualKeyboard(QDialog):
             self.target_widget.insert(" ")
         elif key == "Shift":
             self.uppercase = not self.uppercase
-            for i in range(self.layout().count()):
-                button = self.layout().itemAt(i).widget()
+            for i in range(self.keyboard_layout.count()):
+                button = self.keyboard_layout.itemAt(i).widget()
                 if isinstance(button, QPushButton) and len(button.text()) == 1:
                     button.setText(button.text().upper() if self.uppercase else button.text().lower())
         elif key == "123":
             self.current_keys = self.symbol_keys
-            self.create_buttons(self.layout())
+            self.create_buttons(self.keyboard_layout)
         elif key == "ABC":
             self.current_keys = [
                 ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -117,10 +163,9 @@ class VirtualKeyboard(QDialog):
                 ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "?"],
                 ["123", "Space", "-", "_", "/", "Cancel"]
             ]
-            self.create_buttons(self.layout())
+            self.create_buttons(self.keyboard_layout)
         elif key == "Cancel":
             self.close()
             self.target_widget.keyboard = None
         else:
             self.target_widget.insert(key.upper() if self.uppercase else key.lower())
-
