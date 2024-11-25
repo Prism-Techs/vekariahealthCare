@@ -12,7 +12,7 @@ class RPiKeyboard(QtWidgets.QWidget):
     def show_keyboard(self):
         # Launch onboard without unsupported options
         self.keyboard_process = subprocess.Popen([
-            'onboard',"--ontop"
+            'onboard',
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Wait a moment and raise the window to the top using xdotool
