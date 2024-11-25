@@ -23,7 +23,7 @@ import json
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-from . import home_page
+# from . import home_page
 from . import patient_page 
 
 
@@ -610,7 +610,7 @@ class Login_page(object):
                 # self.show_flicker_controller()
                 self.form.hide()
                 self.doctor_window = QtWidgets.QWidget()
-                self.doctor_ui = home_page()  # From doctor.py
+                self.doctor_ui = HomePpage()  # From doctor.py
                 self.doctor_ui.setupUi(self.doctor_window)
                 self.doctor_window.show()
             else:
