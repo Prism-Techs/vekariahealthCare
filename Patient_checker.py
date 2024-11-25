@@ -104,6 +104,7 @@ class FolderMonitor(FileSystemEventHandler):
         """
         self.syncer = syncer
 
+
     def on_created(self, event):
         """
         Handle the event when a new file is created in the folder.
