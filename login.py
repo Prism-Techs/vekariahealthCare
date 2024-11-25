@@ -5,7 +5,7 @@ import subprocess
 from datetime import datetime
 import json
 from PyQt5.QtWidgets import QMessageBox
-from tkinter import messagebox
+# from tkinter import messagebox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
@@ -372,19 +372,7 @@ class Ui_Form(object):
 
 
     def show_flicker_controller(self):
-        """Show the flicker controller page"""
-        # Hide the login form
-        self.form.hide()  # This refers to the main form that contains the login UI
-        
-        # Create and show the flicker controller
-        self.flicker_window = FlickerController()
-        
-        # Connect the home button to return to login
-        self.flicker_window.ui.pushButton_2.clicked.connect(self.return_to_login)
-        
-        # Show the flicker controller
-        self.flicker_window.show()
-        # pass
+        pass
 
     def return_to_login(self):
         """Return to login page when home button is clicked"""
@@ -456,7 +444,7 @@ class Ui_Form(object):
 
 
 
-    def generate_user_json(self, user_data):
+    def generate_user_json(self, user_data,opeartion_mode):
         """Generate JSON file with user information"""
         try:
             # Create user info dictionary
@@ -467,7 +455,10 @@ class Ui_Form(object):
                 "title": user_data['title'] if user_data['title'] else "",
                 "login_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "is_doctor": user_data['is_doctor'],
-                "is_operator": user_data['is_operator']
+                "is_operator": user_data['is_operator'],
+                "user_id": user_data['id'],
+                'opeartion_mode':opeartion_mode
+                
             }
 
             # Create filename with timestamp
@@ -494,7 +485,10 @@ class Ui_Form(object):
         password = self.password.text().strip()
 
         if not username or not password:
-            messagebox.showwarning('Error', 'Please enter both username and password')
+            # messagebox.showwarning('Error', 'Please enter both username and password')
+            QMessageBox.warning(None, "Error", "Please enter both username and password")
+            
+
             return
 
         # Get selected operation mode
@@ -506,14 +500,14 @@ class Ui_Form(object):
             operation_mode = "Demo"
 
         # Verify login
-        user = self.db.verify_login(username, password)
+        user = self.db.verify_login(username, password,operation_mode)
 
         if user:
             # Generate JSON file
             json_file = self.generate_user_json(user)
             if json_file:
-                messagebox.showinfo('Success',
-                    f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
+                QMessageBox.information(None, "Success", f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
+
 
                 # Create and show the FlickerController instance
                 # self.show_flicker_controller()
@@ -523,9 +517,9 @@ class Ui_Form(object):
                 self.doctor_ui.setupUi(self.doctor_window)
                 self.doctor_window.show()
             else:
-                messagebox.showwarning('Warning', 'Login successful but failed to save user data')
+                QMessageBox.warning(None, "Warning", 'Login successful but failed to save user data')
         else:
-            messagebox.showerror('Error', 'Invalid username or password')
+            QMessageBox.critical(None, "Error", 'Invalid username or password')
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

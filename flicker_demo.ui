@@ -488,7 +488,7 @@ color:#f2f5f3;
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
+  <widget class="QPushButton" name="Flicker_demo_status">
    <property name="geometry">
     <rect>
      <x>10</x>
