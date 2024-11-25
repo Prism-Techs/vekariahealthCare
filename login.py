@@ -22,23 +22,21 @@ class CustomLineEdit(QtWidgets.QLineEdit):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        # Show keyboard on mouse press
         self.show_keyboard()
 
     def show_keyboard(self):
         if self.keyboard is None or not self.keyboard.isVisible():
             keyboard_width = 800
-            keyboard_height = 400
+            keyboard_height = 280  # Reduced height to fit better
             
-            # Get main window geometry
-            main_window = self.window()
-            window_rect = main_window.geometry()
+            # Get the screen geometry
+            screen = QtWidgets.QApplication.desktop().screenGeometry()
             
-            # Calculate keyboard position
-            keyboard_x = window_rect.x() + (window_rect.width() - keyboard_width) // 2
-            keyboard_y = window_rect.y() + window_rect.height() - keyboard_height - 50
+            # Calculate keyboard position to appear above the login form
+            keyboard_x = (screen.width() - keyboard_width) // 2
+            keyboard_y = 115  # Position it just above the login form
             
-            self.keyboard = VirtualKeyboard(self, main_window)
+            self.keyboard = VirtualKeyboard(self)
             self.keyboard.setFixedSize(keyboard_width, keyboard_height)
             self.keyboard.move(keyboard_x, keyboard_y)
             self.keyboard.show()
@@ -150,7 +148,7 @@ class Ui_Form(object):
         self.frame_2.setObjectName("frame_2")
 
         # Username field setup
-        self.username = QtWidgets.QLineEdit(self.frame_2)
+        self.username = CustomLineEdit(self.frame_2)
         self.username.setGeometry(QtCore.QRect(62, 50, 500, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
@@ -167,7 +165,7 @@ class Ui_Form(object):
         # self.username.installEventFilter(self)
 
         # Password field setup
-        self.password = QtWidgets.QLineEdit(self.frame_2)
+        self.password = CustomLineEdit(self.frame_2)
         self.password.setGeometry(QtCore.QRect(62, 140, 500, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
@@ -378,7 +376,8 @@ class Ui_Form(object):
         # Add this to the setupUi method
 # Add this to the setupUi method
 # Add this to the setupUi method
-
+        self.username.mousePressEvent = lambda event: self.keyboard.show_keyboard()
+        self.password.mousePressEvent = lambda event: self.keyboard.show_keyboard()
         
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
@@ -451,8 +450,11 @@ class Ui_Form(object):
 
 
     def closeEvent(self, event):
-        """Clean up keyboard process when closing"""
-        self.hide_keyboard()
+        """Clean up keyboard processes when closing"""
+        if hasattr(self.username, 'keyboard') and self.username.keyboard:
+            self.username.keyboard.hide()
+        if hasattr(self.password, 'keyboard') and self.password.keyboard:
+            self.password.keyboard.hide()
         event.accept()
 
     def toggle_password_visibility(self):
