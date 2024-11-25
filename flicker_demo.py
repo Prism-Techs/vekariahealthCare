@@ -11,9 +11,10 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 # from login import doctor_page as Operation_page
 # from globalpage import doctor_page as Opeartion_page
-from home import Ui_Form as Opeartion_page
+# from home import Ui_Form as Opeartion_page
+from . import login_page
+from . import home_page
 
-from login import Ui_Form as Login_page
 
 class PeriodicThread(threading.Thread):
     def __init__(self, interval, callback):
@@ -521,7 +522,7 @@ class Ui_Form(object):
     def open_home_page(self):
         globaladc.buzzer_1()
         if self.operation_window is None:
-            self.operation_window = Opeartion_page()
+            self.operation_window = home_page()
             self.form.hide()
             self.operation_window.show()
         else:
@@ -530,7 +531,7 @@ class Ui_Form(object):
     def open_login_page(self):
         globaladc.buzzer_1()
         if self.login_window is None:
-            self.login_window = Login_page()
+            self.login_window = login_page()
             self.form.hide()
             self.login_window.show()
         else:

@@ -13,7 +13,8 @@ from customKeyboard import RPiKeyboard
 from globalvar import  globaladc as buzzer
 # from globalpage import doctor_page
 
-from doctor import Ui_Form as doctor_page
+from . import home_page
+# from doctor import Ui_Form as doctor_page
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -511,7 +512,7 @@ class Ui_Form(object):
                 # self.show_flicker_controller()
                 self.form.hide()
                 self.doctor_window = QtWidgets.QWidget()
-                self.doctor_ui = doctor_page()  # From doctor.py
+                self.doctor_ui = home_page()  # From doctor.py
                 self.doctor_ui.setupUi(self.doctor_window)
                 self.doctor_window.show()
             else:
