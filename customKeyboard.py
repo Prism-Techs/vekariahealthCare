@@ -24,23 +24,17 @@ class VirtualKeyboard(QDialog):
         self.container.setObjectName("container")
         self.main_layout.addWidget(self.container)
         
-        # Title bar
-        self.title_bar = QtWidgets.QWidget()
-        self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
-        self.title_label = QtWidgets.QLabel("Virtual Keyboard")
-        self.title_label.setStyleSheet("color: white; font-weight: bold;")
-        self.title_bar_layout.addWidget(self.title_label)
+        # Remove the title bar layout
+        # Title bar is removed, so no need for title_bar or title_bar_layout
         
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
         self.container_layout.setContentsMargins(0, 0, 0, 0)
-        self.container_layout.addWidget(self.title_bar)
         
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(5)
+        self.keyboard_layout.setSpacing(5)  # You can adjust this spacing value if needed
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
@@ -53,7 +47,7 @@ class VirtualKeyboard(QDialog):
         self.container_layout.addLayout(size_grip_layout)
         
         # Set styles
-        self.setStyleSheet("""
+        self.setStyleSheet(""" 
             QDialog {
                 background: transparent;
             }
@@ -104,12 +98,12 @@ class VirtualKeyboard(QDialog):
                 
                 if key in ["Back", "Enter", "Shift", "123", "ABC", "Cancel", "Space"]:
                     button.setStyleSheet(
-                        "QPushButton {background-color: #475569; border-radius: 5px;}"
+                        "QPushButton {background-color: #475569; border-radius: 5px;} "
                         "QPushButton:pressed {background-color: #64748b;}"
                     )
                 else:
                     button.setStyleSheet(
-                        "QPushButton {background-color: #334155; border-radius: 5px;}"
+                        "QPushButton {background-color: #334155; border-radius: 5px;} "
                         "QPushButton:pressed {background-color: #475569;}"
                     )
                 
