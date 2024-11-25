@@ -9,12 +9,6 @@ import time
 from globalvar import globaladc
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-# from login import doctor_page as Operation_page
-# from globalpage import doctor_page as Opeartion_page
-# from home import Ui_Form as Opeartion_page
-# from . import  Login_page as login_page
-from login import Login_page as login_page
-from home_page import HomePpage
 
 
 
@@ -523,8 +517,9 @@ class Ui_Form(object):
 
     def open_home_page(self):
         globaladc.buzzer_1()
+        from home_page import Home
         if self.operation_window is None:
-            self.operation_window = HomePpage()
+            self.operation_window = Home()
             self.form.hide()
             self.operation_window.show()
         else:
@@ -532,8 +527,9 @@ class Ui_Form(object):
 
     def open_login_page(self):
         globaladc.buzzer_1()
+        from pages  import Login_page
         if self.login_window is None:
-            self.login_window = login_page()
+            self.login_window = Login_page()
             self.form.hide()
             self.login_window.show()
         else:
