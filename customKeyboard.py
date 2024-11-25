@@ -46,7 +46,7 @@ class VirtualKeyboard(QDialog):
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(5)
+        self.keyboard_layout.setSpacing(1)
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
