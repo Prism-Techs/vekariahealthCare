@@ -27,7 +27,7 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QtWidgets.QWidget()
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(0,0,0,0)
+        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
         self.title_bar_layout.addWidget(self.title_label)
@@ -126,8 +126,6 @@ class VirtualKeyboard(QDialog):
         if self.dragging and event.buttons() & Qt.LeftButton:
             self.move(event.globalPos() - self.offset)
             event.accept()
-
-
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
