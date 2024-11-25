@@ -11,7 +11,7 @@ from PyQt5.QtGui import QPixmap
 from imagewrite import Ui_Form as WriteUPImageForm
 from globalvar import globaladc
 from wifi_checker import main as wifi_checker_main
-
+from Patient_checker import run_in_thread
 
 class LoadingScreen(QWidget):
     def __init__(self):
@@ -25,6 +25,7 @@ class LoadingScreen(QWidget):
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setGeometry(0, 0, 1024, 600)
+        run_in_thread("patient_data","http://localhost:5600/patient/sync/",'wifi_status.py')
 
         # Replace 'path/to/your/logo.png' with the actual path to your logo
         self.pixmap = QPixmap('logo.png')
