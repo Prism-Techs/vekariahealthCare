@@ -142,8 +142,18 @@ class MainWindow(QMainWindow):
             self.fields.append(field)
 
     def open_keyboard(self, target_widget):
+        keyboard_width = 800
+        keyboard_height = 400
+        
+        # Calculate the center position relative to the main window
+        parent_rect = self.geometry()
+        keyboard_x = parent_rect.x() + (parent_rect.width() - keyboard_width) // 2
+        keyboard_y = parent_rect.y() + (parent_rect.height() - keyboard_height) // 2
+        
+        # Create and position the keyboard
         self.keyboard = VirtualKeyboard(target_widget, self)
-        self.keyboard.setGeometry(100, 300, 800, 400)  # Made wider to accommodate all keys
+        self.keyboard.setFixedSize(keyboard_width, keyboard_height)
+        self.keyboard.move(keyboard_x, keyboard_y)
         self.keyboard.show()
 
 # --- Main Entry Point ---
