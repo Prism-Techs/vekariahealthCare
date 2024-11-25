@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QLineEdit, QPushButton, QGridLayout, QDialog
 )
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtMultimedia import QSound  # For playing the buzzer sound
+# from PyQt5.QtMultimedia import QSound  # For playing the buzzer sound
 
 # --- Global function to play a buzzer ---
 def buzzer_1():
