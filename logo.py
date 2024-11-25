@@ -22,6 +22,8 @@ from datetime import datetime
 import json
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
+from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
+from . import home_page
 
 class LoadingScreen(QWidget):
     def __init__(self):
