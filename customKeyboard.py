@@ -107,6 +107,9 @@ class VirtualKeyboard(QDialog):
         for i in reversed(range(layout.count())): 
             layout.itemAt(i).widget().setParent(None)
 
+        self.keyboard_layout.setVerticalSpacing(0)  # Removes vertical spacing
+        self.keyboard_layout.setHorizontalSpacing(5)  # Optionally, adjust horizontal spacing
+
         for row_index, row in enumerate(self.current_keys):
             for col_index, key in enumerate(row):
                 button = QPushButton(key)
