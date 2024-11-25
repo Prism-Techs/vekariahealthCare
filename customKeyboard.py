@@ -24,9 +24,6 @@ class VirtualKeyboard(QDialog):
         self.container.setObjectName("container")
         self.main_layout.addWidget(self.container)
         
-        # Remove the title bar layout
-        # Title bar is removed, so no need for title_bar or title_bar_layout
-        
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
         self.container_layout.setContentsMargins(0, 0, 0, 0)
@@ -34,7 +31,9 @@ class VirtualKeyboard(QDialog):
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(5)  # You can adjust this spacing value if needed
+        self.keyboard_layout.setSpacing(0)  # Remove any unwanted spacing
+        self.keyboard_layout.setHorizontalSpacing(0)  # Ensure no horizontal spacing
+        self.keyboard_layout.setVerticalSpacing(5)  # Keep vertical spacing if desired
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
