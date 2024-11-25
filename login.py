@@ -17,8 +17,8 @@ import tkinter as tk
 from keyboard_tkinter import KeyBoard
 
 class CustomLineEdit(QLineEdit):
-    def __init__(self, keyboard):
-        super().__init__()
+    def __init__(self, keyboard,parent=None):
+        super().__init__(parent)
         self.keyboard = keyboard  # Reference to the tkinter keyboard
 
     def focusInEvent(self, event):
