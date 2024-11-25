@@ -53,6 +53,10 @@ class VirtualKeyboard(QDialog):
         self.title_label = QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
         self.title_bar_layout.addWidget(self.title_label)
+
+
+        self.title_bar.setFixedHeight(30)
+
         
         # Container layout
         self.container_layout = QVBoxLayout(self.container)
@@ -62,7 +66,7 @@ class VirtualKeyboard(QDialog):
         # Keyboard grid
         self.keyboard_widget = QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(5)
+        self.keyboard_layout.setSpacing(3)
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Set minimum size
