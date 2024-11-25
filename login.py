@@ -138,7 +138,7 @@ class Ui_Form(object):
         self.frame_2.setObjectName("frame_2")
 
         # Username field setup
-        self.username = CustomLineEdit(self.tkKeyboard)
+        self.username = CustomLineEdit(self.tkKeyboard,self.frame_2)
         self.username.setGeometry(QtCore.QRect(62, 50, 500, 61))
 
         font = QtGui.QFont()
@@ -156,7 +156,7 @@ class Ui_Form(object):
         # self.username.installEventFilter(self)
 
         # Password field setup
-        self.password = CustomLineEdit(self.tkKeyboard)
+        self.password = CustomLineEdit(self.tkKeyboard,self.frame_2)
         self.password.setGeometry(QtCore.QRect(62, 140, 500, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
