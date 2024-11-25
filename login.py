@@ -16,7 +16,7 @@ from globalvar import  globaladc as buzzer
 from . import home_page
 # from doctor import Ui_Form as doctor_page
 
-class Ui_Form(object):
+class Login_page(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
@@ -541,11 +541,11 @@ import vekarialogo_rc
 import wifi_rc
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#     Form = QtWidgets.QWidget()
+#     ui = Ui_Form()
+#     ui.setupUi(Form)
+#     Form.show()
+#     sys.exit(app.exec_())
