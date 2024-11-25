@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QPixmap
-from login import Ui_Form
+# from login import Ui_Form
+from . import login_page
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve, QEvent
@@ -75,7 +76,7 @@ class LoadingScreen(QWidget):
     def show_login_form(self):
         # Create login form
         self.login_form = QWidget()
-        self.login_ui = Ui_Form()
+        self.login_ui = login_page()
         self.login_ui.setupUi(self.login_form)
 
         # Set up fade-in animation for login form
