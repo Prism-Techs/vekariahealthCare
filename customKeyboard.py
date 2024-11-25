@@ -15,7 +15,7 @@ class VirtualKeyboard(QDialog):
         self.debug_mode = True  # Set to True to enable debug prints
         
         # Resizing and dragging variables
-        self.resize_margin = 10
+        self.resize_margin = 1
         self.resizing = False
         self.resize_edge = None
         self.dragging = False
@@ -48,7 +48,7 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QWidget()
         self.title_bar_layout = QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
+        self.title_bar_layout.setContentsMargins(1, 1, 10, 5)
         
         self.title_label = QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
