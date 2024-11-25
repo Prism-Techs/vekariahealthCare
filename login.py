@@ -9,32 +9,45 @@ from PyQt5.QtWidgets import QMessageBox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-from customKeyboard import RPiKeyboard
+from customKeyboard import VirtualKeyboard
 from globalvar import  globaladc as buzzer
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QLineEdit
-import tkinter as tk
-from keyboard_tkinter import KeyBoard
 
-class CustomLineEdit(QLineEdit):
-    def __init__(self, keyboard,parent=None):
+
+class CustomLineEdit(QtWidgets.QLineEdit):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.keyboard = keyboard  # Reference to the tkinter keyboard
+        self.keyboard = None
 
-    def focusInEvent(self, event):
-        super().focusInEvent(event)
-        # Create and show the tkinter keyboard
-        root = tk.Tk()  # Initialize tkinter root
-        root.withdraw()  # Hide tkinter root window
-        self.keyboard.createAlphaKey(root, self)
-        root.mainloop()  # Start the tkinter loop
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        # Show keyboard on mouse press
+        self.show_keyboard()
 
+    def show_keyboard(self):
+        if self.keyboard is None or not self.keyboard.isVisible():
+            keyboard_width = 800
+            keyboard_height = 400
+            
+            # Get main window geometry
+            main_window = self.window()
+            window_rect = main_window.geometry()
+            
+            # Calculate keyboard position
+            keyboard_x = window_rect.x() + (window_rect.width() - keyboard_width) // 2
+            keyboard_y = window_rect.y() + window_rect.height() - keyboard_height - 50
+            
+            self.keyboard = VirtualKeyboard(self, main_window)
+            self.keyboard.setFixedSize(keyboard_width, keyboard_height)
+            self.keyboard.move(keyboard_x, keyboard_y)
+            self.keyboard.show()
 
 class Ui_Form(object):
     def setupUi(self, Form):
+        # self.keyboard = None
         Form.setObjectName("Form")
         Form.resize(1024, 600)
-        self.tkKeyboard = KeyBoard()
         Form.setStyleSheet("background-color:black;")
         Form.setWindowFlags(Qt.FramelessWindowHint |  Qt.WindowStaysOnBottomHint)
         # Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -45,8 +58,7 @@ class Ui_Form(object):
         # Create directory if it doesn't exist
         if not os.path.exists(self.json_path):
             os.makedirs(self.json_path)
-        self.rpi_keyboard = RPiKeyboard()
-        self.rpi_keyboard.show()
+
         
         
 
@@ -138,9 +150,8 @@ class Ui_Form(object):
         self.frame_2.setObjectName("frame_2")
 
         # Username field setup
-        self.username = CustomLineEdit(self.tkKeyboard,self.frame_2)
+        self.username = QtWidgets.QLineEdit(self.frame_2)
         self.username.setGeometry(QtCore.QRect(62, 50, 500, 61))
-
         font = QtGui.QFont()
         font.setPointSize(18)
         self.username.setFont(font)
@@ -156,7 +167,7 @@ class Ui_Form(object):
         # self.username.installEventFilter(self)
 
         # Password field setup
-        self.password = CustomLineEdit(self.tkKeyboard,self.frame_2)
+        self.password = QtWidgets.QLineEdit(self.frame_2)
         self.password.setGeometry(QtCore.QRect(62, 140, 500, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
@@ -367,11 +378,7 @@ class Ui_Form(object):
         # Add this to the setupUi method
 # Add this to the setupUi method
 # Add this to the setupUi method
-        self.rpi_keyboard = RPiKeyboard(Form)
-        self.rpi_keyboard.move(Form.x(), Form.y() + Form.height())
-        self.rpi_keyboard.username_field = self.username
-        self.username.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
-        self.password.mousePressEvent = lambda event: self.rpi_keyboard.show_keyboard()
+
         
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
