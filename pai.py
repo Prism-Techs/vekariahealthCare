@@ -22,7 +22,7 @@ import subprocess
 
 
 
-class Patient_info(object):
+class Patient_UI(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1031, 586)

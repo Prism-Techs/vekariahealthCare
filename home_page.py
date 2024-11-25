@@ -14,7 +14,7 @@ import os,json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-from pages import Patient_info
+from pages import Patient_UI  as  Patient_info
 
 class Home(object):
     def setupUi(self, Form):
