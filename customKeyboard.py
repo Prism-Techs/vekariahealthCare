@@ -27,7 +27,9 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QtWidgets.QWidget()
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
+        self.title_bar.setCursor(Qt.OpenHandCursor)
+        self.title_bar.setFixedHeight(30)
+        self.title_bar_layout.setContentsMargins(5, 0, 5, 0)
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
         self.title_bar_layout.addWidget(self.title_label)
@@ -73,7 +75,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(600, 300)  # Set minimum size
+        self.setMinimumSize(600, 100)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
