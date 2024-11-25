@@ -36,12 +36,12 @@ class VirtualKeyboard(QDialog):
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold; font-size: 14px;")  # Adjust font size
         self.title_bar_layout.addWidget(self.title_label)
-        self.container_layout.addWidget(self.title_bar)
         
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
         self.container_layout.setContentsMargins(0, 0, 0, 0)
         self.container_layout.addWidget(self.title_bar)
+
         
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
