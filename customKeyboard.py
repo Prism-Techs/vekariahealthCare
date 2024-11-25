@@ -95,6 +95,23 @@ class VirtualKeyboard(QDialog):
             ["123", "Space", "-", "_", "/", "Cancel"]
         ]
 
+        
+
+        self.symbol_keys = [
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
+            ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+"],
+            ["=", "{", "}", "[", "]", ";", ":", "'", '"', "Enter"],
+            ["~", "`", "\\", "|", "<", ">", "€", "£", "¥", "¢", "?"],
+            ["ABC", "Space", "-", "_", "/", "Cancel"]
+        ]
+
+        self.current_keys = keys
+        self.create_buttons(self.keyboard_layout)
+
+
+
+
+
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
 
@@ -106,17 +123,6 @@ class VirtualKeyboard(QDialog):
 
         self.container_layout.addWidget(self.keyboard_widget)
 
-        self.create_buttons(self.keyboard_layout)
-
-        self.symbol_keys = [
-            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
-            ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+"],
-            ["=", "{", "}", "[", "]", ";", ":", "'", '"', "Enter"],
-            ["~", "`", "\\", "|", "<", ">", "€", "£", "¥", "¢", "?"],
-            ["ABC", "Space", "-", "_", "/", "Cancel"]
-        ]
-
-        self.current_keys = keys
         self.create_buttons(self.keyboard_layout)
 
     def create_buttons(self, layout):
