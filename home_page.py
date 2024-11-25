@@ -14,7 +14,7 @@ import os,json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-from pages import Patient_UI  as  Patient_info
+# from pages import Patient_UI  as  Patient_info
 
 class Home(object):
     def setupUi(self, Form):
@@ -358,9 +358,10 @@ class Home(object):
 
     def testMode(self):
         buzzer.buzzer_1()
+        from pages import Patient_UI
         self.form.hide()
         self.patient_info_widow = QtWidgets.QWidget()
-        self.patient_info = Patient_info()  
+        self.patient_info = Patient_UI()  
         self.patient_info.setupUi(self.patient_info_widow)
         self.patient_info_widow.show()
 
