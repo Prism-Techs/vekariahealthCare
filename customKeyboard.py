@@ -33,7 +33,7 @@ class VirtualKeyboard(QDialog):
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
         self.keyboard_layout.setSpacing(0)  # Remove any unwanted spacing
         self.keyboard_layout.setHorizontalSpacing(0)  # Ensure no horizontal spacing
-        self.keyboard_layout.setVerticalSpacing(5)  # Keep vertical spacing if desired
+        self.keyboard_layout.setVerticalSpacing(0)  # Remove vertical spacing between rows
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
