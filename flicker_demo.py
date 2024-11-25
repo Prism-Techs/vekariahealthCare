@@ -14,7 +14,7 @@ from wifi_final import WifiPage
 # from home import Ui_Form as Opeartion_page
 # from . import  Login_page as login_page
 from login import Login_page as login_page
-from . import home_page
+from doctor import HomePpage
 
 
 
@@ -524,7 +524,7 @@ class Ui_Form(object):
     def open_home_page(self):
         globaladc.buzzer_1()
         if self.operation_window is None:
-            self.operation_window = home_page()
+            self.operation_window = HomePpage()
             self.form.hide()
             self.operation_window.show()
         else:
