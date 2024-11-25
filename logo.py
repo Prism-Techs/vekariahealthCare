@@ -10,7 +10,7 @@ from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve, QEvent
 from PyQt5.QtGui import QPixmap
 from imagewrite import Ui_Form as WriteUPImageForm
 from globalvar import globaladc
-
+from wifi_checker import main as wifi_checker_main
 
 
 class LoadingScreen(QWidget):
@@ -33,7 +33,7 @@ class LoadingScreen(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.animate_logo)
         self.timer.start(50)  # Adjust for faster/slower animation
-
+        wifi_checker_main()
         self.counter = 0
 
     def animate_logo(self):
