@@ -500,11 +500,11 @@ class Ui_Form(object):
             operation_mode = "Demo"
 
         # Verify login
-        user = self.db.verify_login(username, password,operation_mode)
+        user = self.db.verify_login(username, password)
 
         if user:
             # Generate JSON file
-            json_file = self.generate_user_json(user)
+            json_file = self.generate_user_json(user,operation_mode)
             if json_file:
                 QMessageBox.information(None, "Success", f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
 
