@@ -18,7 +18,7 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:black;")
-        Form.setWindowFlags(Qt.FramelessWindowHint |  Qt.WindowStaysOnBottomHint)
+        Form.setWindowFlags(Qt.WindowStaysOnBottomHint)
         # Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
