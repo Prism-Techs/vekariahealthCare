@@ -15,6 +15,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
 from . import patient_page as Patient_info_page
+# from pai imprt 
 
 class HomePpage(object):
     def setupUi(self, Form):
