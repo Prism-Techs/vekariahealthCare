@@ -85,7 +85,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(600, 300)  # Set minimum size
+        self.setMinimumSize(600, 200)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -106,24 +106,12 @@ class VirtualKeyboard(QDialog):
         ]
 
         self.current_keys = keys
-        # self.create_buttons(self.keyboard_layout)
-
-
-
-
-
-        self.keyboard_widget = QtWidgets.QWidget()
-        self.keyboard_layout = QGridLayout(self.keyboard_widget)
-
-        # Remove vertical and horizontal spacing
-        self.keyboard_layout.setSpacing(0)
-
-        # Remove margins around the keyboard layout
-        self.keyboard_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.container_layout.addWidget(self.keyboard_widget)
-
         self.create_buttons(self.keyboard_layout)
+
+
+
+
+        
 
     def create_buttons(self, layout):
         for i in reversed(range(layout.count())): 
@@ -164,11 +152,11 @@ class VirtualKeyboard(QDialog):
             event.accept()
 
     def key_pressed(self, key):
-        try:
-            from globalvar import globaladc
-            globaladc.buzzer_1()
-        except Exception as e:
-            print(f"Buzzer error: {e}")
+        # try:
+        #     from globalvar import globaladc
+        #     globaladc.buzzer_1()
+        # except Exception as e:
+        #     print(f"Buzzer error: {e}")
 
         if key == "Back":
             self.target_widget.backspace()
@@ -200,3 +188,20 @@ class VirtualKeyboard(QDialog):
             self.target_widget.keyboard = None
         else:
             self.target_widget.insert(key.upper() if self.uppercase else key.lower())
+
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
+
+    # Create a QLineEdit or any widget as the target for the keyboard
+    line_edit = QtWidgets.QLineEdit()
+    line_edit.setPlaceholderText("Enter text...")
+
+    # Show the QLineEdit widget
+    line_edit.show()
+
+    # Create the virtual keyboard and pass the QLineEdit as the target widget
+    keyboard = VirtualKeyboard(line_edit)
+    keyboard.show()
+
+    app.exec_()
