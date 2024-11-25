@@ -82,13 +82,16 @@ class MainWindow(QMainWindow):
         self.fields = []
         for i in range(3):
             field = CustomLineEdit(self)
+            font = field.font()  # Retrieve the current font
+            font.setPointSize(18)  # Modify the font size
+            field.setFont(font)  # Apply the modified font back to the field
             field.setStyleSheet(
                 "QLineEdit {background-color: #334155; color: white; border: 1px solid white; padding: 5px;}"
             )
-            field.setFont(field.font().setPointSize(18))
             field.focusIn.connect(lambda f=field: self.open_keyboard(f))
             layout.addWidget(field)
             self.fields.append(field)
+
 
     def open_keyboard(self, target_widget):
         self.keyboard = VirtualKeyboard(target_widget, self)
