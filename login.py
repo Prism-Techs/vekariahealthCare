@@ -376,8 +376,8 @@ class Ui_Form(object):
         # Add this to the setupUi method
 # Add this to the setupUi method
 # Add this to the setupUi method
-        self.username.mousePressEvent = lambda event: self.keyboard.show_keyboard()
-        self.password.mousePressEvent = lambda event: self.keyboard.show_keyboard()
+        # self.username.mousePressEvent = lambda event: self.keyboard.show_keyboard()
+        # self.password.mousePressEvent = lambda event: self.keyboard.show_keyboard()
         
         self.retranslateUi(Form)
         self.wifiIcon.clicked.connect(self.open_wifi_page)
