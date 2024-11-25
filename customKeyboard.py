@@ -26,11 +26,17 @@ class VirtualKeyboard(QDialog):
         
         # Title bar
         self.title_bar = QtWidgets.QWidget()
+        self.title_bar.setObjectName("titleBar")
+        self.title_bar.setCursor(Qt.OpenHandCursor)
+        self.title_bar.setFixedHeight(25)  # Set the height of the title bar to 25 pixels
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
+        self.title_bar_layout.setContentsMargins(5, 0, 5, 0)  # Minimize margins
+        self.title_bar_layout.setSpacing(0)  # Remove unnecessary spacing
+
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
-        self.title_label.setStyleSheet("color: white; font-weight: bold;")
+        self.title_label.setStyleSheet("color: white; font-weight: bold; font-size: 14px;")  # Adjust font size
         self.title_bar_layout.addWidget(self.title_label)
+        self.container_layout.addWidget(self.title_bar)
         
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
