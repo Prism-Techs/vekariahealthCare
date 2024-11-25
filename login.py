@@ -11,18 +11,15 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
 from globalvar import  globaladc as buzzer
-# from globalpage import doctor_page
 
-# from . import home_page
-from doctor import HomePpage as Home_page
-# from doctor import Ui_Form as doctor_page
 
-class Login_page(object):
+class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:black;")
-        Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        Form.setWindowFlags(Qt.FramelessWindowHint)
+        # Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.wifi_window = None  # Initialize as None
         # Initialize keyboard tracking variables
         self.form = Form
@@ -513,7 +510,7 @@ class Login_page(object):
                 # self.show_flicker_controller()
                 self.form.hide()
                 self.doctor_window = QtWidgets.QWidget()
-                self.doctor_ui = Home_page()  # From doctor.py
+                self.doctor_ui = home_page()  # From doctor.py
                 self.doctor_ui.setupUi(self.doctor_window)
                 self.doctor_window.show()
             else:
@@ -542,11 +539,11 @@ import vekarialogo_rc
 import wifi_rc
 
 
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     Form = QtWidgets.QWidget()
-#     ui = Ui_Form()
-#     ui.setupUi(Form)
-#     Form.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())

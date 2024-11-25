@@ -14,7 +14,7 @@ from wifi_final import WifiPage
 # from home import Ui_Form as Opeartion_page
 # from . import  Login_page as login_page
 from login import Login_page as login_page
-from doctor import HomePpage
+from home_page import HomePpage
 
 
 

@@ -18,7 +18,7 @@ from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
 from pai import Patient_info as Patient_info_page
 # from pai imprt 
 
-class HomePpage(object):
+class Home(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
@@ -388,12 +388,3 @@ class HomePpage(object):
 import vekarialogo_rc
 import wifi_rc
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
