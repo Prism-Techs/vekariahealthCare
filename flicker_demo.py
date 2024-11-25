@@ -12,8 +12,10 @@ from wifi_final import WifiPage
 # from login import doctor_page as Operation_page
 # from globalpage import doctor_page as Opeartion_page
 # from home import Ui_Form as Opeartion_page
-from . import  Login_page as login_page
+# from . import  Login_page as login_page
+from login import Login_page as login_page
 from . import home_page
+
 
 
 class PeriodicThread(threading.Thread):
