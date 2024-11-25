@@ -14,9 +14,9 @@ import os,json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-from pai import Ui_Form as Patient_info_page
+from . import patient_page as Patient_info_page
 
-class Ui_Form(object):
+class HomePpage(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
