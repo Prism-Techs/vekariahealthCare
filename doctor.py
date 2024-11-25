@@ -21,6 +21,7 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:#101826;")
+        Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.form = Form
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))

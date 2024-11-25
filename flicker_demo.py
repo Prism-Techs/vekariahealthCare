@@ -172,7 +172,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         self.wifi_window = None  # Initialize as None
-
+        Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         Form.resize(1024, 600)
         Form.setStyleSheet("background-color:#000000;")
         self.frame_4 = QtWidgets.QFrame(Form)

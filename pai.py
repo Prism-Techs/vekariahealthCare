@@ -24,6 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1031, 586)
+        Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         Form.setStyleSheet("background-color:black;\n"
 "border:none;")
         self.frame_2 = QtWidgets.QFrame(Form)
@@ -836,6 +837,13 @@ class Ui_Form(object):
                 "is_sync":False,
                 "handler_id":0
                 }
+                
+                current_login_usr = os.path.join(os.path.dirname(os.path.abspath(__file__)), "patient_data", filename)
+                with open(current_login_usr, 'r') as f:
+                     user_data = json.load(f)
+
+                patient_data['handler_id'] = user_data['user_id']
+                        
                 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 filename = f"patient_{patient_data['first_name']}.json"
