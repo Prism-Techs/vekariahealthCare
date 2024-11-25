@@ -66,7 +66,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(500, 100)  # Set minimum size
+        self.setMinimumSize(200, 100)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
