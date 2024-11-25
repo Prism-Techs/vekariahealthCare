@@ -46,7 +46,7 @@ class VirtualKeyboard(QDialog):
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(1)
+        self.keyboard_layout.setSpacing(2)
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
@@ -67,6 +67,12 @@ class VirtualKeyboard(QDialog):
                 background-color: #1e293b;
                 border: 1px solid #475569;
                 border-radius: 10px;
+            }
+            #titleBar {
+                background-color: #1e293b;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                min-height: 25px;
             }
             QPushButton {
                 color: white;
