@@ -26,27 +26,21 @@ class VirtualKeyboard(QDialog):
         
         # Title bar
         self.title_bar = QtWidgets.QWidget()
-        self.title_bar.setObjectName("titleBar")
-        self.title_bar.setCursor(Qt.OpenHandCursor)
-        self.title_bar.setFixedHeight(25)  # Set the height of the title bar to 25 pixels
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(5, 0, 5, 0)  # Minimize margins
-        self.title_bar_layout.setSpacing(0)  # Remove unnecessary spacing
-
+        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
-        self.title_label.setStyleSheet("color: white; font-weight: bold; font-size: 14px;")  # Adjust font size
+        self.title_label.setStyleSheet("color: white; font-weight: bold;")
         self.title_bar_layout.addWidget(self.title_label)
         
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
         self.container_layout.setContentsMargins(0, 0, 0, 0)
         self.container_layout.addWidget(self.title_bar)
-
         
         # Add keyboard grid
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(2)
+        self.keyboard_layout.setSpacing(5)
         self.container_layout.addWidget(self.keyboard_widget)
         
         # Add size grip
@@ -68,12 +62,6 @@ class VirtualKeyboard(QDialog):
                 border: 1px solid #475569;
                 border-radius: 10px;
             }
-            #titleBar {
-                background-color: #1e293b;
-                border-top-left-radius: 10px;
-                border-top-right-radius: 10px;
-                min-height: 25px;
-            }
             QPushButton {
                 color: white;
                 border-radius: 5px;
@@ -85,7 +73,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(600, 200)  # Set minimum size
+        self.setMinimumSize(600, 300)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -94,8 +82,6 @@ class VirtualKeyboard(QDialog):
             ["Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "?"],
             ["123", "Space", "-", "_", "/", "Cancel"]
         ]
-
-        
 
         self.symbol_keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -107,11 +93,6 @@ class VirtualKeyboard(QDialog):
 
         self.current_keys = keys
         self.create_buttons(self.keyboard_layout)
-
-
-
-
-        
 
     def create_buttons(self, layout):
         for i in reversed(range(layout.count())): 
@@ -152,11 +133,11 @@ class VirtualKeyboard(QDialog):
             event.accept()
 
     def key_pressed(self, key):
-        # try:
-        #     from globalvar import globaladc
-        #     globaladc.buzzer_1()
-        # except Exception as e:
-        #     print(f"Buzzer error: {e}")
+        try:
+            from globalvar import globaladc
+            globaladc.buzzer_1()
+        except Exception as e:
+            print(f"Buzzer error: {e}")
 
         if key == "Back":
             self.target_widget.backspace()
@@ -188,20 +169,3 @@ class VirtualKeyboard(QDialog):
             self.target_widget.keyboard = None
         else:
             self.target_widget.insert(key.upper() if self.uppercase else key.lower())
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    # Create a QLineEdit or any widget as the target for the keyboard
-    line_edit = QtWidgets.QLineEdit()
-    line_edit.setPlaceholderText("Enter text...")
-
-    # Show the QLineEdit widget
-    line_edit.show()
-
-    # Create the virtual keyboard and pass the QLineEdit as the target widget
-    keyboard = VirtualKeyboard(line_edit)
-    keyboard.show()
-
-    app.exec_()
