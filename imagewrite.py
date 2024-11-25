@@ -12,6 +12,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QFont
+from wifi_update import WifiStatusLabel
+from wifi_final import WifiPage
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -63,18 +65,16 @@ class Ui_Form(object):
         self.label_9.setPixmap(QtGui.QPixmap(":/newPrefix/Vekaria Healthcare Logo/VHC Logo.png"))
         self.label_9.setScaledContents(True)
         self.label_9.setObjectName("label_9")
-        self.label_10 = QtWidgets.QLabel(self.frame)
-        self.label_10.setGeometry(QtCore.QRect(868, 5, 41, 31))
+        self.wifiIcon = WifiStatusLabel(self.frame)
+        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
-        self.label_10.setFont(font)
-        self.label_10.setText("")
-        self.label_10.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-        self.label_10.setScaledContents(True)
-        self.label_10.setObjectName("label_10")
+        self.wifiIcon.setFont(font)
+        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
+        self.wifiIcon.clicked.connect(self.open_wifi_page)
         self.frame_2 = QtWidgets.QFrame(Form)
         self.frame_2.setGeometry(QtCore.QRect(0, 40, 1024, 551))
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -114,6 +114,10 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def open_wifi_page(self):
+        self.wifi_page = WifiPage()
+        self.wifi_page.show()
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

@@ -46,6 +46,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1024, 600)
+        self.form = Form
         Form.setStyleSheet("background-color:black;")
         self.frame = QtWidgets.QFrame(Form)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 40))
@@ -401,6 +402,7 @@ network={{
                     if self.is_connected(ssid):
                         self.check_wifi_status()
                         self.show_message("Success", f"Connected to {ssid}")
+                        self.form.hide()
                         return
                     time.sleep(1)
                 self.check_wifi_status()
