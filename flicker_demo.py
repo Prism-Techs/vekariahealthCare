@@ -9,8 +9,7 @@ import time
 from globalvar import globaladc
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
-from . import opeartion_page as Opeartion_page
-# from doctor import Ui_Form as Opeartion_page
+from login import doctor_page as Operation_page
 
 from login import Ui_Form as Login_page
 
