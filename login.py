@@ -477,6 +477,7 @@ class Ui_Form(object):
             return None
     def handle_login(self):
         """Handle login button click"""
+        from home_page import Home
         buzzer.buzzer_1()
         username = self.username.text().strip()
         password = self.password.text().strip()
@@ -510,7 +511,7 @@ class Ui_Form(object):
                 # self.show_flicker_controller()
                 self.form.hide()
                 self.doctor_window = QtWidgets.QWidget()
-                self.doctor_ui = home_page()  # From doctor.py
+                self.doctor_ui = Home()  # From doctor.py
                 self.doctor_ui.setupUi(self.doctor_window)
                 self.doctor_window.show()
             else:
