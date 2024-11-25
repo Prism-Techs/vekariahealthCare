@@ -12,7 +12,7 @@ class VirtualKeyboard(QDialog):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.dragging = False
         self.offset = QPoint()
-        self.resize_margin = 10  # Resize border width
+        self.resize_margin = 2  # Resize border width
         
         # Main layout
         self.main_layout = QtWidgets.QVBoxLayout(self)
@@ -41,7 +41,7 @@ class VirtualKeyboard(QDialog):
         self.size_grip.setStyleSheet("background: transparent;")
         size_grip_layout = QtWidgets.QHBoxLayout()
         size_grip_layout.setContentsMargins(0, 0, 0, 0)
-        size_grip_layout.addStretch()
+        # size_grip_layout.addStretch()
         size_grip_layout.addWidget(self.size_grip)
         self.container_layout.addLayout(size_grip_layout)
         
@@ -66,7 +66,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(600, 300)  # Set minimum size
+        self.setMinimumSize(500, 100)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -85,6 +85,9 @@ class VirtualKeyboard(QDialog):
         ]
 
         self.current_keys = keys
+        # Additional modifications to remove spacing
+        self.keyboard_layout.setSpacing(0)
+        self.keyboard_layout.setContentsMargins(0, 0, 0, 0)
         self.create_buttons(self.keyboard_layout)
 
     def create_buttons(self, layout):
