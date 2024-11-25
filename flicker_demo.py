@@ -10,7 +10,8 @@ from globalvar import globaladc
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 # from login import doctor_page as Operation_page
-from globalpage import doctor_page as Opeartion_page
+# from globalpage import doctor_page as Opeartion_page
+from home import Ui_Form as Opeartion_page
 
 from login import Ui_Form as Login_page
 
