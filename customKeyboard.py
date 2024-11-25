@@ -27,9 +27,7 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QtWidgets.QWidget()
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar.setCursor(Qt.OpenHandCursor)
-        self.title_bar.setFixedHeight(20)
-        self.title_bar_layout.setContentsMargins(5, 0, 5, 0)
+        self.title_bar_layout.setContentsMargins(10, 5, 10, 5)
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
         self.title_bar_layout.addWidget(self.title_label)
@@ -48,16 +46,9 @@ class VirtualKeyboard(QDialog):
         # Add size grip
         self.size_grip = QSizeGrip(self)
         self.size_grip.setStyleSheet("background: transparent;")
-
-        # Use a layout that doesn’t add extra spacing
         size_grip_layout = QtWidgets.QHBoxLayout()
-        size_grip_layout.setContentsMargins(0, 0, 0, 0)  # Make sure no margins are added
-        size_grip_layout.setSpacing(0)  # Ensure no spacing is added
-
-        # Optionally remove the stretch if it's causing unwanted vertical space
-        # size_grip_layout.addStretch()
-
-        # Add the size grip widget to the layout
+        size_grip_layout.setContentsMargins(0, 0, 0, 0)
+        size_grip_layout.addStretch()
         size_grip_layout.addWidget(self.size_grip)
         self.container_layout.addLayout(size_grip_layout)
         
@@ -82,7 +73,7 @@ class VirtualKeyboard(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.setMinimumSize(600, 100)  # Set minimum size
+        self.setMinimumSize(600, 300)  # Set minimum size
         # Keyboard layout
         keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -106,9 +97,6 @@ class VirtualKeyboard(QDialog):
     def create_buttons(self, layout):
         for i in reversed(range(layout.count())): 
             layout.itemAt(i).widget().setParent(None)
-
-        self.keyboard_layout.setVerticalSpacing(0)  # Removes vertical spacing
-        self.keyboard_layout.setHorizontalSpacing(5)  # Optionally, adjust horizontal spacing
 
         for row_index, row in enumerate(self.current_keys):
             for col_index, key in enumerate(row):
