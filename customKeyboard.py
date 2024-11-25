@@ -28,7 +28,7 @@ class VirtualKeyboard(QDialog):
         self.title_bar = QtWidgets.QWidget()
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
         self.title_bar.setCursor(Qt.OpenHandCursor)
-        self.title_bar.setFixedHeight(10)
+        self.title_bar.setFixedHeight(20)
         self.title_bar_layout.setContentsMargins(5, 0, 5, 0)
         self.title_label = QtWidgets.QLabel("Virtual Keyboard")
         self.title_label.setStyleSheet("color: white; font-weight: bold;")
@@ -48,8 +48,10 @@ class VirtualKeyboard(QDialog):
         # Add size grip
         self.size_grip = QSizeGrip(self)
         self.size_grip.setStyleSheet("background: transparent;")
+        self.size_grip.setFixedHeight(50)
         size_grip_layout = QtWidgets.QHBoxLayout()
         size_grip_layout.setContentsMargins(0, 0, 0, 0)
+
         size_grip_layout.addStretch()
         size_grip_layout.addWidget(self.size_grip)
         self.container_layout.addLayout(size_grip_layout)
