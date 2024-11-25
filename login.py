@@ -11,7 +11,8 @@ from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
 from customKeyboard import RPiKeyboard
 from globalvar import  globaladc as buzzer
-from doctor import Ui_Form as doctor_page
+from globalvar import doctor_page
+# from doctor import Ui_Form as doctor_page
 
 class Ui_Form(object):
     def setupUi(self, Form):
