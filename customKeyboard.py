@@ -72,7 +72,7 @@ class VirtualKeyboard(QDialog):
         self.main_layout.addWidget(self.container)
 
     def init_ui(self):
-        self.setMinimumSize(450, 200)  # Smaller overall size
+        self.setMinimumSize(300, 200)  # Smaller overall size
 
         self.alpha_keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
