@@ -25,23 +25,6 @@ class VirtualKeyboard(QDialog):
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setContentsMargins(10, 10, 10, 10)
 
-        # Title bar
-        self.title_bar = QtWidgets.QWidget()
-        self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(5, 5, 5, 5)
-
-        # Add drag handle icon
-        self.drag_label = QtWidgets.QLabel("≡")
-        self.drag_label.setStyleSheet("color: #94a3b8; font-size: 18px;")
-        self.title_bar_layout.addWidget(self.drag_label)
-        self.title_bar_layout.addStretch()
-
-        # Close button
-        self.close_btn = QPushButton("×")
-        self.close_btn.setFixedSize(30, 30)
-        self.close_btn.clicked.connect(self.close)
-        self.title_bar_layout.addWidget(self.close_btn)
-
         # Container widget
         self.container = QtWidgets.QWidget()
         self.container.setObjectName("container")
@@ -49,7 +32,6 @@ class VirtualKeyboard(QDialog):
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
         self.container_layout.setContentsMargins(8, 8, 8, 8)
-        self.container_layout.addWidget(self.title_bar)
 
         # Keyboard widget
         self.keyboard_widget = QtWidgets.QWidget()
@@ -57,13 +39,23 @@ class VirtualKeyboard(QDialog):
         self.keyboard_layout.setSpacing(5)
         self.container_layout.addWidget(self.keyboard_widget)
 
-        # Size grip
-        size_grip_layout = QtWidgets.QHBoxLayout()
-        self.size_grip = QSizeGrip(self)
-        size_grip_layout.addStretch()
-        size_grip_layout.addWidget(self.size_grip)
-        self.container_layout.addLayout(size_grip_layout)
+        # Drag-and-resize area at the bottom
+        drag_resize_widget = QtWidgets.QWidget()
+        drag_resize_layout = QtWidgets.QHBoxLayout(drag_resize_widget)
+        drag_resize_layout.setContentsMargins(0, 0, 0, 0)
 
+        # Size grip for resizing
+        self.size_grip = QSizeGrip(self)
+        drag_resize_layout.addStretch()
+        drag_resize_layout.addWidget(self.size_grip)
+
+        # Add the drag area
+        self.drag_area = QtWidgets.QLabel()
+        self.drag_area.setMinimumHeight(20)
+        self.drag_area.setStyleSheet("background-color: transparent;")
+        drag_resize_layout.addWidget(self.drag_area)
+
+        self.container_layout.addWidget(drag_resize_widget)
         self.main_layout.addWidget(self.container)
 
     def init_ui(self):
@@ -105,18 +97,6 @@ class VirtualKeyboard(QDialog):
                 min-height: 45px;
                 font-size: 14px;
                 font-weight: bold;
-            }
-            QPushButton#close_btn {
-                background-color: transparent;
-                color: #94a3b8;
-                font-size: 20px;
-                border-radius: 15px;
-                min-width: 30px;
-                min-height: 30px;
-            }
-            QPushButton#close_btn:hover {
-                background-color: #dc2626;
-                color: white;
             }
             QSizeGrip {
                 width: 16px;
@@ -187,7 +167,8 @@ class VirtualKeyboard(QDialog):
             self.target_widget.insert(key.upper() if self.uppercase else key.lower())
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton and self.title_bar.geometry().contains(event.pos()):
+        # Allow dragging only from the drag area
+        if event.button() == Qt.LeftButton and self.drag_area.geometry().contains(event.pos()):
             self.dragging = True
             self.offset = event.globalPos() - self.pos()
         event.accept()
