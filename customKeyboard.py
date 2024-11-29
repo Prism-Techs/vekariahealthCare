@@ -28,20 +28,21 @@ class VirtualKeyboard(QDialog):
         # Title bar
         self.title_bar = QtWidgets.QWidget()
         self.title_bar.setObjectName("title_bar")
-        self.title_bar.setMinimumHeight(20)  # Smaller title bar height
+        self.title_bar.setFixedHeight(20)  # Keep height minimal
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(2, 2, 2, 2)
+        self.title_bar_layout.setContentsMargins(2, 2, 2, 2)  # Tight margins
 
         # Drag handle icon
         self.drag_label = QtWidgets.QLabel("≡")
         self.drag_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        self.drag_label.setFixedSize(16, 16)  # Same size as the close button
         self.title_bar_layout.addWidget(self.drag_label)
 
         self.title_bar_layout.addStretch()
 
         # Close button
         self.close_btn = QPushButton("×")
-        self.close_btn.setFixedSize(16, 16)  # Smaller close button
+        self.close_btn.setFixedSize(16, 16)  # Minimal close button size
         self.close_btn.setObjectName("close_btn")
         self.close_btn.clicked.connect(self.close)
         self.title_bar_layout.addWidget(self.close_btn)
