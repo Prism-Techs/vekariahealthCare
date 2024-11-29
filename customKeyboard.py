@@ -23,19 +23,19 @@ class VirtualKeyboard(QDialog):
     def setup_layouts(self):
         # Main layout
         self.main_layout = QtWidgets.QVBoxLayout(self)
-        self.main_layout.setContentsMargins(2, 2, 2, 2)
+        self.main_layout.setContentsMargins(1, 1, 1, 1)  # Reduce main frame margins
 
         # Title bar
         self.title_bar = QtWidgets.QWidget()
         self.title_bar.setObjectName("title_bar")
-        self.title_bar.setFixedHeight(18)  # Minimal height for title bar
+        self.title_bar.setFixedHeight(16)  # Minimal height for title bar
         self.title_bar_layout = QtWidgets.QHBoxLayout(self.title_bar)
-        self.title_bar_layout.setContentsMargins(2, 2, 2, 2)
+        self.title_bar_layout.setContentsMargins(1, 1, 1, 1)
 
         # Drag handle icon
         self.drag_label = QtWidgets.QLabel("≡")
-        self.drag_label.setStyleSheet("color: #94a3b8; font-size: 10px;")
-        self.drag_label.setFixedSize(12, 12)  # Small drag handle
+        self.drag_label.setStyleSheet("color: #94a3b8; font-size: 8px;")
+        self.drag_label.setFixedSize(10, 10)  # Small drag handle
         self.title_bar_layout.addWidget(self.drag_label)
 
         self.title_bar_layout.addStretch()
@@ -53,13 +53,13 @@ class VirtualKeyboard(QDialog):
 
         # Container layout
         self.container_layout = QtWidgets.QVBoxLayout(self.container)
-        self.container_layout.setContentsMargins(3, 3, 3, 3)
+        self.container_layout.setContentsMargins(2, 2, 2, 2)  # Minimize container margins
         self.container_layout.addWidget(self.title_bar)
 
         # Keyboard widget
         self.keyboard_widget = QtWidgets.QWidget()
         self.keyboard_layout = QGridLayout(self.keyboard_widget)
-        self.keyboard_layout.setSpacing(2)  # Reduced spacing
+        self.keyboard_layout.setSpacing(1)  # Minimal spacing between keys
         self.container_layout.addWidget(self.keyboard_widget)
 
         # Size grip for resizing
@@ -72,7 +72,7 @@ class VirtualKeyboard(QDialog):
         self.main_layout.addWidget(self.container)
 
     def init_ui(self):
-        self.setMinimumSize(350, 150)  # Smaller overall keyboard size
+        self.setMinimumSize(320, 140)  # Further reduce main frame size
 
         self.alpha_keys = [
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Back"],
@@ -101,20 +101,20 @@ class VirtualKeyboard(QDialog):
             #container {
                 background-color: #1e293b;
                 border: 1px solid #475569;
-                border-radius: 6px;
+                border-radius: 4px;
             }
             QPushButton {
                 color: #f8fafc;
-                border-radius: 3px;
-                min-width: 25px;
-                min-height: 25px;
-                font-size: 10px;
+                border-radius: 2px;
+                min-width: 20px;
+                min-height: 20px;
+                font-size: 8px;  /* Smaller font size */
                 font-weight: bold;
             }
             QPushButton#close_btn {
                 background-color: transparent;
                 color: #94a3b8;
-                font-size: 10px;
+                font-size: 8px;
                 border: none;
             }
             QPushButton#close_btn:hover {
@@ -122,8 +122,8 @@ class VirtualKeyboard(QDialog):
                 color: white;
             }
             QSizeGrip {
-                width: 10px;
-                height: 10px;
+                width: 8px;
+                height: 8px;
             }
         """)
 
@@ -145,19 +145,19 @@ class VirtualKeyboard(QDialog):
                     button.setStyleSheet("""
                         QPushButton {
                             background-color: #475569;
-                            border-radius: 3px;
+                            border-radius: 2px;
                         }
                         QPushButton:pressed {
                             background-color: #64748b;
                         }
                     """)
                 elif key == "Space":
-                    button.setMinimumWidth(80)  # Smaller space bar width
+                    button.setMinimumWidth(60)  # Further reduce space bar size
                 else:
                     button.setStyleSheet("""
                         QPushButton {
                             background-color: #334155;
-                            border-radius: 3px;
+                            border-radius: 2px;
                         }
                         QPushButton:pressed {
                             background-color: #475569;
