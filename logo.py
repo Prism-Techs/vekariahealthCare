@@ -33,7 +33,7 @@ class LoadingScreen(QWidget):
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setGeometry(0, 0, 1024, 600)
-        run_in_thread("patient_data","http://localhost:5600/patient/sync/",'wifi_status.py')
+        run_in_thread("patient_data","http://15.2.2.254:8888/patient/sync/",'wifi_status.py')
 
         # Replace 'path/to/your/logo.png' with the actual path to your logo
         self.pixmap = QPixmap('logo.png')
