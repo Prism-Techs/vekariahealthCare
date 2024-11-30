@@ -1,11 +1,31 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QListWidget, QPushButton
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 from PyQt5.QtGui import QFont
-import PerodicThread
 import time
 from globalvar import globaladc
 import RPi.GPIO as GPIO
+
+class PeriodicThread(QThread):
+    update_signal = pyqtSignal()
+
+    def __init__(self, interval, parent=None):
+        super().__init__(parent)
+        self.interval = interval
+        self.isStarted = False
+
+    def run(self):
+        self.isStarted = True
+        while self.isStarted:
+            self.update_signal.emit()
+            time.sleep(self.interval)
+
+    def stop(self):
+        self.isStarted = False
+
+    def kill(self):
+        self.stop()
+        self.wait()
 
 switch = 20
 contt_fva = 34.5
@@ -25,7 +45,8 @@ class CffFovea(QWidget):
         self.response_count = 0
         self.skip_event = True
         self.threadCreated = False
-        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
+        self.worker_cff = PeriodicThread(intervel)
+        self.worker_cff.update_signal.connect(self.periodic_event)
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
         self.min_apr = 0
@@ -156,7 +177,8 @@ class CffFovea(QWidget):
         
     def run_thread(self):
         globaladc.get_print("worker_cff thread started")        
-        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
+        self.worker_cff = PeriodicThread(intervel)
+        self.worker_cff.update_signal.connect(self.periodic_event)
         if not self.worker_cff.isStarted:
             self.worker_cff.start()
             self.patient_switch_enable()
