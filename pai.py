@@ -821,6 +821,7 @@ class Patient_UI(object):
                 "handler_id":0
                 }
                 
+                filename = f"patient_{patient_data['first_name']}.json"
                 current_login_usr = os.path.join(os.path.dirname(os.path.abspath(__file__)), "patient_data", filename)
                 with open(current_login_usr, 'r') as f:
                      user_data = json.load(f)
@@ -829,7 +830,6 @@ class Patient_UI(object):
                         
                 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"patient_{patient_data['first_name']}.json"
                 filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "patient_data", filename)
                 
                 # Create directory if it doesn't exist

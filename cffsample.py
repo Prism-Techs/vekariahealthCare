@@ -9,26 +9,26 @@ class CFFTest(QMainWindow):
     def __init__(self):
         super().__init__()
         self.switch = 20
-        self.flicker_pin = 18  # Example GPIO pin for flicker
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
         self.response_count = 0
         self.skip_event = True
-        self.response_array = [0, 0, 0, 0, 0]
+        self.response_array = [0,0,0,0,0]
         self.min_apr = 0
         self.max_apr = 0
-
-        # Prepare hardware and ADC
         globaladc.flicker_Prepair()
+
+
+        
+        # Initialize global ADC
+        self.globaladc = globaladc
         
         self.setupUI()
         self.setupGPIO()
-
-        # Timer for periodic flicker updates
-        self.flicker_timer = QTimer()
-        self.flicker_timer.timeout.connect(self.update_flicker)
-        self.flicker_on = False
-        self.flicker_timer.start(50)  # Flicker interval (adjust for visibility)
+        
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.periodic_event)
+        self.timer.start(1000) # Adjust interval as needed
 
     def setupUI(self):
         self.setWindowTitle('CFF Test')
@@ -37,7 +37,7 @@ class CFFTest(QMainWindow):
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
         layout = QGridLayout()
-
+        
         # Labels
         self.cff_label = QLabel('CFF FOVEA:', self)
         self.cff_label.setStyleSheet("font: 15pt Arial")
@@ -75,10 +75,6 @@ class CFFTest(QMainWindow):
         GPIO.setup(self.switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.switch, GPIO.RISING, callback=self.handleUserButton)
 
-        # Setup flicker GPIO
-        GPIO.setup(self.flicker_pin, GPIO.OUT)
-        GPIO.output(self.flicker_pin, GPIO.LOW)
-
     def handleUserButton(self, channel):
         if self.skip_event:
             self.action_label.hide()
@@ -110,16 +106,22 @@ class CFFTest(QMainWindow):
                 self.globaladc.buzzer_3()
                 time.sleep(1)
                 
-                self.flicker_timer.stop()
+                self.timer.stop()
                 self.close()
-            self.globaladc.fliker_start_g()
+            globaladc.fliker_start_g()
             self.globaladc.buzzer_3()
 
-    def update_flicker(self):
-        """Toggle the flicker GPIO pin to create a visible flicker effect."""
+    def periodic_event(self):
         if not self.skip_event:
-            self.flicker_on = not self.flicker_on
-            GPIO.output(self.flicker_pin, GPIO.HIGH if self.flicker_on else GPIO.LOW)
+            self.freq_val = round(self.freq_val - 0.5, 1)
+            self.freq_label.setText(str(self.freq_val))
+            self.globaladc.put_cff_fovea_frq(self.freq_val)
+            
+            if self.freq_val < 5:
+                self.skip_event = True
+                self.freq_val = self.freq_val_start
+                self.freq_label.setText(str(self.freq_val))
+                self.globaladc.buzzer_3()
 
     def closeEvent(self, event):
         GPIO.cleanup()
