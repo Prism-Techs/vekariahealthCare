@@ -108,7 +108,7 @@ class CFFTest(QMainWindow):
                 
                 self.timer.stop()
                 self.close()
-            
+            globaladc.fliker_start_g()
             self.globaladc.buzzer_3()
 
     def periodic_event(self):
