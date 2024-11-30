@@ -33,6 +33,7 @@ class LoadingScreen(QWidget):
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setGeometry(0, 0, 1024, 600)
+        wifi_checker_main()
         run_in_thread("patient_data","http://15.2.2.254:8888/patient/sync/",'wifi_status.json')
 
         # Replace 'path/to/your/logo.png' with the actual path to your logo
@@ -42,7 +43,6 @@ class LoadingScreen(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.animate_logo)
         self.timer.start(50)  # Adjust for faster/slower animation
-        wifi_checker_main()
         self.counter = 0
 
     def animate_logo(self):
