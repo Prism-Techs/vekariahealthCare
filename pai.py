@@ -821,7 +821,7 @@ class Patient_UI(object):
                 "handler_id":0
                 }
                 
-                current_login_usr = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data", latest_user.json)
+                current_login_usr = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data", "latest_user.json")
                 with open(current_login_usr, 'r') as f:
                      user_data = json.load(f)
 
