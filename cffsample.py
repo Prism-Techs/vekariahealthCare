@@ -17,7 +17,8 @@ class CffFoveaApp(QWidget):
         super().__init__()
         self.setWindowTitle("CFF Fovea Measurement")
         self.setGeometry(100, 100, 1024, 600)
-
+        globaladc.fan_on()
+        globaladc.fliker_start_b()
         # Variables
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
