@@ -10,9 +10,20 @@ from PyQt5.QtGui import QFont
 import PerodicThread 
 from globalvar import globaladc
 
+# Global variable to store the CffFovea widget instance
+current_cff_fovea_instance = None
+
+def hardware():
+    global current_cff_fovea_instance
+    if current_cff_fovea_instance:
+        current_cff_fovea_instance.handleuserButton()
+
 class CffFoveaWidget(QWidget):
     def __init__(self, on_forward_callback=None, on_backward_callback=None):
         super().__init__()
+        global current_cff_fovea_instance
+        current_cff_fovea_instance = self
+
         self.switch = 20
         self.contt_fva = 34.5
         self.intervel = globaladc.get_cff_delay()
@@ -139,7 +150,6 @@ class CffFoveaWidget(QWidget):
                     
                     avgval = globaladc.get_cff_f_avg_cal()
                     log_data = f"CFF_F-{avgval}"
-                    # Removed currentPatientInfo.log_update(log_data)
                     
                     time.sleep(1)
                     globaladc.buzzer_3()
@@ -202,7 +212,7 @@ class CffFoveaWidget(QWidget):
         self.reset_ui()
         self.show()
         globaladc.cff_Fovea_Prepair()
-        globaladc.blue_led_off()  # Restored blue LED off method
+        globaladc.blue_led_off()
         self.start_thread()
 
     def reset_ui(self):
@@ -225,6 +235,10 @@ class CffFoveaWidget(QWidget):
         self.patient_switch_disable()
         self.skip_event = True
         self.threadCreated = False
+
+    @classmethod
+    def get_current_instance(cls):
+        return current_cff_fovea_instance
 
 def main():
     app = QApplication(sys.argv)
