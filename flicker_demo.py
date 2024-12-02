@@ -536,12 +536,10 @@ class Ui_Form(object):
     def open_cfftest(self):
         globaladc.buzzer_1()
         from cffsample import CFFTest
-        if self.cfftest_window is None:
-            self.cfftest_window = CFFTest()
-            self.form.hide()
-            self.cfftest_window.show()
-        else:
-            self.cfftest_window.activateWindow()
+        self.cfftest_window = CFFTest()
+        self.form.hide()
+        self.cfftest_window.show()
+
 
 
     def open_login_page(self):
