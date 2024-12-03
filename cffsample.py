@@ -6,13 +6,14 @@ import time
 from globalvar import globaladc
 
 class CFFTest(QMainWindow):
-    def __init__(self):
+    def __init__(self, frame=None):
         super().__init__()
         self.switch = 20
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
         self.response_count = 0
         self.skip_event = True
+        self.threadCreated = False
         self.response_array = [0,0,0,0,0]
         self.min_apr = 0
         self.max_apr = 0
@@ -21,9 +22,6 @@ class CFFTest(QMainWindow):
         globaladc.flicker_Prepair()
         self.globaladc = globaladc
         self.globaladc.fliker_start_g()
-        
-        # Add buzzer on first initialization
-        globaladc.buzzer_1()
         
         self.setupUI()
         self.setupGPIO()
@@ -75,48 +73,83 @@ class CFFTest(QMainWindow):
         GPIO.add_event_detect(self.switch, GPIO.RISING, callback=self.handleUserButton)
 
     def handleUserButton(self, channel):
+        globaladc.get_print('handle to be implemented')
+        jmp = False
+        self.patient_switch_desable()
+        time.sleep(0.15)
+
         if self.skip_event:
-            # Add buzzer call similar to Tkinter version
-            # globaladc.buzzer_1()  # Uncomment if you want a buzzer here
-            
             self.action_label.hide()
+            self.threadCreated = True
+            
+            # Adjust starting frequency based on response count
+            if self.response_count == 0:
+                self.freq_val_start = self.freq_val_start
+            else:
+                self.freq_val_start = self.min_apr + 6.5
+            
             self.freq_val = self.freq_val_start
-            self.skip_event = False
-            self.globaladc.fliker_start_g()
+            globaladc.fliker_start_g()
             time.sleep(0.2)
+            self.skip_event = False
         else:
-            # Add buzzer call similar to Tkinter version
-            # globaladc.buzzer_1()  # Uncomment if you want a buzzer here
-            
             self.skip_event = True
-            self.response_array[self.response_count] = self.freq_val
-            self.trial_list.addItem(str(self.freq_val))
-            
-            self.min_apr = self.globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)
-            self.min_label.setText(str(self.min_apr))
-            
-            self.response_count += 1
-            
-            if self.response_count >= 5:
-                self.max_apr = self.globaladc.get_cff_f_max_cal()
-                self.max_label.setText(str(self.max_apr))
+            time.sleep(0.5)
+
+            if self.threadCreated:
+                self.response_array[self.response_count] = self.freq_val
+                self.trial_list.addItem(str(self.response_array[self.response_count]))
                 
-                avg_val = self.globaladc.get_cff_f_avg_cal()
-                self.globaladc.get_print(f"Average value: {avg_val}")
+                self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)
+                self.response_count += 1
                 
-                self.globaladc.buzzer_3()
-                time.sleep(1)
+                self.min_label.setText(str(self.min_apr))
                 
-                self.timer.stop()
-                self.close()
+                if self.response_count == 5:
+                    self.max_apr = globaladc.get_cff_f_max_cal()
+                    self.max_label.setText(str(self.max_apr))
+                    
+                    str_data = 'self.max_apr=' + str(self.max_apr)
+                    globaladc.get_print(str_data)
+                    
+                    avgval = globaladc.get_cff_f_avg_cal()
+                    globaladc.get_print(f"CFF_F-{avgval}")
+                    
+                    time.sleep(1)
+                    globaladc.buzzer_3()
+                    globaladc.get_print('done')
+                    
+                    # Close the application or add your navigation logic here
+                    self.close()
+                    
+                    self.patient_switch_desable()
+                    jmp = True
+                
+                self.freq_label.setText(str(self.freq_val))
+
+        if not jmp:
+            if self.skip_event:
+                time.sleep(0.2)
+                globaladc.buzzer_3()
+            self.patient_switch_enable()
+
+    def patient_switch_enable(self):
+        globaladc.get_print('patient_switch_enable')
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.switch, GPIO.RISING, callback=self.handleUserButton)
+
+    def patient_switch_desable(self):
+        globaladc.get_print('patient_switch_desable')
+        GPIO.remove_event_detect(self.switch)
 
     def periodic_event(self):
         if not self.skip_event:
-            self.freq_val = round(self.freq_val - 0.5, 1)
+            self.freq_val = round(self.freq_val - 1.0, 1)
             self.freq_label.setText(str(self.freq_val))
             self.globaladc.put_cff_fovea_frq(self.freq_val)
             
-            # Toggle flicker state
             self.globaladc.fliker(1 if self.flicker_bool else 0)
             self.flicker_bool = not self.flicker_bool
             
