@@ -22,12 +22,15 @@ class CFFTest(QMainWindow):
         self.globaladc = globaladc
         self.globaladc.fliker_start_g()
         
+        # Add buzzer on first initialization
+        globaladc.buzzer_1()
+        
         self.setupUI()
         self.setupGPIO()
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.periodic_event)
-        self.timer.start(1000)
+        self.timer.start(500)
 
     def setupUI(self):
         self.setWindowTitle('CFF Test')
@@ -73,12 +76,18 @@ class CFFTest(QMainWindow):
 
     def handleUserButton(self, channel):
         if self.skip_event:
+            # Add buzzer call similar to Tkinter version
+            # globaladc.buzzer_1()  # Uncomment if you want a buzzer here
+            
             self.action_label.hide()
             self.freq_val = self.freq_val_start
             self.skip_event = False
             self.globaladc.fliker_start_g()
             time.sleep(0.2)
         else:
+            # Add buzzer call similar to Tkinter version
+            # globaladc.buzzer_1()  # Uncomment if you want a buzzer here
+            
             self.skip_event = True
             self.response_array[self.response_count] = self.freq_val
             self.trial_list.addItem(str(self.freq_val))
