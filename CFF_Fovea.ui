@@ -337,7 +337,7 @@ color:white;</string>
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QLabel" name="label_28">
+   <widget class="QLabel" name="data2">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -366,7 +366,7 @@ color:white;</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_3">
+   <widget class="QTextEdit" name="final_data">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -418,7 +418,7 @@ background-color:black;
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QLabel" name="label_7">
+    <widget class="QLabel" name="data1">
      <property name="geometry">
       <rect>
        <x>40</x>
