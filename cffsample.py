@@ -3,8 +3,7 @@ import time
 import RPi.GPIO as GPIO
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QListWidget, QPushButton
 from PyQt5.QtCore import QTimer
-from globalvar import globaladc, currentPatientInfo
-
+from globalvar import globaladc
 switch = 20
 intervel = globaladc.get_cff_delay()
 Font = "Arial"
@@ -104,7 +103,7 @@ class CffFovea(QWidget):
                     self.cffValue_max.setText(str(self.max_apr))
                     globaladc.get_print(f"Max Apr: {self.max_apr}")
                     avgval = globaladc.get_cff_f_avg_cal()
-                    currentPatientInfo.log_update(f"CFF_F-{avgval}")
+                    # currentPatientInfo.log_update(f"CFF_F-{avgval}")
                     time.sleep(1)
                     globaladc.buzzer_3()
                     self.hide()
