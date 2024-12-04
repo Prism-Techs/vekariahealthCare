@@ -9,7 +9,7 @@ from globalvar import globaladc
 # from globalvar import pageDisctonary
 # from globalvar import currentPatientInfo
 
-class CffFoveaTest(QMainWindow):
+class CFFTest(QMainWindow):
     def __init__(self, frame=None):
         super().__init__()
         
@@ -241,7 +241,7 @@ class CffFoveaTest(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    window = CffFoveaTest()
+    window = CFFTest()
     window.show()
     sys.exit(app.exec_())
 
