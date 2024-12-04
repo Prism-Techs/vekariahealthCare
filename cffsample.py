@@ -1,249 +1,243 @@
 import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 import RPi.GPIO as GPIO
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QFont
+from threading import Thread, Event
 
-from globalvar import globaladc
-# from globalvar import pageDisctonary
-# from globalvar import currentPatientInfo
-
-class CFFTest(QMainWindow):
-    def __init__(self, frame=None):
+class PeriodicThread(Thread):
+    def __init__(self, interval, callback):
         super().__init__()
+        self.interval = interval
+        self.callback = callback
+        self.stop_event = Event()
+        self.is_started = False
         
-        # Hardware and state variables
-        self.switch = 20
-        self.contt_fva = 34.5
-        self.intervel = globaladc.get_cff_delay()
+    def run(self):
+        self.is_started = True
+        while not self.stop_event.is_set():
+            self.callback()
+            time.sleep(self.interval)
+            
+    def stop(self):
+        self.stop_event.set()
+        self.is_started = False
+
+class CffFovea(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+        self.initializeVariables()
+        self.setupConnections()
         
-        # Test state variables
+    def initializeVariables(self):
+        self.switch = 20  # GPIO pin for patient switch
         self.response_count = 0
         self.skip_event = True
-        self.threadCreated = False
-        
-        # Frequency and response tracking
+        self.thread_created = False
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
         self.min_apr = 0
         self.max_apr = 0
-        self.response_array = [0,0,0,0,0]
+        self.response_array = [0] * 5
+        self.interval = 0.1  # Adjust as needed
+        self.worker_thread = None
         
-        # Fonts
-        self.font_normal = QFont("Arial", 15)
-        self.font_large = QFont("Arial", 20)
+    def setupConnections(self):
+        self.pushButton.clicked.connect(self.onMachineReady)
+        self.pushButton_2.clicked.connect(self.onFlickerStart)
+        self.pushButton_3.clicked.connect(self.onFlickerVisible)
+        self.Home.clicked.connect(self.onHome)
+        self.Next.clicked.connect(self.onNext)
         
-        self.setupUI()
-        self.setupGPIO()
+    def setupUi(self):
+        # Adding all the UI elements from the second file's setupUi method
+        self.setObjectName("Form")
+        self.resize(1024, 612)
+        self.setStyleSheet("background-color:black;\ncolor:white;")
         
-        # Timer for periodic events
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.periodic_event)
-        self.timer.start(int(self.intervel * 1000))  # Convert to milliseconds
+        # Create main frame
+        self.frame = QtWidgets.QFrame(self)
+        self.frame.setGeometry(QtCore.QRect(0, 0, 1031, 41))
+        self.frame.setStyleSheet("background-color:#1f2836;\ncolor:white")
         
-    def setupUI(self):
-        self.setWindowTitle('CFF Fovea Test')
-        self.setGeometry(100, 100, 1024, 600)
+        # Add title labels
+        self.label_2 = QtWidgets.QLabel(self.frame)
+        self.label_2.setGeometry(QtCore.QRect(60, 0, 281, 41))
+        font = QtGui.QFont()
+        font.setFamily("Helvetica Neue")
+        font.setPointSize(16)
+        font.setBold(True)
+        self.label_2.setFont(font)
+        self.label_2.setText("Vekaria Healthcare")
         
-        centralWidget = QWidget()
-        self.setCentralWidget(centralWidget)
-        layout = QGridLayout()
+        # Add content frame
+        self.frame_5 = QtWidgets.QFrame(self)
+        self.frame_5.setGeometry(QtCore.QRect(280, 110, 711, 441))
+        self.frame_5.setStyleSheet("""
+        QFrame{
+            background-color:#1f2836;
+            border-radius:30px;
+        };
+        color:white;
+        """)
         
-        # CFF Label
-        cfflabel = QLabel('CFF FOVEA:', self)
-        cfflabel.setFont(self.font_normal)
+        # Add main display
+        self.data1 = QtWidgets.QLabel(self.frame_5)
+        self.data1.setGeometry(QtCore.QRect(200, 60, 211, 50))
+        font = QtGui.QFont()
+        font.setFamily("Helvetica Neue")
+        font.setPointSize(28)
+        self.data1.setFont(font)
+        self.data1.setStyleSheet("color: white;")
+        self.data1.setAlignment(QtCore.Qt.AlignCenter)
+        self.data1.setText("34.5")
         
-        # Minimum and Maximum Value Labels
-        self.cffValue_min = QLabel('    ', self)
-        self.cffValue_min.setFont(self.font_normal)
-        self.cffValue_min.setStyleSheet("background-color: white")
+        # Add trial list
+        self.final_data = QtWidgets.QTextEdit(self.frame_5)
+        self.final_data.setGeometry(QtCore.QRect(580, 100, 111, 281))
+        self.final_data.setStyleSheet("""
+        QTextEdit {
+            background-color: black;
+            border: 2px solid Black;
+            color: white;
+            border-radius:0px;
+        }
+        """)
         
-        self.cffValue_max = QLabel('    ', self)
-        self.cffValue_max.setFont(self.font_normal)
-        self.cffValue_max.setStyleSheet("background-color: white")
+        # Add control buttons
+        button_style = """
+        QPushButton {
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 5px;
+            font-family: Arial;
+            color: white;
+            background-color: #1a472a;
+            border: 2px solid white;
+        }
+        QPushButton:hover {
+            background-color: #2a5a3a;
+        }
+        """
         
-        # Frequency Value Label
-        self.cffValue_frq = QLabel('    ', self)
-        self.cffValue_frq.setFont(self.font_normal)
-        self.cffValue_frq.setStyleSheet("background-color: #F7F442")
+        self.pushButton = QtWidgets.QPushButton("Machine Ready", self.frame_5)
+        self.pushButton.setGeometry(QtCore.QRect(50, 230, 134, 41))
+        self.pushButton.setStyleSheet(button_style)
         
-        # Patient Action Label
-        self.patentActionflabel = QLabel("Patient's side Button\nBegins Trial", self)
-        self.patentActionflabel.setFont(self.font_normal)
-        self.patentActionflabel.setStyleSheet("background-color: white")
+        self.pushButton_2 = QtWidgets.QPushButton("Flicker Start", self.frame_5)
+        self.pushButton_2.setGeometry(QtCore.QRect(50, 290, 134, 41))
+        self.pushButton_2.setStyleSheet(button_style)
         
-        # Trial List
-        self.trialList = QListWidget(self)
-        self.trialList.setFont(self.font_normal)
+        self.pushButton_3 = QtWidgets.QPushButton("Flicker Visible", self.frame_5)
+        self.pushButton_3.setGeometry(QtCore.QRect(50, 350, 134, 41))
+        self.pushButton_3.setStyleSheet(button_style)
         
-        # Navigation Buttons
-        self.fwButton = QPushButton(">>", self)
-        self.fwButton.setFont(self.font_large)
-        self.fwButton.setStyleSheet("background-color: green")
-        self.fwButton.clicked.connect(self.onForward)
+        # Navigation buttons
+        nav_button_style = """
+        QPushButton {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 10px 20px;
+            font-size: 24px;
+            border-radius: 1px;
+            font-weight: bold;
+        }
+        """
         
-        self.bwButton = QPushButton("<<", self)
-        self.bwButton.setFont(self.font_large)
-        self.bwButton.setStyleSheet("background-color: green")
-        self.bwButton.clicked.connect(self.onBackward)
+        self.Home = QtWidgets.QPushButton("Home", self.frame_5)
+        self.Home.setGeometry(QtCore.QRect(300, 380, 121, 51))
+        self.Home.setStyleSheet(nav_button_style)
         
-        # Layout Positioning
-        layout.addWidget(cfflabel, 0, 0)
-        layout.addWidget(self.cffValue_min, 1, 0)
-        layout.addWidget(self.cffValue_max, 1, 1)
-        layout.addWidget(self.cffValue_frq, 1, 2)
-        layout.addWidget(self.patentActionflabel, 2, 0, 1, 2)
-        layout.addWidget(self.trialList, 1, 3, 3, 1)
-        layout.addWidget(self.fwButton, 4, 2)
-        layout.addWidget(self.bwButton, 4, 0)
+        self.Next = QtWidgets.QPushButton("Next", self.frame_5)
+        self.Next.setGeometry(QtCore.QRect(440, 380, 121, 51))
+        self.Next.setStyleSheet(nav_button_style)
+
+    def handleUserButton(self):
+        if self.skip_event:
+            self.startNewTrial()
+        else:
+            self.endTrial()
+            
+    def startNewTrial(self):
+        self.skip_event = False
+        if self.response_count == 0:
+            self.freq_val = self.freq_val_start
+        else:
+            self.freq_val = self.min_apr + 6.5
+            
+        self.thread_created = True
+        self.startFlicker()
         
-        centralWidget.setLayout(layout)
+    def endTrial(self):
+        self.skip_event = True
+        self.response_array[self.response_count] = self.freq_val
+        self.updateTrialDisplay()
+        self.response_count += 1
         
+        if self.response_count == 5:
+            self.finalizeTest()
+            
+    def updateTrialDisplay(self):
+        current_text = self.final_data.toPlainText()
+        new_text = f"{self.freq_val:.1f}\n{current_text}"
+        self.final_data.setText(new_text)
+        
+    def finalizeTest(self):
+        self.stopThread()
+        self.calculateResults()
+        self.showResults()
+        
+    def periodic_event(self):
+        if not self.skip_event:
+            self.freq_val = round(self.freq_val - 0.5, 1)
+            self.data1.setText(f"{self.freq_val:.1f}")
+            if self.freq_val < 5:
+                self.skip_event = True
+                self.thread_created = False
+                self.freq_val = self.freq_val_start
+                
     def setupGPIO(self):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.switch, GPIO.RISING, callback=self.handleUserButton)
+        GPIO.add_event_detect(self.switch, GPIO.RISING, callback=lambda x: self.handleUserButton())
         
-    def handleUserButton(self, switch=None):
-        globaladc.get_print('handle to be implemented')
-        jmp = False
-        self.patient_switch_desable()
-        time.sleep(0.15)
-        
-        if self.skip_event:
-            self.patentActionflabel.hide()
-            self.threadCreated = True
+    def startThread(self):
+        if not self.worker_thread or not self.worker_thread.is_started:
+            self.worker_thread = PeriodicThread(self.interval, self.periodic_event)
+            self.worker_thread.start()
             
-            # Adjust frequency based on response count
-            if self.response_count == 0:
-                self.freq_val_start = self.freq_val_start
-            else:
-                self.freq_val_start = self.min_apr + 6.5
+    def stopThread(self):
+        if self.worker_thread and self.worker_thread.is_started:
+            self.worker_thread.stop()
+            self.worker_thread.join()
             
-            self.freq_val = self.freq_val_start
-            globaladc.fliker_start_g()
-            time.sleep(0.2)
-            self.skip_event = False
-        else:
-            self.skip_event = True
-            time.sleep(0.5)
-            
-            if self.threadCreated:
-                self.response_array[self.response_count] = self.freq_val
-                self.trialList.addItem(str(self.response_array[self.response_count]))
-                
-                self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)
-                self.response_count += 1
-                
-                self.cffValue_min.setText(str(self.min_apr))
-                
-                if self.response_count == 5:
-                    self.max_apr = globaladc.get_cff_f_max_cal()
-                    self.cffValue_max.setText(str(self.max_apr))
-                    
-                    str_data = f'self.max_apr={self.max_apr}'
-                    globaladc.get_print(str_data)
-                    
-                    avgval = globaladc.get_cff_f_avg_cal()
-                    log_data = f"CFF_F-{avgval}"
-                    # currentPatientInfo.log_update(log_data)
-                    
-                    time.sleep(1)
-                    globaladc.buzzer_3()
-                    globaladc.get_print('done')
-                    
-                    # Navigation logic (replace with your actual navigation)
-                    self.hide()
-                    # Uncomment and modify these lines according to your navigation setup
-                    # pageDisctonary['CffFovea'].hide()
-                    # pageDisctonary['BrkFovea_1'].show()
-                    
-                    self.patient_switch_desable()
-                    jmp = True
-                
-                self.cffValue_frq.setText(str(self.freq_val))
+    def onMachineReady(self):
+        self.setupGPIO()
+        self.pushButton.setEnabled(False)
+        self.pushButton_2.setEnabled(True)
         
-        if not jmp:
-            if self.skip_event:
-                time.sleep(0.2)
-                globaladc.buzzer_3()
-            self.patient_switch_enable()
-    
-    def onForward(self):
-        # Replace with your actual forward navigation
-        self.hide()
-        # pageDisctonary['CffFovea'].hide()
-        # pageDisctonary['MainScreen'].show()
-    
-    def onBackward(self):
-        # Replace with your actual backward navigation
-        self.hide()
-        # pageDisctonary['CffFovea'].hide()
-        # pageDisctonary['BrkparaFovea'].show()
-    
-    def patient_switch_enable(self):
-        globaladc.get_print('patient_switch_enable')
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.switch, GPIO.RISING, callback=self.handleUserButton)
-    
-    def patient_switch_desable(self):
-        globaladc.get_print('patient_switch_desable')
-        GPIO.remove_event_detect(self.switch)
-    
-    def periodic_event(self):
-        if not self.skip_event:
-            self.freq_val = round(self.freq_val - 0.5, 1)
-            self.cffValue_frq.setText(str(self.freq_val))
-            
-            if self.freq_val < 5:
-                self.skip_event = True
-                self.threadCreated = False
-                self.freq_val = self.freq_val_start
-                self.cffValue_frq.setText(str(self.freq_val))
-                globaladc.buzzer_3()
-            
-            globaladc.put_cff_fovea_frq(self.freq_val)
-        else:
-            globaladc.put_cff_fovea_frq(35)
-            globaladc.get_print('CF')
-    
-    def show(self):
-        # Reset all values and prepare for a new test
-        self.cffValue_min.setText('     ')
-        self.cffValue_max.setText('     ')
-        self.cffValue_frq.setText('     ')
-        self.trialList.clear()
+    def onFlickerStart(self):
+        self.startThread()
+        self.pushButton_2.setEnabled(False)
+        self.pushButton_3.setEnabled(True)
         
-        # Reset test parameters
-        self.freq_val_start = 34.5
-        self.freq_val = self.freq_val_start
-        self.response_array = [0,0,0,0,0]
-        self.response_count = 0
-        self.min_apr = 0
-        self.max_apr = 0
-        self.skip_event = True
-        self.threadCreated = False
+    def onFlickerVisible(self):
+        # Handle flicker visible button press
+        pass
         
-        globaladc.cff_Fovea_Prepair()
-        globaladc.blue_led_off()
+    def onHome(self):
+        self.stopThread()
+        # Implement navigation to home screen
         
-        # Show the window
-        super().show()
-    
-    def closeEvent(self, event):
-        # Cleanup GPIO and resources
-        GPIO.cleanup()
-        event.accept()
-
-def main():
-    app = QApplication(sys.argv)
-    window = CFFTest()
-    window.show()
-    sys.exit(app.exec_())
+    def onNext(self):
+        self.stopThread()
+        # Implement navigation to next screen
 
 if __name__ == '__main__':
-    main()
+    app = QtWidgets.QApplication(sys.argv)
+    window = CffFovea()
+    window.show()
+    sys.exit(app.exec_())
