@@ -5,6 +5,8 @@ import RPi.GPIO as GPIO
 import time
 from globalvar import globaladc
 
+
+
 class CFFTest(QMainWindow):
     def __init__(self, frame=None):
         super().__init__()
@@ -28,7 +30,7 @@ class CFFTest(QMainWindow):
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.periodic_event)
-        self.timer.start(500)
+        self.timer.start(1000)
 
     def setupUI(self):
         self.setWindowTitle('CFF Test')
