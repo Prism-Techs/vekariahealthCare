@@ -6,8 +6,8 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
 
 from globalvar import globaladc
-from globalvar import pageDisctonary
-from globalvar import currentPatientInfo
+# from globalvar import pageDisctonary
+# from globalvar import currentPatientInfo
 
 class CffFoveaTest(QMainWindow):
     def __init__(self, frame=None):
@@ -148,7 +148,7 @@ class CffFoveaTest(QMainWindow):
                     
                     avgval = globaladc.get_cff_f_avg_cal()
                     log_data = f"CFF_F-{avgval}"
-                    currentPatientInfo.log_update(log_data)
+                    # currentPatientInfo.log_update(log_data)
                     
                     time.sleep(1)
                     globaladc.buzzer_3()
