@@ -15,6 +15,9 @@ def db_connection(query, params=None):
     conn.commit()
     conn.close()
 
+
+    
+
 # Class to add JSON data dynamically to a specified table
 class Add_Json():
     def __init__(self, json_data):
