@@ -540,7 +540,7 @@ class Ui_Form(object):
         self.cfftest_window = CFFTest()
         self.form.hide()
         self.cfftest_window.setupUi(self.test)
-
+        self.test.show()
 
 
     def open_login_page(self):
