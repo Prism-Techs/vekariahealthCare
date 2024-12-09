@@ -1,7 +1,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QWidget
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import threading
@@ -536,9 +536,10 @@ class Ui_Form(object):
     def open_cfftest(self):
         globaladc.buzzer_1()
         from cff_fovea import CFFTest
+        self.test = QWidget()
         self.cfftest_window = CFFTest()
         self.form.hide()
-        self.cfftest_window.show()
+        self.cfftest_window.setupUi(self.test)
 
 
 
