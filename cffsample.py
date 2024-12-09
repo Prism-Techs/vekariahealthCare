@@ -8,6 +8,7 @@ switch = 20
 intervel = globaladc.get_cff_delay()
 Font = "Arial"
 
+
 class CffFovea(QWidget):
     def __init__(self):
         super().__init__()

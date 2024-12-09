@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #qr-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #download-link {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    
+    <div>
+        <input 
+            type="text" 
+            id="data-input" 
+            placeholder="Enter URL or text" 
+            style="width: 300px;"
+        >
+        <select id="format-select">
+            <option value="svg">SVG</option>
+            <option value="png">PNG</option>
+            <option value="dataurl">Data URL</option>
+        </select>
+        <button onclick="generateQRCode()">Generate QR Code</button>
+    </div>
+
+    <div id="qr-container"></div>
+    <a id="download-link" download="qrcode">Download QR Code</a>
+
+    <script>
+        // QR Code Generator Library (Inlined for simplicity)
+        class QRCodeGenerator {
+            static ERROR_CORRECTION_LEVELS = {
+                L: { level: 1, name: 'Low (7% restored)' },
+                M: { level: 0, name: 'Medium (15% restored)' },
+                Q: { level: 3, name: 'Quartile (25% restored)' },
+                H: { level: 2, name: 'High (30% restored)' }
+            };
+
+            constructor(version = 4, errorLevel = 'M') {
+                this.version = version;
+                this.errorLevel = errorLevel;
+            }
+
+            generateSVG(data, options = {}) {
+                const {
+                    size = 300, 
+                    foregroundColor = '#000000', 
+                    backgroundColor = '#FFFFFF'
+                } = options;
+
+                // Simplified SVG generation for demonstration
+                return `
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                         width="${size}" 
+                         height="${size}" 
+                         viewBox="0 0 100 100">
+                        <rect width="100%" height="100%" fill="${backgroundColor}"/>
+                        ${this.generateQRPattern(data, foregroundColor)}
+                    </svg>
+                `;
+            }
+
+            generateQRPattern(data, color) {
+                // Simplified pattern generation
+                const hash = this.simpleHash(data);
+                let pattern = '';
+                
+                for (let i = 0; i < 10; i++) {
+                    for (let j = 0; j < 10; j++) {
+                        if ((hash[i * 10 + j] % 2) === 0) {
+                            pattern += `<rect x="${i*10}" y="${j*10}" width="10" height="10" fill="${color}"/>`;
+                        }
+                    }
+                }
+                
+                return pattern;
+            }
+
+            simpleHash(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+                return Math.abs(hash).toString().split('').map(Number);
+            }
+
+            generate(data, format = 'svg', options = {}) {
+                switch(format) {
+                    case 'svg': return this.generateSVG(data, options);
+                    default: throw new Error('Unsupported format');
+                }
+            }
+        }
+
+        // QR Code Generation Function
+        function generateQRCode() {
+            const input = document.getElementById('data-input');
+            const formatSelect = document.getElementById('format-select');
+            const qrContainer = document.getElementById('qr-container');
+            const downloadLink = document.getElementById('download-link');
+
+            // Validate input
+            if (!input.value) {
+                alert('Please enter some data');
+                return;
+            }
+
+            try {
+                // Create QR Code Generator instance
+                const qrGenerator = new QRCodeGenerator();
+
+                // Generate QR Code
+                const qrCode = qrGenerator.generate(
+                    input.value, 
+                    formatSelect.value, 
+                    { size: 300 }
+                );
+
+                // Display QR Code
+                qrContainer.innerHTML = qrCode;
+
+                // Prepare download link
+                const blob = new Blob([qrCode], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download = `qrcode_${new Date().toISOString()}.svg`;
+                downloadLink.style.display = 'block';
+
+            } catch (error) {
+                console.error('QR Code Generation Error:', error);
+                alert('Failed to generate QR Code');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -482,15 +482,15 @@ class Ui_Form(object):
 "            }\n"
 "")
         self.pushButton_9.setObjectName("pushButton_9")
-        self.exit = QtWidgets.QPushButton(self.frame_5)
-        self.exit.setGeometry(QtCore.QRect(300, 350, 160, 51))
+        self.next = QtWidgets.QPushButton(self.frame_5)
+        self.next.setGeometry(QtCore.QRect(300, 350, 160, 51))
         font = QtGui.QFont()
         font.setFamily("Helvetica Rounded")
         font.setPointSize(16)
         font.setBold(True)
         font.setWeight(75)
-        self.exit.setFont(font)
-        self.exit.setStyleSheet(" QPushButton {\n"
+        self.next.setFont(font)
+        self.next.setStyleSheet(" QPushButton {\n"
 "                background-color: black;\n"
 "                color: white;\n"
 "                border: none;\n"
@@ -499,7 +499,7 @@ class Ui_Form(object):
 "                border:2px solid white;\n"
 "            }\n"
 "")
-        self.exit.setObjectName("exit")
+        self.next.setObjectName("next")
         self.pushButton_2 = QtWidgets.QPushButton(self.frame_5)
         self.pushButton_2.setGeometry(QtCore.QRect(490, 350, 160, 51))
         font = QtGui.QFont()
@@ -519,7 +519,7 @@ class Ui_Form(object):
 "")
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.open_home_page)
-        self.exit.clicked.connect(self.open_cfftest)
+        self.next.clicked.connect(self.open_cfftest)
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -580,7 +580,7 @@ class Ui_Form(object):
         self.pushButton_7.setText(_translate("Form", "CFF Para-Fovea"))
         self.pushButton_8.setText(_translate("Form", "BRK Para-Fovea"))
         self.pushButton_9.setText(_translate("Form", "Test Result"))
-        self.exit.setText(_translate("Form", "Exit"))
+        self.next.setText(_translate("Form", "NEXT"))
 
 
 

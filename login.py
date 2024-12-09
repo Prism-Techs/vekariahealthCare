@@ -5,7 +5,6 @@ import subprocess
 from datetime import datetime
 import json
 from PyQt5.QtWidgets import QMessageBox
-# from tkinter import messagebox
 from database  import DatabaseConnection
 from wifi_update import WifiStatusLabel
 from wifi_final import WifiPage
