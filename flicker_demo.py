@@ -565,7 +565,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_6.setText(_translate("Form", "Vekaria Healthcare"))
         self.label_8.setText(_translate("Form", "V1.0"))
-        self.pushButton_2.setText(_translate("Form", "HOME"))
+        # self.pushButton_2.setText(_translate("Form", "HOME"))
         self.upButton.setText(_translate("Form", "+"))
         self.numberLabel.setText(_translate("Form", "0"))
         self.upButton_2.setText(_translate("Form", "-"))
