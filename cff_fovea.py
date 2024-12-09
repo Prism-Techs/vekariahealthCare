@@ -18,7 +18,7 @@ select = 1
 cffValue_frq_x =820
 cffValue_frq_y = 40
 
-class Ui_Form(object):
+class CFFTest(object):
  
     def __init__(self):
         self.response_count = 0  
@@ -30,7 +30,7 @@ class Ui_Form(object):
         self.min_apr = 0
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
-        self.setupUi()
+        # self.setupUi()
 
     def setupUi(self, Form):
         Form.setObjectName("Form")

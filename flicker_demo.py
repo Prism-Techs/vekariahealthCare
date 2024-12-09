@@ -535,7 +535,7 @@ class Ui_Form(object):
 
     def open_cfftest(self):
         globaladc.buzzer_1()
-        from cffsample import CFFTest
+        from cff_fovea import CFFTest
         self.cfftest_window = CFFTest()
         self.form.hide()
         self.cfftest_window.show()
