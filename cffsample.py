@@ -24,6 +24,7 @@ class CFFConfig:
     BUTTON_STYLE = "background-color: green;"
     FREQ_LABEL_STYLE = "background-color: #F7F442;"
 
+
 class FrequencyWorker(QThread):
     frequency_updated = pyqtSignal(float)
     trial_timeout = pyqtSignal()
@@ -32,22 +33,17 @@ class FrequencyWorker(QThread):
         super().__init__()
         self._initial_freq = initial_freq
         self._frequency = initial_freq
-        self._interval = interval
+        self._interval = interval  # This is globaladc.get_cff_delay()
         self._running = True
         self._skip_event = True
-
-    def reset_frequency(self, new_freq: float):
-        """Reset the frequency to a new value"""
-        self._frequency = new_freq
-        self._initial_freq = new_freq
-        self.frequency_updated.emit(new_freq)
-        globaladc.put_cff_fovea_frq(new_freq)
 
     def run(self):
         while self._running:
             if not self._skip_event:
+                # Decrease frequency slowly
                 self._frequency = round(self._frequency - 0.5, 1)
                 self.frequency_updated.emit(self._frequency)
+                globaladc.put_cff_fovea_frq(self._frequency)
                 
                 if self._frequency < 5:
                     self._skip_event = True
@@ -56,11 +52,9 @@ class FrequencyWorker(QThread):
                     globaladc.fliker_stop()
                     globaladc.buzzer_3()
                     self.trial_timeout.emit()
-                
-                globaladc.put_cff_fovea_frq(self._frequency)
             else:
+                # When not decreasing, maintain stable frequency
                 globaladc.put_cff_fovea_frq(35)
-                globaladc.get_print('CF')
             
             time.sleep(self._interval)
 
@@ -69,13 +63,26 @@ class FrequencyWorker(QThread):
         if skip:
             globaladc.fliker_stop()
         else:
+            # Ensure clean start of flicker
+            globaladc.fliker_stop()
+            time.sleep(0.1)
+            globaladc.green_freq_control(0)
+            time.sleep(0.1)
             globaladc.fliker_start_g()
+
+    def reset_frequency(self, new_freq: float):
+        """Reset the frequency to a new value"""
+        self._frequency = new_freq
+        self._initial_freq = new_freq
+        globaladc.fliker_stop()
+        time.sleep(0.1)
+        globaladc.put_cff_fovea_frq(new_freq)
+        self.frequency_updated.emit(new_freq)
 
     def stop(self):
         self._running = False
+        globaladc.fliker_stop()
         self.wait()
-
-
 
 class GPIOMonitor(QThread):
     """Thread for monitoring GPIO button presses"""
@@ -272,25 +279,19 @@ class CFFWindow(QMainWindow):
             self.patient_action.hide()
             self._thread_created = True
             
-            # Exact original frequency calculation logic
+            # Calculate frequency
             if self._response_count == 0:
                 self.freq_val_start = CFFConfig.INITIAL_FREQUENCY
-            elif self._response_count == 1:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
-            elif self._response_count == 2:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
-            elif self._response_count == 3:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
-            elif self._response_count == 4:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
-            elif self._response_count == 5:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
             else:
                 self.freq_val_start = self._trial_manager.min_amplitude + 6.5
                 
             self._current_frequency = self.freq_val_start
             
-            # Start flicker
+            # Ensure clean flicker start
+            globaladc.fliker_stop()
+            time.sleep(0.1)
+            globaladc.green_freq_control(0)
+            
             if self._freq_thread is None:
                 self._freq_thread = FrequencyWorker(self.freq_val_start, globaladc.get_cff_delay())
                 self._freq_thread.frequency_updated.connect(self.update_frequency)
@@ -298,6 +299,11 @@ class CFFWindow(QMainWindow):
                 self._freq_thread.start()
             else:
                 self._freq_thread.reset_frequency(self.freq_val_start)
+                
+            time.sleep(0.2)  # Wait for settings to take effect
+            globaladc.fliker_start_g()
+            self._skip_event = False
+            self._freq_thread.set_skip_event(False)
                 
             globaladc.fliker_start_g()
             time.sleep(0.2)
