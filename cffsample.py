@@ -22,6 +22,7 @@ class CFFConfig:
     DEFAULT_FONT = QFont("Arial", 15)
     LARGE_FONT = QFont("Arial", 20)
 
+
 class FrequencyWorker(QThread):
     """Worker thread for handling frequency updates"""
     frequency_updated = pyqtSignal(float)
@@ -33,24 +34,37 @@ class FrequencyWorker(QThread):
         self._frequency = initial_freq
         self._interval = interval
         self._running = True
+        self._skip_event = True  # Added to match original logic
 
     def run(self):
         while self._running:
-            if self._frequency > CFFConfig.MINIMUM_FREQUENCY:
-                self._frequency = round(self._frequency - CFFConfig.FREQUENCY_DECREMENT, 1)
+            if not self._skip_event:
+                self._frequency = round(self._frequency - 0.5, 1)
                 self.frequency_updated.emit(self._frequency)
+                
+                if self._frequency < 5:
+                    self._skip_event = True
+                    self._frequency = self._initial_freq
+                    self.frequency_updated.emit(self._frequency)
+                    globaladc.buzzer_3()
+                    self.trial_timeout.emit()
+                
                 globaladc.put_cff_fovea_frq(self._frequency)
-                time.sleep(self._interval)
             else:
-                self._frequency = self._initial_freq
-                self.frequency_updated.emit(self._frequency)
-                globaladc.buzzer_3()
-                self.trial_timeout.emit()
-                break
+                globaladc.put_cff_fovea_frq(35)  # This effectively stops flickering
+                globaladc.get_print('CF')
+            
+            time.sleep(self._interval)
+
+    def set_skip_event(self, skip: bool):
+        self._skip_event = skip
 
     def stop(self):
         self._running = False
         self.wait()
+
+
+
 
 class GPIOMonitor(QThread):
     """Thread for monitoring GPIO button presses"""
@@ -143,9 +157,9 @@ class CFFWindow(QMainWindow):
         self._freq_thread = None
         self._gpio_thread = None
         self._current_frequency = CFFConfig.INITIAL_FREQUENCY
-        self._skip_event = True  # Changed from _trial_in_progress to match original logic
-        self._thread_created = False  # Added to match original code
-        self._response_count = 0  # Added to track responses like original
+        self._skip_event = True
+        self._thread_created = False
+        self._response_count = 0
         
         # Initialize UI elements that will be referenced elsewhere
         self.min_label = None
@@ -155,6 +169,7 @@ class CFFWindow(QMainWindow):
         self.patient_action = None
         self.back_btn = None
         self.next_btn = None
+        globaladc.cff_Fovea_Prepair() # run this while loding cff Fovea screen        
         
         # Setup UI and threads
         self.setup_ui()
@@ -244,15 +259,18 @@ class CFFWindow(QMainWindow):
 
             self._current_frequency = start_freq
             
-            # Start the flicker
+            # Start the flicker by setting skip_event to False
             globaladc.fliker_start_g()
             
-            # Start frequency decrease thread
+            # Create thread if not exists
             if self._freq_thread is None:
                 self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
                 self._freq_thread.frequency_updated.connect(self.update_frequency)
                 self._freq_thread.trial_timeout.connect(self.handle_timeout)
                 self._freq_thread.start()
+            
+            # Set skip_event to False to start decreasing frequency
+            self._freq_thread.set_skip_event(False)
             
             time.sleep(0.2)
             self._skip_event = False
@@ -263,10 +281,8 @@ class CFFWindow(QMainWindow):
             time.sleep(0.5)
 
             if self._thread_created and self._freq_thread:
-                # Stop frequency updates but don't destroy thread
-                self._freq_thread.stop()
-                self._freq_thread = None
-                globaladc.fliker_stop_g()  # Add this to stop flickering
+                # Set skip_event to True to stop frequency changes
+                self._freq_thread.set_skip_event(True)
 
                 # Record response
                 self.trial_list.addItem(f"{self._current_frequency:.1f}")
@@ -280,6 +296,11 @@ class CFFWindow(QMainWindow):
                     self.max_label.setText(f"{self._trial_manager.max_amplitude:.1f}")
                     avg_val = globaladc.get_cff_f_avg_cal()
                     globaladc.get_print(f"CFF_F-{avg_val}")
+                    
+                    # Now actually stop the thread
+                    self._freq_thread.stop()
+                    self._freq_thread = None
+                    
                     time.sleep(1)
                     globaladc.buzzer_3()
                     if self._gpio_thread:
@@ -296,6 +317,7 @@ class CFFWindow(QMainWindow):
                 globaladc.buzzer_3()
             if self._gpio_thread:
                 self._gpio_thread.enable()
+
 
     @pyqtSlot(float)
     def update_frequency(self, new_freq):
@@ -353,6 +375,7 @@ class CFFWindow(QMainWindow):
         super().hideEvent(event)
         if self._freq_thread:
             self._freq_thread.stop()
+            self._freq_thread = None
         if self._gpio_thread:
             self._gpio_thread.stop()
 
