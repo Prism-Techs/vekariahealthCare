@@ -33,27 +33,20 @@ class FrequencyWorker(QThread):
         self._frequency = initial_freq
         self._interval = interval
         self._running = True
-        self._skip_event = False
 
     def run(self):
         while self._running:
-            if not self._skip_event:
+            if self._frequency > CFFConfig.MINIMUM_FREQUENCY:
                 self._frequency = round(self._frequency - CFFConfig.FREQUENCY_DECREMENT, 1)
                 self.frequency_updated.emit(self._frequency)
-                
-                if self._frequency < CFFConfig.MINIMUM_FREQUENCY:
-                    self._skip_event = True
-                    self._frequency = self._initial_freq
-                    self.frequency_updated.emit(self._frequency)
-                    globaladc.buzzer_3()
-                    self.trial_timeout.emit()
-                
                 globaladc.put_cff_fovea_frq(self._frequency)
+                time.sleep(self._interval)
             else:
-                globaladc.put_cff_fovea_frq(35)
-                globaladc.get_print('CF')
-            
-            time.sleep(self._interval)
+                self._frequency = self._initial_freq
+                self.frequency_updated.emit(self._frequency)
+                globaladc.buzzer_3()
+                self.trial_timeout.emit()
+                break
 
     def stop(self):
         self._running = False
@@ -150,7 +143,9 @@ class CFFWindow(QMainWindow):
         self._freq_thread = None
         self._gpio_thread = None
         self._current_frequency = CFFConfig.INITIAL_FREQUENCY
-        self._trial_in_progress = False
+        self._skip_event = True  # Changed from _trial_in_progress to match original logic
+        self._thread_created = False  # Added to match original code
+        self._response_count = 0  # Added to track responses like original
         
         # Initialize UI elements that will be referenced elsewhere
         self.min_label = None
@@ -226,6 +221,7 @@ class CFFWindow(QMainWindow):
         self._gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
         self._gpio_thread.button_pressed.connect(self.handle_button_press)
 
+
     @pyqtSlot()
     def handle_button_press(self):
         globaladc.get_print('handle to be implemented')
@@ -235,42 +231,66 @@ class CFFWindow(QMainWindow):
             self._gpio_thread.disable()
         time.sleep(0.15)
 
-        if not self._trial_in_progress:
+        if self._skip_event:
+            # Starting new measurement
             self.patient_action.hide()
-            self._trial_in_progress = True
+            self._thread_created = True
 
-            if self._trial_manager.current_trial == 0:
+            # Set starting frequency based on trial count
+            if self._response_count == 0:
                 start_freq = CFFConfig.INITIAL_FREQUENCY
             else:
                 start_freq = self._trial_manager.min_amplitude + CFFConfig.FREQUENCY_INCREMENT
 
             self._current_frequency = start_freq
+            
+            # Start the flicker
             globaladc.fliker_start_g()
             
-            self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
-            self._freq_thread.frequency_updated.connect(self.update_frequency)
-            self._freq_thread.trial_timeout.connect(self.handle_timeout)
-            self._freq_thread.start()
+            # Start frequency decrease thread
+            if self._freq_thread is None:
+                self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
+                self._freq_thread.frequency_updated.connect(self.update_frequency)
+                self._freq_thread.trial_timeout.connect(self.handle_timeout)
+                self._freq_thread.start()
             
             time.sleep(0.2)
+            self._skip_event = False
 
         else:
-            self._trial_in_progress = False
+            # Recording measurement
+            self._skip_event = True
             time.sleep(0.5)
 
-            if self._freq_thread:
+            if self._thread_created and self._freq_thread:
+                # Stop frequency updates but don't destroy thread
                 self._freq_thread.stop()
                 self._freq_thread = None
 
+                # Record response
                 self.trial_list.addItem(f"{self._current_frequency:.1f}")
-                if self._trial_manager.record_response(self._current_frequency):
-                    self.complete_trials()
+                self._trial_manager.record_response(self._current_frequency)
+                self.min_label.setText(f"{self._trial_manager.min_amplitude:.1f}")
+                
+                self._response_count += 1
+                
+                # Check if all trials are complete
+                if self._response_count == 5:
+                    self.max_label.setText(f"{self._trial_manager.max_amplitude:.1f}")
+                    avg_val = globaladc.get_cff_f_avg_cal()
+                    globaladc.get_print(f"CFF_F-{avg_val}")
+                    time.sleep(1)
+                    globaladc.buzzer_3()
+                    if self._gpio_thread:
+                        self._gpio_thread.disable()
+                    self.hide()
                     jmp = True
                 
-                self.update_display()
+                self.freq_label.setText(f"{self._current_frequency:.1f}")
 
+        # Re-enable button if not jumping to next screen
         if not jmp:
-            if not self._trial_in_progress:
+            if self._skip_event:
                 time.sleep(0.2)
                 globaladc.buzzer_3()
             if self._gpio_thread:
