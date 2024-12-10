@@ -55,9 +55,18 @@ class FrequencyWorker(QThread):
             
             time.sleep(self._interval)
 
-    def reset_frequency(self, new_freq: float):
-        self._frequency = new_freq
-        self.frequency_updated.emit(new_freq)
+    def set_skip_event(self, skip: bool):
+        self._skip_event = skip
+        if skip:
+            time.sleep(0.2)  # Add delay before stopping
+            globaladc.fliker_stop()
+            globaladc.green_led_off()  # Explicitly turn off green LED
+        else:
+            time.sleep(0.2)  # Add delay before starting
+            globaladc.green_volt_control(20)  # Set voltage
+            globaladc.green_freq_control(0)   # Set frequency
+            time.sleep(0.2)  # Wait for settings to take effect
+            globaladc.fliker_start_g()        # Start flicker
 
     def set_skip_event(self, skip: bool):
         self._skip_event = skip
@@ -70,7 +79,6 @@ class FrequencyWorker(QThread):
         self._running = False
         globaladc.fliker_stop()  # Ensure flicker is stopped
         self.wait()
-
 
 class GPIOMonitor(QThread):
     """Thread for monitoring GPIO button presses"""
@@ -281,6 +289,11 @@ class CFFWindow(QMainWindow):
         
         self._current_frequency = start_freq
         
+        # Make sure flicker is stopped before starting new trial
+        globaladc.fliker_stop()
+        globaladc.green_led_off()
+        time.sleep(0.3)  # Longer delay before starting
+        
         # Initialize frequency thread if needed
         if self._freq_thread is None:
             self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
@@ -290,11 +303,12 @@ class CFFWindow(QMainWindow):
         else:
             self._freq_thread.reset_frequency(start_freq)
         
-        # Start the flicker
-        globaladc.green_volt_control(20)  # Ensure proper voltage
-        globaladc.green_freq_control(0)   # Initial frequency
-        time.sleep(0.1)  # Short delay for hardware
-        self._freq_thread.set_skip_event(False)  # This will start the flicker
+        # Start the flicker with proper delays
+        globaladc.green_volt_control(20)
+        time.sleep(0.2)
+        globaladc.green_freq_control(0)
+        time.sleep(0.2)
+        self._freq_thread.set_skip_event(False)  # This will start the flicker with delay
         self._skip_event = False
 
     def _handle_trial_response(self):
@@ -303,8 +317,8 @@ class CFFWindow(QMainWindow):
         
         if self._thread_created and self._freq_thread:
             # Stop the flicker first
-            self._freq_thread.set_skip_event(True)  # This will stop the flicker
-            time.sleep(0.1)  # Short delay for hardware
+            self._freq_thread.set_skip_event(True)  # This will stop flicker with delay
+            time.sleep(0.3)  # Additional delay after stopping
             
             # Record the trial result
             self.trial_list.addItem(f"{self._current_frequency:.1f}")
@@ -321,9 +335,11 @@ class CFFWindow(QMainWindow):
                 self._complete_trial_set()
                 return
             
-            # Prepare for next trial
-            time.sleep(0.5)  # Delay before next trial
-            self.patient_action.show()  # Show prompt for next trial
+            # Prepare for next trial with longer delay
+            time.sleep(0.5)
+            globaladc.green_led_off()  # Ensure LED is off between trials
+            time.sleep(0.2)
+            self.patient_action.show()
 
     def _setup_frequency_thread(self, start_freq):
         """Setup the frequency update thread"""
@@ -390,32 +406,41 @@ class CFFWindow(QMainWindow):
             self._freq_thread.stop()
             self._freq_thread = None
         
+        # Ensure hardware is completely off
+        globaladc.fliker_stop()
+        time.sleep(0.2)
+        globaladc.green_led_off()
+        time.sleep(0.2)
+        
         self.min_label.setText("    ")
         self.max_label.setText("    ")
         self.freq_label.setText("    ")
         self.trial_list.clear()
         self.patient_action.show()
-        
-        # Ensure hardware is in correct initial state
-        globaladc.fliker_stop()
-        time.sleep(0.1)
-        globaladc.green_volt_control(20)
-        globaladc.green_freq_control(0)
 
     def showEvent(self, event):
         """Handle window show event"""
         super().showEvent(event)
         self.reset()
-        self._initialize_hardware()
+        # Initialize hardware with proper delays
+        globaladc.cff_Fovea_Prepair()
+        time.sleep(0.3)
+        globaladc.fliker_stop()
+        time.sleep(0.2)
+        globaladc.green_led_off()
         if self._gpio_thread:
             self._gpio_thread.start()
 
     def hideEvent(self, event):
         """Handle window hide event"""
         super().hideEvent(event)
+        # Ensure everything is off when hiding window
         if self._freq_thread:
             self._freq_thread.stop()
             self._freq_thread = None
+        globaladc.fliker_stop()
+        time.sleep(0.2)
+        globaladc.green_led_off()
         if self._gpio_thread:
             self._gpio_thread.stop()
 
@@ -426,6 +451,8 @@ class CFFWindow(QMainWindow):
     def on_next(self):
         """Handle next button press"""
         self.hide()
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
