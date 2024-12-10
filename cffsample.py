@@ -66,22 +66,14 @@ class FrequencyWorker(QThread):
     def set_skip_event(self, skip: bool):
         self._skip_event = skip
         if skip:
-            # time.sleep(0.2)  # Add delay before stopping
-            globaladc.fliker_stop()    
-            globaladc.green_led_off()  # Explicitly turn off green LED
+            globaladc.fliker_stop()
+            time.sleep(0.1)
+            globaladc.green_led_off()
         else:
-            # time.sleep(0.2)  # Add delay before starting
-            globaladc.green_volt_control(20)  # Set voltage
-            globaladc.green_freq_control(0)   # Set frequency
-            # time.sleep(0.2)  # Wait for settings to take effect
-            globaladc.fliker_start_g()        # Start flicker
+            globaladc.green_freq_control(0)   # Set base frequency
+            time.sleep(0.1)  # Wait for settings to stabilize
+            globaladc.fliker_start_g()
 
-    def set_skip_event(self, skip: bool):
-        self._skip_event = skip
-        if skip:
-            globaladc.fliker_stop()  # Stop flicker when skipping
-        else:
-            globaladc.fliker_start_g()  # Start flicker when not skipping
 
     def stop(self):
         self._running = False
@@ -293,14 +285,17 @@ class CFFWindow(QMainWindow):
         
         # Calculate starting frequency
         start_freq = (CFFConfig.INITIAL_FREQUENCY if self._response_count == 0 
-                     else self._trial_manager.min_amplitude + CFFConfig.FREQUENCY_INCREMENT)
+                    else self._trial_manager.min_amplitude + CFFConfig.FREQUENCY_INCREMENT)
         
         self._current_frequency = start_freq
         
-        # Make sure flicker is stopped before starting new trial
+        # Ensure proper hardware state
         globaladc.fliker_stop()
         globaladc.green_led_off()
-        time.sleep(0.3)  # Longer delay before starting
+        time.sleep(0.2)
+        
+        # Set base frequency only, let voltage remain at default
+        # globaladc.green_freq_control(0)
         
         # Initialize frequency thread if needed
         if self._freq_thread is None:
@@ -311,12 +306,8 @@ class CFFWindow(QMainWindow):
         else:
             self._freq_thread.reset_frequency(start_freq)
         
-        # Start the flicker with proper delays
-        globaladc.green_volt_control(20)
-        time.sleep(0.2)
-        globaladc.green_freq_control(0)
-        time.sleep(0.2)
-        self._freq_thread.set_skip_event(False)  # This will start the flicker with delay
+        time.sleep(0.2)  # Wait for settings to take effect
+        self._freq_thread.set_skip_event(False)  # Start flicker
         self._skip_event = False
 
     def _handle_trial_response(self):
