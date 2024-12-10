@@ -67,7 +67,7 @@ class FrequencyWorker(QThread):
         self._skip_event = skip
         if skip:
             # time.sleep(0.2)  # Add delay before stopping
-            globaladc.fliker_stop()   b  
+            globaladc.fliker_stop()    
             globaladc.green_led_off()  # Explicitly turn off green LED
         else:
             # time.sleep(0.2)  # Add delay before starting
