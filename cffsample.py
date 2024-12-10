@@ -1,175 +1,259 @@
 import sys
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel, 
+                           QVBoxLayout, QHBoxLayout, QPushButton, QListWidget)
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QFont
 import time
 import RPi.GPIO as GPIO
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QListWidget, QPushButton
-from PyQt5.QtCore import QTimer
+from dataclasses import dataclass
+from typing import List, Tuple
 from globalvar import globaladc
-switch = 20
-intervel = globaladc.get_cff_delay()
-Font = "Arial"
 
+@dataclass
+class CFFConfig:
+    SWITCH_PIN: int = 20
+    INITIAL_FREQUENCY: float = 34.5
+    FREQUENCY_INCREMENT: float = 6.5
+    MINIMUM_FREQUENCY: float = 5.0
+    TRIALS_COUNT: int = 5
+    DEBOUNCE_DELAY: float = 0.15
+    DEFAULT_FONT = QFont("Arial", 15)
+    LARGE_FONT = QFont("Arial", 20)
 
-class CffFovea(QWidget):
+class FrequencyWorker(QThread):
+    """Worker thread for frequency updates"""
+    frequency_updated = pyqtSignal(float)
+    trial_timeout = pyqtSignal()
+
+    def __init__(self, initial_freq: float, interval: float):
+        super().__init__()
+        self.frequency = initial_freq
+        self.interval = interval
+        self.running = True
+
+    def run(self):
+        while self.running:
+            if self.frequency > CFFConfig.MINIMUM_FREQUENCY:
+                self.frequency = round(self.frequency - 0.5, 1)
+                self.frequency_updated.emit(self.frequency)
+                time.sleep(self.interval)
+            else:
+                self.trial_timeout.emit()
+                break
+
+    def stop(self):
+        self.running = False
+
+class GPIOMonitor(QThread):
+    """Thread for monitoring GPIO button presses"""
+    button_pressed = pyqtSignal()
+
+    def __init__(self, pin: int):
+        super().__init__()
+        self.pin = pin
+        self.running = True
+
+    def run(self):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
+        while self.running:
+            if GPIO.input(self.pin) == GPIO.HIGH:
+                self.button_pressed.emit()
+                time.sleep(CFFConfig.DEBOUNCE_DELAY)
+            time.sleep(0.01)
+
+    def stop(self):
+        self.running = False
+        GPIO.cleanup(self.pin)
+
+class CFFTrial:
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.current_trial = 0
+        self.responses = [0.0] * CFFConfig.TRIALS_COUNT
+        self.min_amplitude = 0.0
+        self.max_amplitude = 0.0
+        
+    def record_response(self, frequency: float) -> bool:
+        """Record trial response and return True if all trials complete"""
+        if self.current_trial >= CFFConfig.TRIALS_COUNT:
+            return True
+            
+        self.responses[self.current_trial] = frequency
+        self.min_amplitude = globaladc.get_cff_f_min_cal(self.current_trial, frequency)
+        self.current_trial += 1
+        return self.current_trial >= CFFConfig.TRIALS_COUNT
+
+class CFFWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.response_count = 0  
-        self.skip_event = True
-        self.threadCreated = False
-        self.freq_val_start = 34.5
-        self.freq_val = self.freq_val_start
-        self.min_apr = 0
-        self.max_apr = 0 
-        self.response_array = [0, 0, 0, 0, 0]
+        self.trial = CFFTrial()
+        self.setup_ui()
+        self.setup_threads()
+        
+    def setup_ui(self):
+        self.setWindowTitle("CFF Fovea Test")
+        self.setFixedSize(1024, 600)
 
-        self.initUI()
-        self.setupGPIO()
+        # Main widget and layout
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        layout = QVBoxLayout(main_widget)
 
-    def initUI(self):
-        layout = QVBoxLayout()
+        # Header
+        header = QHBoxLayout()
+        header_label = QLabel("CFF FOVEA:", font=CFFConfig.DEFAULT_FONT)
+        self.min_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
+        self.max_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
+        self.freq_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
+        self.freq_label.setStyleSheet("background-color: #F7F442;")
+        
+        header.addWidget(header_label)
+        header.addWidget(self.min_label)
+        header.addWidget(self.max_label)
+        header.addWidget(self.freq_label)
+        header.addStretch()
+        
+        # Trial list
+        self.trial_list = QListWidget()
+        self.trial_list.setFont(CFFConfig.DEFAULT_FONT)
+        self.trial_list.setMaximumWidth(100)
+        
+        # Patient action label
+        self.patient_action = QLabel("Patient's side Button\nBegins Trial")
+        self.patient_action.setFont(CFFConfig.DEFAULT_FONT)
+        self.patient_action.setAlignment(Qt.AlignCenter)
+        
+        # Navigation buttons
+        nav_layout = QHBoxLayout()
+        self.back_btn = QPushButton("<<")
+        self.next_btn = QPushButton(">>")
+        for btn in (self.back_btn, self.next_btn):
+            btn.setFont(CFFConfig.LARGE_FONT)
+            btn.setStyleSheet("background-color: green;")
+        nav_layout.addWidget(self.back_btn)
+        nav_layout.addWidget(self.next_btn)
 
-        self.patentActionflabel = QLabel("Patient's side Button \n Begins Trial", self)
-        self.cffValue_min = QLabel("    ", self)
-        self.cffValue_max = QLabel("    ", self)
-        self.cffValue_frq = QLabel("    ", self)
-        self.trialList = QListWidget(self)
+        # Add all elements to main layout
+        layout.addLayout(header)
+        layout.addWidget(self.patient_action, alignment=Qt.AlignCenter)
+        layout.addWidget(self.trial_list, alignment=Qt.AlignRight)
+        layout.addLayout(nav_layout)
+        
+        # Connect navigation buttons
+        self.back_btn.clicked.connect(self.on_back)
+        self.next_btn.clicked.connect(self.on_next)
 
-        layout.addWidget(QLabel("CFF FOVEA :", self))
-        layout.addWidget(self.patentActionflabel)
-        layout.addWidget(QLabel("Min Frequency:"))
-        layout.addWidget(self.cffValue_min)
-        layout.addWidget(QLabel("Max Frequency:"))
-        layout.addWidget(self.cffValue_max)
-        layout.addWidget(QLabel("Current Frequency:"))
-        layout.addWidget(self.cffValue_frq)
-        layout.addWidget(self.trialList)
+    def setup_threads(self):
+        # GPIO monitoring thread
+        self.gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
+        self.gpio_thread.button_pressed.connect(self.handle_button_press)
+        
+        # Frequency update thread
+        self.freq_thread = None
+        
+    def start_trial(self):
+        """Start a new trial"""
+        self.patient_action.hide()
+        starting_freq = (CFFConfig.INITIAL_FREQUENCY if self.trial.current_trial == 0 
+                        else self.trial.min_amplitude + CFFConfig.FREQUENCY_INCREMENT)
+        
+        # Start frequency decrease thread
+        self.freq_thread = FrequencyWorker(starting_freq, globaladc.get_cff_delay())
+        self.freq_thread.frequency_updated.connect(self.update_frequency)
+        self.freq_thread.trial_timeout.connect(self.handle_timeout)
+        self.freq_thread.start()
+        
+        globaladc.fliker_start_g()
 
-        self.setLayout(layout)
-        self.setGeometry(100, 100, 600, 400)
-        self.setWindowTitle("CFF FOVEA Test")
+    @pyqtSlot()
+    def handle_button_press(self):
+        """Handle patient button press"""
+        if not self.freq_thread or not self.freq_thread.isRunning():
+            self.start_trial()
+        else:
+            self.record_response()
 
-        # Buttons for navigation (if needed)
-        fwButton = QPushButton(">>", self)
-        fwButton.clicked.connect(self.onfw)
-        layout.addWidget(fwButton)
+    @pyqtSlot(float)
+    def update_frequency(self, freq: float):
+        """Update frequency display"""
+        self.freq_label.setText(f"{freq:.1f}")
+        globaladc.put_cff_fovea_frq(freq)
 
-        bwButton = QPushButton("<<", self)
-        bwButton.clicked.connect(self.onbw)
-        layout.addWidget(bwButton)
+    @pyqtSlot()
+    def handle_timeout(self):
+        """Handle trial timeout"""
+        self.freq_thread.stop()
+        self.freq_thread = None
+        globaladc.buzzer_3()
+        self.reset_trial()
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.periodic_event)
-        self.run_thread()
-
-    def setupGPIO(self):
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        try:
-            GPIO.add_event_detect(switch, GPIO.RISING, callback=self.gpio_callback)
-        except RuntimeError:
-            # Ignore if already detected
-            pass
-
-    def gpio_callback(self, channel):
-        self.handle_user_button()
-
-    def handle_user_button(self):
-        jmp = False
-        self.patient_switch_disable()
-        time.sleep(0.15)  
-
-        if self.skip_event:
-            self.patentActionflabel.hide()
-            self.threadCreated = True
-            if self.response_count == 0:
-                self.freq_val_start = self.freq_val_start
+    def record_response(self):
+        """Record current trial response"""
+        if self.freq_thread:
+            current_freq = float(self.freq_label.text())
+            self.freq_thread.stop()
+            self.freq_thread = None
+            
+            if self.trial.record_response(current_freq):
+                self.complete_trials()
             else:
-                self.freq_val_start = self.min_apr + 6.5
-            self.freq_val = self.freq_val_start
-            globaladc.fliker_start_g()
-            time.sleep(0.2)
-            self.skip_event = False
-        else:
-            self.skip_event = True
-            time.sleep(0.5)
-            if self.threadCreated:
-                self.response_array[self.response_count] = self.freq_val
-                self.trialList.addItem(str(self.response_array[self.response_count]))
-                self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)
-                self.response_count += 1
-                self.cffValue_min.setText(str(self.min_apr))
-
-                if self.response_count == 5:
-                    self.max_apr = globaladc.get_cff_f_max_cal()
-                    self.cffValue_max.setText(str(self.max_apr))
-                    globaladc.get_print(f"Max Apr: {self.max_apr}")
-                    avgval = globaladc.get_cff_f_avg_cal()
-                    # currentPatientInfo.log_update(f"CFF_F-{avgval}")
-                    time.sleep(1)
-                    globaladc.buzzer_3()
-                    self.hide()
-                    jmp = True
-
-                self.cffValue_frq.setText(str(self.freq_val))
-
-        if not jmp:
-            if self.skip_event:
-                time.sleep(0.2)
+                self.trial_list.addItem(f"{current_freq:.1f}")
+                self.min_label.setText(f"{self.trial.min_amplitude:.1f}")
                 globaladc.buzzer_3()
-            self.patient_switch_enable()
 
-    def patient_switch_enable(self):
-        try:
-            GPIO.add_event_detect(switch, GPIO.RISING, callback=self.gpio_callback)
-        except RuntimeError:
-            pass
+    def complete_trials(self):
+        """Handle completion of all trials"""
+        self.trial.max_amplitude = globaladc.get_cff_f_max_cal()
+        self.max_label.setText(f"{self.trial.max_amplitude:.1f}")
+        
+        avg_value = globaladc.get_cff_f_avg_cal()
+        # currentPatientInfo.log_update(f"CFF_F-{avg_value}")
+        
+        time.sleep(1)
+        globaladc.buzzer_3()
+        self.hide()
+        # pageDisctonary['BrkFovea_1'].show()
 
-    def patient_switch_disable(self):
-        try:
-            GPIO.remove_event_detect(switch)
-        except RuntimeError:
-            pass
+    def reset_trial(self):
+        """Reset for new trial"""
+        self.trial.reset()
+        self.min_label.setText("    ")
+        self.max_label.setText("    ")
+        self.freq_label.setText("    ")
+        self.trial_list.clear()
+        self.patient_action.show()
 
-    def periodic_event(self):
-        if not self.skip_event:
-            self.freq_val = round(self.freq_val - 0.5, 1)
-            self.cffValue_frq.setText(str(self.freq_val))
-            if self.freq_val < 5:
-                self.skip_event = True
-                self.threadCreated = False
-                self.freq_val = self.freq_val_start
-                self.cffValue_frq.setText(str(self.freq_val))
-                globaladc.buzzer_3()
-            globaladc.put_cff_fovea_frq(self.freq_val)
-        else:
-            globaladc.put_cff_fovea_frq(35)
-            globaladc.get_print('CF')
+    def showEvent(self, event):
+        """Handle window show event"""
+        super().showEvent(event)
+        self.reset_trial()
+        globaladc.cff_Fovea_Prepair()
+        self.gpio_thread.start()
+        globaladc.blue_led_off()
 
-    def onfw(self):
-        globaladc.get_print("Forward button clicked")
+    def hideEvent(self, event):
+        """Handle window hide event"""
+        super().hideEvent(event)
+        if self.freq_thread:
+            self.freq_thread.stop()
+        self.gpio_thread.stop()
 
-    def onbw(self):
-        globaladc.get_print("Backward button clicked")
+    def on_back(self):
+        """Handle back button press"""
+        self.hide()
+        # pageDisctonary['BrkparaFovea'].show()
 
-    def run_thread(self):
-        globaladc.get_print("Worker thread started")
-        self.timer.start(intervel * 1000)
+    def on_next(self):
+        """Handle next button press"""
+        self.hide()
+        # pageDisctonary['MainScreen'].show()
 
-    def hide(self):
-        self.timer.stop()
-        self.patient_switch_disable()
-        self.close()
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = CffFovea()
+    window = CFFWindow()
     window.show()
-
-    # Clean up GPIO on exit
-    import atexit
-    @atexit.register
-    def cleanup_gpio():
-        GPIO.cleanup()
-
     sys.exit(app.exec_())
