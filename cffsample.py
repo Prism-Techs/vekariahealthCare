@@ -192,13 +192,12 @@ class CFFWindow(QMainWindow):
         self.next_btn.clicked.connect(self.on_next)
 
     def setup_threads(self):
-        # GPIO monitoring thread
-        self.gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
-        self.gpio_thread.button_pressed.connect(self.handle_button_press)
-        
-        # Frequency update thread
-        self.freq_thread = None
-        
+        """Initialize threads for GPIO monitoring"""
+        self._gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
+        self._gpio_thread.button_pressed.connect(self.handle_button_press)
+
+
+
     def start_trial(self):
         """Start a new trial"""
         self.patient_action.hide()
@@ -381,9 +380,10 @@ class CFFWindow(QMainWindow):
     def showEvent(self, event):
         """Handle window show event"""
         super().showEvent(event)
-        self.reset_trial()
+        self.reset_test()
         globaladc.cff_Fovea_Prepair()
-        self.gpio_thread.start()
+        if self._gpio_thread:
+            self._gpio_thread.start()  # Start GPIO monitoring
         globaladc.blue_led_off()
 
     def hideEvent(self, event):
