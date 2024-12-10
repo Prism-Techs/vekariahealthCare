@@ -36,6 +36,13 @@ class FrequencyWorker(QThread):
         self._running = True
         self._skip_event = True
 
+    def reset_frequency(self, new_freq: float):
+        """Reset the frequency to a new value"""
+        self._frequency = new_freq
+        self._initial_freq = new_freq
+        self.frequency_updated.emit(new_freq)
+        globaladc.put_cff_fovea_frq(new_freq)
+
     def run(self):
         while self._running:
             if not self._skip_event:
