@@ -93,6 +93,14 @@ class CFFWindow(QMainWindow):
         self.trial = CFFTrial()
         self.setup_ui()
         self.setup_threads()
+
+        self.skip_event = True
+        self.threadCreated = False
+        self.response_count = 0
+        self.freq_val_start = 34.5
+        self.freq_val = self.freq_val_start
+        self.min_apr = 0
+        self.response_array = [0] * 5
         
     def setup_ui(self):
         self.setWindowTitle("CFF Fovea Test")
@@ -171,25 +179,93 @@ class CFFWindow(QMainWindow):
 
     @pyqtSlot()
     def handle_button_press(self):
-        """Handle patient button press"""
-        if not self.freq_thread or not self.freq_thread.isRunning():
-            self.start_trial()
+        """Convert of original handleuserButton to PyQt5"""
+        globaladc.get_print('handle to be implemented')
+        jmp = False
+        
+        # Disable GPIO monitoring temporarily
+        self.gpio_thread.stop()
+        time.sleep(0.15)
+
+        if self.skip_event:
+            # Starting a new measurement
+            self.patient_action.hide()
+            self.threadCreated = True
+            
+            # Determine starting frequency based on trial count
+            if self.response_count == 0:
+                self.freq_val_start = self.freq_val_start
+            else:
+                self.freq_val_start = self.min_apr + 6.5
+                
+            self.freq_val = self.freq_val_start
+            
+            # Start the flicker
+            globaladc.fliker_start_g()
+            
+            # Start frequency decrease thread
+            self.freq_thread = FrequencyWorker(self.freq_val_start, globaladc.get_cff_delay())
+            self.freq_thread.frequency_updated.connect(self.update_frequency)
+            self.freq_thread.trial_timeout.connect(self.handle_timeout)
+            self.freq_thread.start()
+            
+            time.sleep(0.2)
+            self.skip_event = False
+            
         else:
-            self.record_response()
+            # Recording a measurement
+            self.skip_event = True
+            time.sleep(0.5)
+            
+            if self.threadCreated:
+                # Stop frequency updates
+                if self.freq_thread:
+                    self.freq_thread.stop()
+                    self.freq_thread = None
+                
+                # Record response
+                self.response_array[self.response_count] = self.freq_val
+                self.trial_list.addItem(str(self.response_array[self.response_count]))
+                
+                # Calculate and update minimum amplitude
+                self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)
+                self.min_label.setText(str(self.min_apr))
+                
+                self.response_count += 1
+                
+                # Check if all trials are complete
+                if self.response_count == 5:
+                    self.complete_trial_sequence()
+                    jmp = True
+                
+                self.freq_label.setText(str(self.freq_val))
+
+        # Re-enable GPIO monitoring if not jumping to next screen
+        if not jmp:
+            if self.skip_event:
+                time.sleep(0.2)
+                globaladc.buzzer_3()
+            self.gpio_thread.start()
 
     @pyqtSlot(float)
-    def update_frequency(self, freq: float):
-        """Update frequency display"""
-        self.freq_label.setText(f"{freq:.1f}")
-        globaladc.put_cff_fovea_frq(freq)
+    def update_frequency(self, new_freq):
+        """Handle frequency updates from worker thread"""
+        self.freq_val = new_freq
+        self.freq_label.setText(str(new_freq))
+        globaladc.put_cff_fovea_frq(new_freq)
 
     @pyqtSlot()
     def handle_timeout(self):
         """Handle trial timeout"""
-        self.freq_thread.stop()
-        self.freq_thread = None
+        self.skip_event = True
+        self.threadCreated = False
+        self.freq_val = self.freq_val_start
+        self.freq_label.setText(str(self.freq_val))
         globaladc.buzzer_3()
-        self.reset_trial()
+        
+        if self.freq_thread:
+            self.freq_thread.stop()
+            self.freq_thread = None
 
     def record_response(self):
         """Record current trial response"""
@@ -205,18 +281,32 @@ class CFFWindow(QMainWindow):
                 self.min_label.setText(f"{self.trial.min_amplitude:.1f}")
                 globaladc.buzzer_3()
 
-    def complete_trials(self):
-        """Handle completion of all trials"""
-        self.trial.max_amplitude = globaladc.get_cff_f_max_cal()
-        self.max_label.setText(f"{self.trial.max_amplitude:.1f}")
-        
-        avg_value = globaladc.get_cff_f_avg_cal()
-        # currentPatientInfo.log_update(f"CFF_F-{avg_value}")
-        
-        time.sleep(1)
-        globaladc.buzzer_3()
-        self.hide()
-        # pageDisctonary['BrkFovea_1'].show()
+    def complete_trial_sequence(self):
+            """Handle completion of all trials"""
+            # Calculate maximum amplitude
+            self.max_apr = globaladc.get_cff_f_max_cal()
+            self.max_label.setText(str(self.max_apr))
+            
+            # Log the data
+            str_data = f'self.max_apr={self.max_apr}'
+            globaladc.get_print(str_data)
+            
+            # Calculate and log average value
+            avgval = globaladc.get_cff_f_avg_cal()
+            log_data = f"CFF_F-{avgval}"
+            # currentPatientInfo.log_update(log_data)
+            
+            # Final cleanup and transition
+            time.sleep(1)
+            globaladc.buzzer_3()
+            globaladc.get_print('done')
+            
+            # Stop GPIO monitoring
+            self.gpio_thread.stop()
+            
+            # Transition to next screen
+            self.hide()
+            # pageDisctonary['BrkFovea_1'].show()
 
     def reset_trial(self):
         """Reset for new trial"""
