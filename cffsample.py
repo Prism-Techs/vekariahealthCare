@@ -25,7 +25,6 @@ class CFFConfig:
     FREQ_LABEL_STYLE = "background-color: #F7F442;"
 
 class FrequencyWorker(QThread):
-    """Worker thread for handling frequency updates"""
     frequency_updated = pyqtSignal(float)
     trial_timeout = pyqtSignal()
 
@@ -40,45 +39,36 @@ class FrequencyWorker(QThread):
     def run(self):
         while self._running:
             if not self._skip_event:
-                self._frequency = round(self._frequency - CFFConfig.FREQUENCY_DECREMENT, 1)
+                self._frequency = round(self._frequency - 0.5, 1)
                 self.frequency_updated.emit(self._frequency)
                 
-                if self._frequency <= CFFConfig.MINIMUM_FREQUENCY:
+                if self._frequency < 5:
                     self._skip_event = True
                     self._frequency = self._initial_freq
                     self.frequency_updated.emit(self._frequency)
-                    globaladc.fliker_stop()  # Stop flicker on timeout
+                    globaladc.fliker_stop()
                     globaladc.buzzer_3()
                     self.trial_timeout.emit()
                 
                 globaladc.put_cff_fovea_frq(self._frequency)
+            else:
+                globaladc.put_cff_fovea_frq(35)
+                globaladc.get_print('CF')
             
             time.sleep(self._interval)
-
-
-    def reset_frequency(self, new_freq: float):
-        """Reset the frequency to a new value"""
-        self._frequency = new_freq
-        self._initial_freq = new_freq
-        self.frequency_updated.emit(new_freq)
-        globaladc.put_cff_fovea_frq(new_freq)
 
     def set_skip_event(self, skip: bool):
         self._skip_event = skip
         if skip:
             globaladc.fliker_stop()
-            time.sleep(0.1)
-            globaladc.green_led_off()
         else:
-            globaladc.green_freq_control(0)   # Set base frequency
-            time.sleep(0.1)  # Wait for settings to stabilize
             globaladc.fliker_start_g()
-
 
     def stop(self):
         self._running = False
-        globaladc.fliker_stop()  # Ensure flicker is stopped
         self.wait()
+
+
 
 class GPIOMonitor(QThread):
     """Thread for monitoring GPIO button presses"""
@@ -284,18 +274,12 @@ class CFFWindow(QMainWindow):
         self._thread_created = True
         
         # Calculate starting frequency
-        start_freq = (CFFConfig.INITIAL_FREQUENCY if self._response_count == 0 
-                    else self._trial_manager.min_amplitude + CFFConfig.FREQUENCY_INCREMENT)
-        
+        if self._response_count == 0:
+            start_freq = CFFConfig.INITIAL_FREQUENCY
+        else:
+            start_freq = self._trial_manager.min_amplitude + 6.5
+            
         self._current_frequency = start_freq
-        
-        # Ensure proper hardware state
-        globaladc.fliker_stop()
-        globaladc.green_led_off()
-        time.sleep(0.2)
-        
-        # Set base frequency only, let voltage remain at default
-        # globaladc.green_freq_control(0)
         
         # Initialize frequency thread if needed
         if self._freq_thread is None:
@@ -306,18 +290,19 @@ class CFFWindow(QMainWindow):
         else:
             self._freq_thread.reset_frequency(start_freq)
         
-        time.sleep(0.2)  # Wait for settings to take effect
-        self._freq_thread.set_skip_event(False)  # Start flicker
+        # Start flicker immediately
+        globaladc.fliker_start_g()
+        time.sleep(0.2)
+        self._freq_thread.set_skip_event(False)
         self._skip_event = False
 
     def _handle_trial_response(self):
         """Handle the patient's response during a trial"""
         self._skip_event = True
+        time.sleep(0.5)
         
         if self._thread_created and self._freq_thread:
-            # Stop the flicker first
-            self._freq_thread.set_skip_event(True)  # This will stop flicker with delay
-            time.sleep(0.3)  # Additional delay after stopping
+            self._freq_thread.set_skip_event(True)
             
             # Record the trial result
             self.trial_list.addItem(f"{self._current_frequency:.1f}")
@@ -327,16 +312,12 @@ class CFFWindow(QMainWindow):
             
             self._response_count += 1
             
-            # Play the beeps
-            globaladc.buzzer_3()
-            
             if self._response_count >= CFFConfig.TRIALS_COUNT:
                 self._complete_trial_set()
                 return
             
-            # Prepare for next trial with longer delay
-            time.sleep(0.5)
-            globaladc.green_led_off()  # Ensure LED is off between trials
+            # Beep and prepare for next trial
+            globaladc.buzzer_3()
             time.sleep(0.2)
             self.patient_action.show()
 
