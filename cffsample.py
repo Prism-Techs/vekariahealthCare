@@ -266,6 +266,7 @@ class CFFWindow(QMainWindow):
                 # Stop frequency updates but don't destroy thread
                 self._freq_thread.stop()
                 self._freq_thread = None
+                globaladc.fliker_stop_g()  # Add this to stop flickering
 
                 # Record response
                 self.trial_list.addItem(f"{self._current_frequency:.1f}")
