@@ -256,24 +256,96 @@ class CFFWindow(QMainWindow):
         self._gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
         self._gpio_thread.button_pressed.connect(self.handle_button_press)
 
+
     @pyqtSlot()
     def handle_button_press(self):
         """Handle patient button press events"""
+        globaladc.get_print('handle to be implemented')
+        jmp = False
+        
         if self._gpio_thread:
             self._gpio_thread.disable()
-        
-        time.sleep(0.15)  # Debounce delay
+        time.sleep(0.15)
 
         if self._skip_event:
-            self._handle_trial_start()
+            # Starting new measurement
+            self.patient_action.hide()
+            self._thread_created = True
+            
+            # Exact original frequency calculation logic
+            if self._response_count == 0:
+                self.freq_val_start = CFFConfig.INITIAL_FREQUENCY
+            elif self._response_count == 1:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+            elif self._response_count == 2:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+            elif self._response_count == 3:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+            elif self._response_count == 4:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+            elif self._response_count == 5:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+            else:
+                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+                
+            self._current_frequency = self.freq_val_start
+            
+            # Start flicker
+            if self._freq_thread is None:
+                self._freq_thread = FrequencyWorker(self.freq_val_start, globaladc.get_cff_delay())
+                self._freq_thread.frequency_updated.connect(self.update_frequency)
+                self._freq_thread.trial_timeout.connect(self.handle_timeout)
+                self._freq_thread.start()
+            else:
+                self._freq_thread.reset_frequency(self.freq_val_start)
+                
+            globaladc.fliker_start_g()
+            time.sleep(0.2)
+            self._skip_event = False
+            self._freq_thread.set_skip_event(False)
+        
         else:
-            self._handle_trial_response()
+            # Recording measurement
+            self._skip_event = True
+            time.sleep(0.5)
+            
+            if self._thread_created and self._freq_thread:
+                self._freq_thread.set_skip_event(True)
+                
+                # Record trial result
+                self.trial_list.addItem(f"{self._current_frequency:.1f}")
+                self._trial_manager.record_response(self._current_frequency)
+                self.min_label.setText(f"{self._trial_manager.min_amplitude:.1f}")
+                
+                self._response_count += 1
+                
+                # Check if all trials complete
+                if self._response_count == 5:
+                    self.max_label.setText(f"{self._trial_manager.max_amplitude:.1f}")
+                    avg_val = globaladc.get_cff_f_avg_cal()
+                    globaladc.get_print(f"CFF_F-{avg_val}")
+                    
+                    if self._freq_thread:
+                        self._freq_thread.stop()
+                        self._freq_thread = None
+                    
+                    time.sleep(1)
+                    globaladc.buzzer_3()
+                    if self._gpio_thread:
+                        self._gpio_thread.disable()
+                    self.hide()
+                    jmp = True
+                
+                self.freq_label.setText(f"{self._current_frequency:.1f}")
 
-        # Re-enable button if not completed all trials
-        if self._response_count < CFFConfig.TRIALS_COUNT:
-            time.sleep(0.2)  # Delay before re-enabling
+        # Re-enable button if not jumping
+        if not jmp:
+            if self._skip_event:
+                time.sleep(0.2)
+                globaladc.buzzer_3()
             if self._gpio_thread:
                 self._gpio_thread.enable()
+
 
     def _handle_trial_start(self):
         """Handle the start of a new trial"""
