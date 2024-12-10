@@ -169,6 +169,7 @@ class CFFWindow(QMainWindow):
         self.patient_action = None
         self.back_btn = None
         self.next_btn = None
+        globaladc.flicker_Prepair()
         globaladc.cff_Fovea_Prepair() # run this while loding cff Fovea screen        
         
         # Setup UI and threads
