@@ -25,115 +25,113 @@ class CffFovea:
     def __init__(self, root):
         self.root = root
         self.frame = tk.Frame(root, bg='black')
-        self.frame.place(x=0, y=0, width=1024, height=612)
         
-        # Initialize variables from old implementation
-        self.response_count = 0
+        # Initialize variables
+        self.response_count = 0  
         self.skip_event = True
         self.threadCreated = False
-        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)  # Using global intervel
+        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
         self.min_apr = 0
-        self.max_apr = 0
+        self.max_apr = 0 
         self.response_array = [0, 0, 0, 0, 0]
-        
+
         # Create header frame
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
         self.header_frame.pack(fill='x')
-        
-        # Load logo (assuming you have the image file)
+
+        # Logo and title
         try:
             logo = Image.open("VHC Logo.png")
             logo = logo.resize((44, 23))
             self.logo_img = ImageTk.PhotoImage(logo)
-            logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
-            logo_label.place(x=0, y=10)
+            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
+            self.logo_label.place(x=0, y=10)
         except:
             print("Logo image not found")
-        
-        # Header labels - using global Font variables
+
+        # Header labels
         tk.Label(self.header_frame, text="Vekaria Healthcare", 
                 font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
         tk.Label(self.header_frame, text="V1.0",
                 font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
-        
-        # Sub header
-        tk.Label(self.frame, text="Macular Densitometer                                                          CFF Fovea Test",
+
+        # Create UI elements
+        self.create_main_ui()
+        self.create_side_buttons()
+        self.create_content_frame()
+
+    def create_main_ui(self):
+        # Main title
+        tk.Label(self.frame, 
+                text="Macular Densitometer                                                          CFF Fovea Test",
                 font=Font2, bg='black', fg='white').place(x=0, y=40)
-        
-        # Side buttons
-        side_buttons = [
-            ("Flicker Demo", 150),
-            ("CFF Fovea", 210),
-            ("BRK Fovea", 270),
-            ("CFF Para-Fovea", 330),
-            ("BRK Para-Fovea", 390),
-            ("Test Result", 450)
-        ]
-        
-        for text, y in side_buttons:
-            btn = tk.Button(self.frame, text=text, font=Font,
-                          width=20, bg='black' if text != "CFF Fovea" else 'white',
-                          fg='white' if text != "CFF Fovea" else 'black',
-                          relief='solid', bd=2)
-            btn.place(x=10, y=y)
-        
-        # Main content frame
-        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        self.content_frame.place(x=280, y=110, width=711, height=441)
-        
-        # Data display
-        self.data2_label = tk.Label(self.content_frame, text="24.5", 
-                                  font=Font2, bg='black', fg='white')
-        self.data2_label.place(x=580, y=30)
-        
-        # Results frame
-        self.results_frame = tk.Frame(self.content_frame, bg='black', bd=3, relief='solid')
-        self.results_frame.place(x=170, y=10, width=291, height=126)
-        
-        tk.Label(self.results_frame, text="CFF Fovea",
-                font=Font2, bg='black', fg='white').place(x=10, y=10)
-        self.data1_label = tk.Label(self.results_frame, text="23.5",
-                                  font=Font2, bg='black', fg='white')
-        self.data1_label.place(x=40, y=60)
-        
-        # Control buttons
-        tk.Label(self.content_frame, text="Test Status",
-                font=Font2, bg='#1f2836', fg='white').place(x=0, y=170)
-        
-        # Trial list - using global Font1
-        self.trialList = tk.Listbox(self.content_frame, font=Font1, width=6)
-        self.trialList.place(x=cffValue_frq_x, y=60)  # Using global position variables
-        
-        # Status labels - using global Font variables
-        self.patentActionflabel = tk.Label(self.content_frame, 
+
+        # CFF label and values
+        cfflabel = tk.Label(self.frame, text='CFF FOVEA :', font=Font)
+        cfflabel.place(x=420, y=10)
+
+        self.cffValue_min = tk.Label(self.frame, text='    ', font=Font, bg='white')
+        self.cffValue_max = tk.Label(self.frame, text='    ', font=Font, bg='white')
+        self.cffValue_frq = tk.Label(self.frame, text='    ', font=Font, bg='#F7F442')
+
+        self.trialList = tk.Listbox(self.frame, font=Font1, width=6)
+        self.patentActionflabel = tk.Label(self.frame, 
                                          text="Patient's side Button \n Begins Trial",
                                          font=Font1, bg='white')
-        self.cffValue_min = tk.Label(self.content_frame, text='    ', 
-                                   font=Font, bg='white')
-        self.cffValue_max = tk.Label(self.content_frame, text='    ', 
-                                   font=Font, bg='white')
-        self.cffValue_frq = tk.Label(self.content_frame, text='    ', 
-                                   font=Font, bg='#F7F442')
-        
-        # Place the status labels
+
+        # Place UI elements
         self.cffValue_min.place(x=430, y=40)
         self.cffValue_max.place(x=500, y=40)
-        self.cffValue_frq.place(x=cffValue_frq_x, y=cffValue_frq_y)  # Using global position variables
+        self.cffValue_frq.place(x=cffValue_frq_x, y=cffValue_frq_y)
+        self.trialList.place(x=800, y=60)
         self.patentActionflabel.place(x=380, y=100)
 
-        # Navigation buttons with specified Font2
+    def create_side_buttons(self):
+        buttons = [
+            ("Flicker Demo", 150, 'black'),
+            ("CFF Fovea", 210, 'white'),
+            ("BRK Fovea", 270, 'black'),
+            ("CFF Para-Fovea", 330, 'black'),
+            ("BRK Para-Fovea", 390, 'black'),
+            ("Test Result", 450, 'black')
+        ]
+
+        for text, y, bg_color in buttons:
+            btn = tk.Button(self.frame, text=text, font=Font,
+                          width=20, bg=bg_color,
+                          fg='white' if bg_color == 'black' else 'black',
+                          relief='solid', bd=2)
+            btn.place(x=10, y=y)
+
+    def create_content_frame(self):
+        # Content frame
+        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
+        self.content_frame.place(x=280, y=110, width=711, height=441)
+
+        # Status buttons
+        machine_ready = tk.Button(self.content_frame, text="Machine Ready",
+                                font=('Arial', 14, 'bold'), bg='#1a472a', fg='#4CAF50')
+        machine_ready.place(x=50, y=230)
+
+        flicker_start = tk.Button(self.content_frame, text="Flicker Start",
+                                font=('Arial', 14, 'bold'), bg='#4d3319', fg='#FFA500')
+        flicker_start.place(x=53, y=284)
+
+        flicker_visible = tk.Button(self.content_frame, text="Flicker Visible",
+                                  font=('Arial', 14, 'bold'), bg='#4d1f1f', fg='#ff4444')
+        flicker_visible.place(x=50, y=340)
+
+        # Navigation buttons
         self.home_btn = tk.Button(self.content_frame, text="Home",
-                                font=Font2, bg='black', fg='white',
-                                relief='solid', bd=1,
-                                command=self.on_home)
+                                font=Font2, command=self.on_home,
+                                bg='black', fg='white', relief='solid', bd=1)
         self.home_btn.place(x=300, y=380)
-        
+
         self.next_btn = tk.Button(self.content_frame, text="Next",
-                                font=Font2, bg='black', fg='white',
-                                relief='solid', bd=1,
-                                command=self.on_next)
+                                font=Font2, command=self.on_next,
+                                bg='black', fg='white', relief='solid', bd=1)
         self.next_btn.place(x=440, y=380)
 
     def on_home(self):
@@ -144,7 +142,7 @@ class CffFovea:
         pageDisctonary['CffFovea'].hide()
         pageDisctonary['BrkFovea_1'].show()
 
-    def handleuserButton(self, switch=switch):  # Using global switch
+    def handleuserButton(self, switch=switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
         self.patient_switch_desable()
@@ -198,11 +196,11 @@ class CffFovea:
     def patient_switch_enable(self):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Using global switch
+        GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(switch, GPIO.RISING, callback=self.handleuserButton)
     
     def patient_switch_desable(self):
-        GPIO.remove_event_detect(switch)  # Using global switch
+        GPIO.remove_event_detect(switch)
     
     def show(self):
         self.frame.place(width=1024, height=600)
@@ -220,7 +218,7 @@ class CffFovea:
         self.cffValue_max.config(text='     ')
         self.cffValue_frq.config(text='     ')
         self.trialList.delete(0, tk.END)
-        self.freq_val_start = contt_fva  # Using global contt_fva
+        self.freq_val_start = contt_fva
         self.freq_val = self.freq_val_start
         self.response_array = [0, 0, 0, 0, 0]
         self.response_count = 0
@@ -230,7 +228,7 @@ class CffFovea:
         self.threadCreated = False
 
     def run_therad(self):
-        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)  # Using global intervel
+        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
         if not self.worker_cff.isStarted:
             self.worker_cff.start()
             self.patient_switch_enable()
