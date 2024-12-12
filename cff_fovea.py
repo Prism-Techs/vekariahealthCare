@@ -37,78 +37,29 @@ class CffFovea:
         self.max_apr = 0 
         self.response_array = [0, 0, 0, 0, 0]
 
-        # Create header frame
-        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
-        self.header_frame.pack(fill='x')
-
-        # Logo and title
-        try:
-            logo = Image.open("VHC Logo.png")
-            logo = logo.resize((44, 23))
-            self.logo_img = ImageTk.PhotoImage(logo)
-            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
-            self.logo_label.place(x=0, y=10)
-        except:
-            print("Logo image not found")
-
-        # Header labels
-        tk.Label(self.header_frame, text="Vekaria Healthcare", 
-                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
-        tk.Label(self.header_frame, text="V1.0",
-                font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
+        # Create content frame first (since we'll be placing elements in it)
+        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
+        self.content_frame.place(x=280, y=110, width=711, height=441)
 
         # Create UI elements
-        self.create_main_ui()
-        self.create_side_buttons()
-        self.create_content_frame()
+        cfflabel = tk.Label(self.content_frame, text='CFF FOVEA :', font=Font, bg='#1f2836', fg='white')
+        cfflabel.place(x=140, y=10)
 
-    def create_main_ui(self):
-        # Main title
-        tk.Label(self.frame, 
-                text="Macular Densitometer                                                          CFF Fovea Test",
-                font=Font2, bg='black', fg='white').place(x=0, y=40)
+        self.cffValue_min = tk.Label(self.content_frame, text='    ', font=Font, bg='white')
+        self.cffValue_max = tk.Label(self.content_frame, text='    ', font=Font, bg='white')
+        self.cffValue_frq = tk.Label(self.content_frame, text='    ', font=Font, bg='#F7F442')
 
-        # CFF label and values
-        cfflabel = tk.Label(self.frame, text='CFF FOVEA :', font=Font)
-        cfflabel.place(x=420, y=10)
-
-        self.cffValue_min = tk.Label(self.frame, text='    ', font=Font, bg='white')
-        self.cffValue_max = tk.Label(self.frame, text='    ', font=Font, bg='white')
-        self.cffValue_frq = tk.Label(self.frame, text='    ', font=Font, bg='#F7F442')
-
-        self.trialList = tk.Listbox(self.frame, font=Font1, width=6)
-        self.patentActionflabel = tk.Label(self.frame, 
+        self.trialList = tk.Listbox(self.content_frame, font=Font1, width=6)
+        self.patentActionflabel = tk.Label(self.content_frame, 
                                          text="Patient's side Button \n Begins Trial",
                                          font=Font1, bg='white')
 
-        # Place UI elements
-        self.cffValue_min.place(x=430, y=40)
-        self.cffValue_max.place(x=500, y=40)
-        self.cffValue_frq.place(x=cffValue_frq_x, y=cffValue_frq_y)
-        self.trialList.place(x=800, y=60)
-        self.patentActionflabel.place(x=380, y=100)
-
-    def create_side_buttons(self):
-        buttons = [
-            ("Flicker Demo", 150, 'black'),
-            ("CFF Fovea", 210, 'white'),
-            ("BRK Fovea", 270, 'black'),
-            ("CFF Para-Fovea", 330, 'black'),
-            ("BRK Para-Fovea", 390, 'black'),
-            ("Test Result", 450, 'black')
-        ]
-
-        for text, y, bg_color in buttons:
-            btn = tk.Button(self.frame, text=text, font=Font,
-                          width=20, bg=bg_color,
-                          fg='white' if bg_color == 'black' else 'black',
-                          relief='solid', bd=2)
-            btn.place(x=10, y=y)
-
-    def create_content_frame(self):
-        # Content frame
-        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        self.content_frame.place(x=280, y=110, width=711, height=441)
+        # Place UI elements inside content_frame (adjusted coordinates relative to content_frame)
+        self.cffValue_min.place(x=150, y=40)
+        self.cffValue_max.place(x=220, y=40)
+        self.cffValue_frq.place(x=520, y=30)
+        self.trialList.place(x=520, y=60)
+        self.patentActionflabel.place(x=100, y=100)
 
         # Status buttons
         machine_ready = tk.Button(self.content_frame, text="Machine Ready",
@@ -134,6 +85,26 @@ class CffFovea:
                                 bg='black', fg='white', relief='solid', bd=1)
         self.next_btn.place(x=440, y=380)
 
+        # Create side buttons
+        self.create_side_buttons()
+
+    def create_side_buttons(self):
+        buttons = [
+            ("Flicker Demo", 150, 'black'),
+            ("CFF Fovea", 210, 'white'),
+            ("BRK Fovea", 270, 'black'),
+            ("CFF Para-Fovea", 330, 'black'),
+            ("BRK Para-Fovea", 390, 'black'),
+            ("Test Result", 450, 'black')
+        ]
+
+        for text, y, bg_color in buttons:
+            btn = tk.Button(self.frame, text=text, font=Font,
+                          width=20, bg=bg_color,
+                          fg='white' if bg_color == 'black' else 'black',
+                          relief='solid', bd=2)
+            btn.place(x=10, y=y)
+
     def on_home(self):
         pageDisctonary['CffFovea'].hide()
         pageDisctonary['MainScreen'].show()
@@ -142,6 +113,7 @@ class CffFovea:
         pageDisctonary['CffFovea'].hide()
         pageDisctonary['BrkFovea_1'].show()
 
+    # [Rest of the methods remain the same as in your original code]
     def handleuserButton(self, switch=switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
