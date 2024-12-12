@@ -37,6 +37,32 @@ class CffFovea:
         self.max_apr = 0 
         self.response_array = [0, 0, 0, 0, 0]
 
+
+        # Create header frame
+        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+        self.header_frame.pack(fill='x')
+
+        # Logo and header labels
+        try:
+            logo = Image.open("VHC Logo.png")
+            logo = logo.resize((44, 23))
+            self.logo_img = ImageTk.PhotoImage(logo)
+            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
+            self.logo_label.place(x=0, y=10)
+        except:
+            print("Logo image not found")
+
+        tk.Label(self.header_frame, text="Vekaria Healthcare", 
+                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
+        tk.Label(self.header_frame, text="V1.0",
+                font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
+
+        # Macular Densitometer/CFF Fovea Test label
+        tk.Label(self.frame, 
+                text="Macular Densitometer                                                          CFF Fovea Test",
+                font=Font2, bg='black', fg='white').place(x=0, y=40)
+
+
         # Create content frame first (since we'll be placing elements in it)
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
         self.content_frame.place(x=280, y=110, width=711, height=441)
