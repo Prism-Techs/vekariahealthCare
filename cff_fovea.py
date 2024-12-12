@@ -1,4 +1,4 @@
-from tkinter import tk
+import tkinter as tk
 from tkinter import ttk
 import time
 import RPi.GPIO as GPIO
