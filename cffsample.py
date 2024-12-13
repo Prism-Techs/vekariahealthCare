@@ -1,526 +1,236 @@
-import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel, 
-                           QVBoxLayout, QHBoxLayout, QPushButton, QListWidget)
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QFont
+import tkinter as tk
+from tkinter import ttk
 import time
 import RPi.GPIO as GPIO
-from dataclasses import dataclass
-from typing import List, Optional
+from PIL import Image, ImageTk
+from BRK_FOVEA_1 import BrkFovea_1
+import PatientInfo
+from globalvar import pageDisctonary
 from globalvar import globaladc
+from globalvar import currentPatientInfo
+import PerodicThread
 
-@dataclass
-class CFFConfig:
-    """Configuration constants for CFF testing"""
-    SWITCH_PIN: int = 20
-    INITIAL_FREQUENCY: float = 34.5
-    FREQUENCY_DECREMENT: float = 0.5
-    FREQUENCY_INCREMENT: float = 6.5
-    MINIMUM_FREQUENCY: float = 5.0
-    TRIALS_COUNT: int = 5
-    DEBOUNCE_DELAY: float = 0.15
-    DEFAULT_FONT = QFont("Arial", 15)
-    LARGE_FONT = QFont("Arial", 20)
-    BUTTON_STYLE = "background-color: green;"
-    FREQ_LABEL_STYLE = "background-color: #F7F442;"
+# Global variables
+switch = 20
+contt_fva = 34.5
+Font = ("Arial", 15)
+Font1 = ("Arial", 15)
+Font2 = ("Arial", 20)
+intervel = globaladc.get_cff_delay()
+select = 1
+cffValue_frq_x = 820
+cffValue_frq_y = 40
 
+class CffFovea:
+    def __init__(self, frame):
+        self.frame = frame
+        self.response_count = 0  
+        self.skip_event = True
+        self.threadCreated = False
+        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
+        self.freq_val_start = 34.5
+        self.freq_val = self.freq_val_start
+        self.min_apr = 0
+        self.max_apr = 0 
+        self.response_array = [0, 0, 0, 0, 0]
 
-class FrequencyWorker(QThread):
-    frequency_updated = pyqtSignal(float)
-    trial_timeout = pyqtSignal()
+        # Create header frame
+        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+        self.header_frame.pack(fill='x')
 
-    def __init__(self, initial_freq: float, interval: float):
-        super().__init__()
-        self._initial_freq = initial_freq
-        self._frequency = initial_freq
-        self._interval = interval  # This is globaladc.get_cff_delay()
-        self._running = True
-        self._skip_event = True
+        # Logo and header labels
+        try:
+            logo = Image.open("VHC Logo.png")
+            logo = logo.resize((44, 23))
+            self.logo_img = ImageTk.PhotoImage(logo)
+            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
+            self.logo_label.place(x=0, y=10)
+        except:
+            print("Logo image not found")
 
-    def run(self):
-        while self._running:
-            if not self._skip_event:
-                # Decrease frequency slowly
-                self._frequency = round(self._frequency - 0.5, 1)
-                self.frequency_updated.emit(self._frequency)
-                globaladc.put_cff_fovea_frq(self._frequency)
-                
-                if self._frequency < 5:
-                    self._skip_event = True
-                    self._frequency = self._initial_freq
-                    self.frequency_updated.emit(self._frequency)
-                    globaladc.fliker_stop()
-                    globaladc.buzzer_3()
-                    self.trial_timeout.emit()
-            else:
-                # When not decreasing, maintain stable frequency
-                globaladc.put_cff_fovea_frq(35)
-            
-            time.sleep(self._interval)
+        tk.Label(self.header_frame, text="Vekaria Healthcare", 
+                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
+        tk.Label(self.header_frame, text="V1.0",
+                font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
 
-    def set_skip_event(self, skip: bool):
-        self._skip_event = skip
-        if skip:
-            globaladc.fliker_stop()
-        else:
-            # Ensure clean start of flicker
-            globaladc.fliker_stop()
-            time.sleep(0.1)
-            globaladc.green_freq_control(0)
-            time.sleep(0.1)
-            globaladc.fliker_start_g()
+        # Macular Densitometer/CFF Fovea Test label
+        tk.Label(self.frame, 
+                text="Macular Densitometer                                                          CFF Fovea Test",
+                font=Font2, bg='black', fg='white').place(x=0, y=40)
 
-    def reset_frequency(self, new_freq: float):
-        """Reset the frequency to a new value"""
-        self._frequency = new_freq
-        self._initial_freq = new_freq
-        globaladc.fliker_stop()
-        time.sleep(0.1)
-        globaladc.put_cff_fovea_frq(new_freq)
-        self.frequency_updated.emit(new_freq)
-
-    def stop(self):
-        self._running = False
-        globaladc.fliker_stop()
-        self.wait()
-
-class GPIOMonitor(QThread):
-    """Thread for monitoring GPIO button presses"""
-    button_pressed = pyqtSignal()
-
-    def __init__(self, pin: int):
-        super().__init__()
-        self._pin = pin
-        self._running = True
-        self._enabled = True
-        self._setup_gpio()
-
-    def _setup_gpio(self):
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self._pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-    def run(self):
-        while self._running:
-            if self._enabled and GPIO.input(self._pin) == GPIO.HIGH:
-                self.button_pressed.emit()
-                time.sleep(CFFConfig.DEBOUNCE_DELAY)
-            time.sleep(0.01)
-
-    def enable(self):
-        self._enabled = True
-
-    def disable(self):
-        self._enabled = False
-
-    def stop(self):
-        self._running = False
-        GPIO.cleanup(self._pin)
-        self.wait()
-
-class TrialManager:
-    """Manages the state and data for CFF trials"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self._current_trial = 0
-        self._responses = [0.0] * CFFConfig.TRIALS_COUNT
-        self._min_amplitude = 0.0
-        self._max_amplitude = 0.0
-
-    @property
-    def current_trial(self) -> int:
-        return self._current_trial
-
-    @property
-    def is_complete(self) -> bool:
-        return self._current_trial >= CFFConfig.TRIALS_COUNT
-
-    def record_response(self, frequency: float) -> bool:
-        if self.is_complete:
-            return True
-
-        self._responses[self._current_trial] = frequency
-        self._min_amplitude = globaladc.get_cff_f_min_cal(self._current_trial, frequency)
-        self._current_trial += 1
-
-        if self.is_complete:
-            self._max_amplitude = globaladc.get_cff_f_max_cal()
-            return True
-        return False
-
-    @property
-    def min_amplitude(self) -> float:
-        return self._min_amplitude
-
-    @property
-    def max_amplitude(self) -> float:
-        return self._max_amplitude
-
-class CFFWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self._initialize_attributes()
-        self._initialize_hardware()
-        self.setup_ui()
-        self.setup_threads()
-
-    def _initialize_attributes(self):
-        """Initialize all class attributes"""
-        self._trial_manager = TrialManager()
-        self._freq_thread = None
-        self._gpio_thread = None
-        self._current_frequency = CFFConfig.INITIAL_FREQUENCY
-        self._skip_event = True
-        self._thread_created = False
-        self._response_count = 0
-        self.min_label = None
-        self.max_label = None
-        self.freq_label = None
-        self.trial_list = None
-        self.patient_action = None
-        self.back_btn = None
-        self.next_btn = None
-
-    def _initialize_hardware(self):
-        """Initialize hardware state"""
-        globaladc.on_time = 1
-        globaladc.cff_Fovea_Prepair()
-        time.sleep(0.1)
-        self._ensure_flicker_state()
-
-    def _ensure_flicker_state(self):
-        """Ensure proper flicker LED state"""
-        globaladc.fliker_stop()
-        time.sleep(0.1)
-        globaladc.green_volt_control(20)
-        globaladc.green_freq_control(0)
-        globaladc.fliker_start_g()
-
-    def setup_ui(self):
-        """Setup the user interface"""
-        self.setWindowTitle("CFF Fovea Test")
-        self.setFixedSize(1024, 600)
-
-        main_widget = QWidget()
-        self.setCentralWidget(main_widget)
-        layout = QVBoxLayout(main_widget)
-
-        self._setup_header(layout)
-        self._setup_trial_section(layout)
-        self._setup_navigation(layout)
-
-    def _setup_header(self, parent_layout):
-        """Setup header section with labels"""
-        header_layout = QHBoxLayout()
         
-        header_label = QLabel("CFF FOVEA:", font=CFFConfig.DEFAULT_FONT)
-        self.min_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
-        self.max_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
-        self.freq_label = QLabel("    ", font=CFFConfig.DEFAULT_FONT)
-        self.freq_label.setStyleSheet(CFFConfig.FREQ_LABEL_STYLE)
+        # Create UI elements that need to be accessed throughout the class
+        self.trialList = tk.Listbox(frame, font=Font1, width=6)
+        self.patentActionflabel = tk.Label(frame, 
+                                         text="Patient's side Button \n Begins Trial",
+                                         font=Font1, bg='white')
+        self.cffValue_min = tk.Label(frame, text='    ', font=Font, bg='white')
+        self.cffValue_max = tk.Label(frame, text='    ', font=Font, bg='white')
+        self.cffValue_frq = tk.Label(frame, text='    ', font=Font, bg='#F7F442')
+
+    def Load(self):
+        # Reset variables
+        self.response_count = 0  
+        self.skip_event = True
+        self.threadCreated = False
+        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
+        self.freq_val_start = 34.5
+        self.freq_val = self.freq_val_start
+        self.min_apr = 0
+        self.max_apr = 0 
+        self.response_array = [0, 0, 0, 0, 0]
+
+        # Create and place UI elements
+        cfflabel = tk.Label(self.frame, text='CFF FOVEA :', font=Font)
+        cfflabel.place(x=420, y=10)
+
+        self.cffValue_min.place(x=430, y=40)
+        self.cffValue_max.place(x=500, y=40)
+        self.cffValue_frq.place(x=cffValue_frq_x, y=cffValue_frq_y)
+        self.trialList.place(x=800, y=60)
+        self.patentActionflabel.place(x=380, y=100)
+
+        # Navigation buttons
+        def onfw():
+            pageDisctonary['CffFovea'].hide()
+            pageDisctonary['MainScreen'].show()
+
+        def onbw():
+            pageDisctonary['CffFovea'].hide()
+            pageDisctonary['BrkparaFovea'].show()
+
+        fwButton = tk.Button(self.frame,
+                           text=">>", font=Font2,
+                           command=onfw, bg='Green',
+                           width=10)
         
-        for widget in (header_label, self.min_label, self.max_label, self.freq_label):
-            header_layout.addWidget(widget)
-        
-        header_layout.addStretch()
-        parent_layout.addLayout(header_layout)
+        bwButton = tk.Button(self.frame,
+                           text="<<", font=Font2,
+                           command=onbw, bg='Green',
+                           width=10)
 
-    def _setup_trial_section(self, parent_layout):
-        """Setup trial list and patient action sections"""
-        self.trial_list = QListWidget()
-        self.trial_list.setFont(CFFConfig.DEFAULT_FONT)
-        self.trial_list.setMaximumWidth(100)
+        fwButton.place(x=620, y=500)
+        bwButton.place(x=420, y=500)
 
-        self.patient_action = QLabel("Patient's side Button\nBegins Trial")
-        self.patient_action.setFont(CFFConfig.DEFAULT_FONT)
-        self.patient_action.setAlignment(Qt.AlignCenter)
-
-        parent_layout.addWidget(self.patient_action, alignment=Qt.AlignCenter)
-        parent_layout.addWidget(self.trial_list, alignment=Qt.AlignRight)
-
-    def _setup_navigation(self, parent_layout):
-        """Setup navigation buttons"""
-        nav_layout = QHBoxLayout()
-
-        self.back_btn = QPushButton("<<")
-        self.next_btn = QPushButton(">>")
-
-        for btn in (self.back_btn, self.next_btn):
-            btn.setFont(CFFConfig.LARGE_FONT)
-            btn.setStyleSheet(CFFConfig.BUTTON_STYLE)
-
-        self.back_btn.clicked.connect(self.on_back)
-        self.next_btn.clicked.connect(self.on_next)
-
-        nav_layout.addWidget(self.back_btn)
-        nav_layout.addWidget(self.next_btn)
-        parent_layout.addLayout(nav_layout)
-
-    def setup_threads(self):
-        """Initialize and setup monitoring threads"""
-        self._gpio_thread = GPIOMonitor(CFFConfig.SWITCH_PIN)
-        self._gpio_thread.button_pressed.connect(self.handle_button_press)
-
-
-    @pyqtSlot()
-    def handle_button_press(self):
-        """Handle patient button press events"""
+    def handleuserButton(self, switch=switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
+        self.patient_switch_desable()
+        time.sleep(0.15)        
         
-        if self._gpio_thread:
-            self._gpio_thread.disable()
-        time.sleep(0.15)
-
-        if self._skip_event:
-            # Starting new measurement
-            self.patient_action.hide()
-            self._thread_created = True
+        if self.skip_event:
+            self.patentActionflabel.place_forget()
+            self.threadCreated = True
             
-            # Calculate frequency
-            if self._response_count == 0:
-                self.freq_val_start = CFFConfig.INITIAL_FREQUENCY
+            if self.response_count == 0:
+                self.freq_val_start = self.freq_val_start
             else:
-                self.freq_val_start = self._trial_manager.min_amplitude + 6.5
+                self.freq_val_start = self.min_apr + 6.5
                 
-            self._current_frequency = self.freq_val_start
-            
-            # Ensure clean flicker start
-            globaladc.fliker_stop()
-            time.sleep(0.1)
-            globaladc.green_freq_control(0)
-            
-            if self._freq_thread is None:
-                self._freq_thread = FrequencyWorker(self.freq_val_start, globaladc.get_cff_delay())
-                self._freq_thread.frequency_updated.connect(self.update_frequency)
-                self._freq_thread.trial_timeout.connect(self.handle_timeout)
-                self._freq_thread.start()
-            else:
-                self._freq_thread.reset_frequency(self.freq_val_start)
-                
-            time.sleep(0.2)  # Wait for settings to take effect
+            self.freq_val = self.freq_val_start   
             globaladc.fliker_start_g()
-            self._skip_event = False
-            self._freq_thread.set_skip_event(False)
-                
-            globaladc.fliker_start_g()
-            time.sleep(0.2)
-            self._skip_event = False
-            self._freq_thread.set_skip_event(False)
-        
+            time.sleep(0.2)             
+            self.skip_event = False            
         else:
-            # Recording measurement
-            self._skip_event = True
+            self.skip_event = True
             time.sleep(0.5)
             
-            if self._thread_created and self._freq_thread:
-                self._freq_thread.set_skip_event(True)
+            if self.threadCreated:
+                self.response_array[self.response_count] = self.freq_val
+                self.trialList.insert(self.response_count, self.response_array[self.response_count])                
+                self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)  
+                self.response_count = self.response_count + 1
+                self.cffValue_min.config(text=self.min_apr)                
                 
-                # Record trial result
-                self.trial_list.addItem(f"{self._current_frequency:.1f}")
-                self._trial_manager.record_response(self._current_frequency)
-                self.min_label.setText(f"{self._trial_manager.min_amplitude:.1f}")
-                
-                self._response_count += 1
-                
-                # Check if all trials complete
-                if self._response_count == 5:
-                    self.max_label.setText(f"{self._trial_manager.max_amplitude:.1f}")
-                    avg_val = globaladc.get_cff_f_avg_cal()
-                    globaladc.get_print(f"CFF_F-{avg_val}")
-                    
-                    if self._freq_thread:
-                        self._freq_thread.stop()
-                        self._freq_thread = None
-                    
+                if self.response_count == 5:
+                    self.max_apr = globaladc.get_cff_f_max_cal()                        
+                    self.cffValue_max.config(text=self.max_apr)                    
+                    avgval = globaladc.get_cff_f_avg_cal()
+                    log_data = f"CFF_F-{avgval}"
+                    currentPatientInfo.log_update(log_data)                    
                     time.sleep(1)
                     globaladc.buzzer_3()
-                    if self._gpio_thread:
-                        self._gpio_thread.disable()
                     self.hide()
+                    pageDisctonary['BrkFovea_1'].show()
+                    self.patient_switch_desable()
                     jmp = True
                 
-                self.freq_label.setText(f"{self._current_frequency:.1f}")
-
-        # Re-enable button if not jumping
+                self.cffValue_frq.config(text=self.freq_val)
+        
         if not jmp:
-            if self._skip_event:
-                time.sleep(0.2)
-                globaladc.buzzer_3()
-            if self._gpio_thread:
-                self._gpio_thread.enable()
+            if self.skip_event:
+                time.sleep(0.2) 
+                globaladc.buzzer_3()            
+            self.patient_switch_enable()
 
-
-    def _handle_trial_start(self):
-        """Handle the start of a new trial"""
-        self.patient_action.hide()
-        self._thread_created = True
-        
-        # Calculate starting frequency
-        if self._response_count == 0:
-            start_freq = CFFConfig.INITIAL_FREQUENCY
-        else:
-            start_freq = self._trial_manager.min_amplitude + 6.5
-            
-        self._current_frequency = start_freq
-        
-        # Initialize frequency thread if needed
-        if self._freq_thread is None:
-            self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
-            self._freq_thread.frequency_updated.connect(self.update_frequency)
-            self._freq_thread.trial_timeout.connect(self.handle_timeout)
-            self._freq_thread.start()
-        else:
-            self._freq_thread.reset_frequency(start_freq)
-        
-        # Start flicker immediately
-        globaladc.fliker_start_g()
-        time.sleep(0.2)
-        self._freq_thread.set_skip_event(False)
-        self._skip_event = False
-
-    def _handle_trial_response(self):
-        """Handle the patient's response during a trial"""
-        self._skip_event = True
-        time.sleep(0.5)
-        
-        if self._thread_created and self._freq_thread:
-            self._freq_thread.set_skip_event(True)
-            
-            # Record the trial result
-            self.trial_list.addItem(f"{self._current_frequency:.1f}")
-            self._trial_manager.record_response(self._current_frequency)
-            self.min_label.setText(f"{self._trial_manager.min_amplitude:.1f}")
-            self.freq_label.setText(f"{self._current_frequency:.1f}")
-            
-            self._response_count += 1
-            
-            if self._response_count >= CFFConfig.TRIALS_COUNT:
-                self._complete_trial_set()
-                return
-            
-            # Beep and prepare for next trial
-            globaladc.buzzer_3()
-            time.sleep(0.2)
-            self.patient_action.show()
-
-    def _setup_frequency_thread(self, start_freq):
-        """Setup the frequency update thread"""
-        self._freq_thread = FrequencyWorker(start_freq, globaladc.get_cff_delay())
-        self._freq_thread.frequency_updated.connect(self.update_frequency)
-        self._freq_thread.trial_timeout.connect(self.handle_timeout)
-        self._freq_thread.start()
-
-    def _record_trial_result(self):
-        """Record and process trial results"""
-        self.trial_list.addItem(f"{self._current_frequency:.1f}")
-        self._trial_manager.record_response(self._current_frequency)
-        self.min_label.setText(f"{self._trial_manager.min_amplitude:.1f}")
-        
-        self._response_count += 1
-        
-        if self._response_count == CFFConfig.TRIALS_COUNT:
-            self._complete_trial_set()
-        
-        self.freq_label.setText(f"{self._current_frequency:.1f}")
-
-    def _complete_trial_set(self):
-        """Handle completion of all trials"""
-        self.max_label.setText(f"{self._trial_manager.max_amplitude:.1f}")
-        avg_val = globaladc.get_cff_f_avg_cal()
-        globaladc.get_print(f"CFF_F-{avg_val}")
-        
-        if self._freq_thread:
-            self._freq_thread.stop()
-            self._freq_thread = None
-        
-        time.sleep(0.5)
-        globaladc.buzzer_3()
-        
-        if self._gpio_thread:
-            self._gpio_thread.disable()
-        
-        self.hide()
-
-    @pyqtSlot(float)
-    def update_frequency(self, new_freq):
-        """Update displayed frequency and hardware state"""
-        self._current_frequency = new_freq
-        self.freq_label.setText(f"{new_freq:.1f}")
-        globaladc.put_cff_fovea_frq(new_freq)
-
-    @pyqtSlot()
-    def handle_timeout(self):
-        """Handle trial timeout"""
-        if self._freq_thread:
-            self._freq_thread.stop()
-            self._freq_thread = None
-        self.freq_label.setText(f"{CFFConfig.INITIAL_FREQUENCY:.1f}")
-
-    def reset(self):
-        """Reset window state for new test"""
-        self._trial_manager.reset()
-        self._current_frequency = CFFConfig.INITIAL_FREQUENCY
-        self._response_count = 0
-        self._skip_event = True
-        self._thread_created = False
-        
-        if self._freq_thread:
-            self._freq_thread.stop()
-            self._freq_thread = None
-        
-        # Ensure hardware is completely off
-        globaladc.fliker_stop()
-        time.sleep(0.2)
-        globaladc.green_led_off()
-        time.sleep(0.2)
-        
-        self.min_label.setText("    ")
-        self.max_label.setText("    ")
-        self.freq_label.setText("    ")
-        self.trial_list.clear()
-        self.patient_action.show()
-
-    def showEvent(self, event):
-        """Handle window show event"""
-        super().showEvent(event)
-        self.reset()
-        # Initialize hardware with proper delays
+    def patient_switch_enable(self):
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(switch, GPIO.RISING, callback=self.handleuserButton)
+    
+    def patient_switch_desable(self):
+        GPIO.remove_event_detect(switch)
+    
+    def show(self):
+        self.frame.place(width=1024, height=600)
+        self.reset_values()
         globaladc.cff_Fovea_Prepair()
-        time.sleep(0.3)
-        globaladc.fliker_stop()
-        time.sleep(0.2)
-        globaladc.green_led_off()
-        if self._gpio_thread:
-            self._gpio_thread.start()
+        self.run_therad()
+        globaladc.blue_led_off()
+    
+    def hide(self):
+        self.stop_therad()
+        self.frame.place_forget()
+    
+    def reset_values(self):
+        self.cffValue_min.config(text='     ')
+        self.cffValue_max.config(text='     ')
+        self.cffValue_frq.config(text='     ')
+        self.trialList.delete(0, tk.END)
+        self.freq_val_start = contt_fva
+        self.freq_val = self.freq_val_start
+        self.response_array = [0, 0, 0, 0, 0]
+        self.response_count = 0
+        self.min_apr = 0
+        self.max_apr = 0
+        self.skip_event = True
+        self.threadCreated = False
 
-    def hideEvent(self, event):
-        """Handle window hide event"""
-        super().hideEvent(event)
-        # Ensure everything is off when hiding window
-        if self._freq_thread:
-            self._freq_thread.stop()
-            self._freq_thread = None
-        globaladc.fliker_stop()
-        time.sleep(0.2)
-        globaladc.green_led_off()
-        if self._gpio_thread:
-            self._gpio_thread.stop()
-
-    def on_back(self):
-        """Handle back button press"""
-        self.hide()
-
-    def on_next(self):
-        """Handle next button press"""
-        self.hide()
-
-
+    def run_therad(self):
+        self.worker_cff = PerodicThread.PeriodicThread(intervel, self)
+        if not self.worker_cff.isStarted:
+            self.worker_cff.start()
+            self.patient_switch_enable()
+    
+    def stop_therad(self):
+        if hasattr(self, 'worker_cff') and self.worker_cff.isStarted:
+            self.worker_cff.stop()
+            self.worker_cff.kill()
+            self.patient_switch_desable()
+            self.skip_event = True
+            self.threadCreated = False
+    
+    def periodic_event(self):
+        if not self.skip_event:
+            self.freq_val = round((self.freq_val - 0.5), 1)
+            self.cffValue_frq.config(text=self.freq_val)
+            if self.freq_val < 5:
+                self.skip_event = True
+                self.threadCreated = False
+                self.freq_val = self.freq_val_start
+                self.cffValue_frq.config(text=self.freq_val)
+                globaladc.buzzer_3()
+            globaladc.put_cff_fovea_frq(self.freq_val)
+        else:
+            globaladc.put_cff_fovea_frq(35)
+            globaladc.get_print('CF')
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = CFFWindow()
-    window.show()
-    sys.exit(app.exec_())
+    root = tk.Tk()
+    frame = tk.Frame(root)
+    frame.pack(expand=True, fill='both')
+    app = CffFovea(frame)
+    app.Load()
+    app.show()
+    root.mainloop()
