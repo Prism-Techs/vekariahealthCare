@@ -50,7 +50,7 @@ class CustomLabel(tk.Label):
         super().__init__(parent, **default_style)
         
         # Place the label (matching QRect(580, 30, 111, 51))
-        self.place(x=620, y=30)
+        self.place(x=700, y=30)
 
 def hardware():
         CffFovea.handleuserButton()
@@ -217,7 +217,7 @@ class CffFovea :
         # cfflabel.place (x=420, y=50)
         self.cffValue_min.place (x=100, y=50)
         self.cffValue_max.place (x=140, y=50)
-        self.cffValue_frq.place (x=500, y=50)        
+        self.cffValue_frq.place (x=620, y=50)        
         self.patentActionflabel.place (x=380, y=180)
         self.trialList.place (x=200, y=120)
         self.setup_header()
