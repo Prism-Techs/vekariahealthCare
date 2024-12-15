@@ -44,6 +44,8 @@ class CffFovea :
         self.cffValue_frq = tk.Label (self.content_frame, text='    ', font=Font,bg='#F7F442')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
+        self.freques_frame = tk.Frame(self.content_frame,bg="black")
+
   
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
@@ -189,6 +191,7 @@ class CffFovea :
         self.setup_header()
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
+        self.freques_frame.place(x=140,y=20,width=10,height=5)
         
 
         def onfw():

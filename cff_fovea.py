@@ -224,6 +224,7 @@ class Ui_Form(object):
         self.label_6.setStyleSheet("border:none;")
         self.label_6.setAlignment(QtCore.Qt.AlignCenter)
         self.label_6.setObjectName("label_6")
+        
         self.label = QtWidgets.QLabel(self.frame_5)
         self.label.setGeometry(QtCore.QRect(0, 170, 231, 41))
         font = QtGui.QFont()
