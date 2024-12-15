@@ -136,7 +136,7 @@ class StatrupClass:
 
         self.StartButton = tk.Button (self.window,
                                     text="Start", font=Font,
-                                    command=handleSttart, bg='Green',
+                                    command=handleStart, bg='Green',
                                     width=10)
 
         
