@@ -183,6 +183,7 @@ class CffFovea :
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
         self.freques_frame = tk.Frame(self.content_frame,bg="black")
+        self.cff_label = tk.Label(self.freques_frame, text="CFF Fovea", font=Font, bg="black", fg="white")
 
   
     def handleuserButton(self,switch):
@@ -330,6 +331,7 @@ class CffFovea :
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(x=170,y=10,width=291,height=126)
+        self.cff_label.place_configure(x=100, y=50)
         
 
         def onfw():
