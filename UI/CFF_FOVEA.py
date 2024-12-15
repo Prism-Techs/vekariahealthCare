@@ -151,6 +151,24 @@ class CffFovea :
                 font=Font2, bg='black', fg='white').place(x=0, y=40)
 
 
+    def create_side_buttons(self):
+        """Create side navigation buttons."""
+        buttons = [
+            ("Flicker Demo", 150, 'black'),
+            ("CFF Fovea", 210, 'white'),
+            ("BRK Fovea", 270, 'black'),
+            ("CFF Para-Fovea", 330, 'black'),
+            ("BRK Para-Fovea", 390, 'black'),
+            ("Test Result", 450, 'black')
+        ]
+
+        for text, y, bg_color in buttons:
+            btn = tk.Button(self.frame, text=text, font=Font,
+                          width=20, bg=bg_color,
+                          fg='white' if bg_color == 'black' else 'black',
+                          relief='solid', bd=2)
+            btn.place(x=10, y=y)
+
 
     def Load(self):
         self.response_count = 0  
@@ -170,6 +188,7 @@ class CffFovea :
         self.patentActionflabel.place (x=380, y=180)
         self.trialList.place (x=800, y=120)
         self.setup_header()
+        self.create_side_buttons()
         
 
         def onfw():
