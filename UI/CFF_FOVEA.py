@@ -52,6 +52,48 @@ class CustomLabel(tk.Label):
         # Place the label (matching QRect(580, 30, 111, 51))
         self.place(x=700, y=30)
 
+class CustomListbox(tk.Listbox):
+    def __init__(self, parent, font_family="Helvetica", font_size=18, **kwargs):
+        # Create custom font
+        custom_font = font.Font(
+            family=font_family,
+            size=font_size
+        )
+        
+        # Default styling
+        default_style = {
+            'font': custom_font,
+            'width': 6,
+            'bg': 'black',
+            'fg': 'red',
+            'selectmode': 'single',
+            'selectbackground': '#3d3d3d',  # Darker grey for selection
+            'selectforeground': 'red',      # Keep text red when selected
+            'borderwidth': 1,
+            'relief': 'solid',
+            'highlightthickness': 0,        # Remove focus highlight
+            'activestyle': 'none'           # Remove active item underline
+        }
+        
+        # Update default styling with any provided kwargs
+        default_style.update(kwargs)
+        
+        # Initialize the listbox with our styling
+        super().__init__(parent, **default_style)
+        
+        # Bind events for hover effects (optional)
+        self.bind('<Enter>', self.on_enter)
+        self.bind('<Leave>', self.on_leave)
+    
+    def on_enter(self, event):
+        """Optional hover effect"""
+        self.configure(borderwidth=2)
+    
+    def on_leave(self, event):
+        """Reset border on mouse leave"""
+        self.configure(borderwidth=1)
+
+
 def hardware():
         CffFovea.handleuserButton()
         
@@ -69,10 +111,7 @@ class CffFovea :
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        self.trialList = tk.Listbox (self.content_frame,font=font.Font(
-            family="Helvetica",
-            size=20
-        ),width=6,fg="red",background='black')
+        self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.cffValue_min = tk.Label (self.content_frame, text='    ', font=Font,bg='white')
         self.cffValue_max = tk.Label (self.content_frame, text='    ', font=Font,bg='white') 
