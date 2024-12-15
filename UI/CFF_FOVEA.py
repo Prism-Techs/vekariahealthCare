@@ -64,6 +64,8 @@ class CurvedFrame(tk.Frame):
             anchor='center'
         )
 
+
+
     def create_rounded_rectangle(self, x1, y1, x2, y2, radius=25, **kwargs):
         """Create a rounded rectangle on the canvas"""
         points = [
