@@ -72,7 +72,8 @@ class CustomListbox(tk.Listbox):
             'borderwidth': 1,
             'relief': 'solid',
             'highlightthickness': 0,        # Remove focus highlight
-            'activestyle': 'none'           # Remove active item underline
+            'activestyle': 'none',  
+            'justify': 'center'           # Remove active item underline
         }
         
         # Update default styling with any provided kwargs
