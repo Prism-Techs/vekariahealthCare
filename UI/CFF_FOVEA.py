@@ -44,8 +44,7 @@ class CffFovea :
         self.cffValue_frq = tk.Label (self.content_frame, text='    ', font=Font,bg='#F7F442')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
-
-
+  
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
@@ -182,9 +181,9 @@ class CffFovea :
         self.response_array = [0,0,0,0,0]
         # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
         # cfflabel.place (x=420, y=50)
-        self.cffValue_min.place (x=430, y=80)
-        self.cffValue_max.place (x=500, y=80)
-        self.cffValue_frq.place (x=810, y=80)        
+        self.cffValue_min.place (x=140, y=50)
+        self.cffValue_max.place (x=140, y=50)
+        self.cffValue_frq.place (x=100, y=50)        
         self.patentActionflabel.place (x=380, y=180)
         self.trialList.place (x=800, y=120)
         self.setup_header()
