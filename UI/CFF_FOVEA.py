@@ -131,7 +131,7 @@ class CffFovea :
         self.header_frame.pack(fill='x')
 
         try:
-            logo = Image.open("VHC Logo.png")
+            logo = Image.open("logo.png")
             logo = logo.resize((44, 23))
             self.logo_img = ImageTk.PhotoImage(logo)
             self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
