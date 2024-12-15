@@ -189,6 +189,7 @@ class CffFovea :
         self.trialList.place (x=800, y=120)
         self.setup_header()
         self.create_side_buttons()
+        self.content_frame.place(x=280, y=110, width=711, height=441)
         
 
         def onfw():

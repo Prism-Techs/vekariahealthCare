@@ -21,6 +21,13 @@ select = 1
 cffValue_frq_x = 820
 cffValue_frq_y = 40
 
+
+
+
+
+def hardware():
+        CffFovea.handleuserButton()
+
 class CffFovea:
     def __init__(self, root):
         """Initialize the CffFovea class with basic setup."""
@@ -108,6 +115,7 @@ class CffFovea:
                 text="Macular Densitometer                                                          CFF Fovea Test",
                 font=Font2, bg='black', fg='white').place(x=0, y=40)
 
+
     def setup_content(self):
         """Setup main content area with all controls."""
         self.content_frame.place(x=280, y=110, width=711, height=441)
@@ -162,6 +170,7 @@ class CffFovea:
                           fg='white' if bg_color == 'black' else 'black',
                           relief='solid', bd=2)
             btn.place(x=10, y=y)
+
 
     def handleuserButton(self, switch=switch):
         """Handle user button press events."""
