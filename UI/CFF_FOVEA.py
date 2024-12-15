@@ -322,8 +322,7 @@ class CffFovea :
         self.response_array = [0,0,0,0,0]
         # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
         # cfflabel.place (x=420, y=50)
-        self.cffValue_min.place (x=80, y=50)
-        self.cffValue_max.place (x=140, y=50)
+
         self.cffValue_frq.place (x=600, y=35)        
         self.patentActionflabel.place (x=380, y=180)
         self.trialList.place (x=604, y=100)
@@ -332,7 +331,9 @@ class CffFovea :
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(x=170,y=10,width=291,height=126)
         self.cff_label.place_configure(x=100, y=10)
-        
+        self.cffValue_min.place (x=50, y=50)
+        self.cffValue_max.place (x=80, y=50)
+
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
