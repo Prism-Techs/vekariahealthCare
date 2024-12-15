@@ -331,8 +331,8 @@ class CffFovea :
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(x=170,y=10,width=291,height=126)
         self.cff_label.place(x=100, y=10)
-        self.cffValue_min.place (x=50, y=50)
-        self.cffValue_max.place (x=80, y=50)
+        self.cffValue_min.place (x=50, y=65)
+        self.cffValue_max.place (x=100, y=65)
 
 
         def onfw():
