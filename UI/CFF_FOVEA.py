@@ -69,7 +69,7 @@ class CffFovea :
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        self.trialList = tk.Listbox (self.content_frame,font=Font1,width=6)
+        self.trialList = tk.Listbox (self.content_frame,font=Font1,width=6,fg="red",background='black')
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.cffValue_min = tk.Label (self.content_frame, text='    ', font=Font,bg='white')
         self.cffValue_max = tk.Label (self.content_frame, text='    ', font=Font,bg='white') 
