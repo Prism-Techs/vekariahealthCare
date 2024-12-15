@@ -23,6 +23,48 @@ cffValue_frq_x =820
 cffValue_frq_y = 40
 
 
+class CurvedFrame(tk.Frame):
+    def __init__(self, parent, width=200, height=100, corner_radius=15, padding=3, color="black", bg=None, **kwargs):
+        super().__init__(parent, **kwargs)
+        
+        self.background = bg if bg else parent.cget('bg')
+        
+        # Create a canvas for the border
+        self.canvas = tk.Canvas(
+            self,
+            width=width,
+            height=height,
+            bg=self.background,
+            highlightthickness=0
+        )
+        self.canvas.pack(fill='both', expand=True)
+        
+        # Create rounded rectangle
+        self.canvas.create_rounded_rectangle(
+            padding,
+            padding,
+            width-padding,
+            height-padding,
+            radius=corner_radius,
+            fill=color,
+            outline='grey',
+            width=2
+        )
+        
+        # Create an inner frame for content
+        self.inner_frame = tk.Frame(
+            self,
+            bg=color,
+            width=width-padding*2,
+            height=height-padding*2
+        )
+        self.inner_frame.place(
+            relx=0.5,
+            rely=0.5,
+            anchor='center'
+        )
+
+
 class CustomLabel(tk.Label):
     def __init__(self, parent, **kwargs):
         # Create custom font matching Helvetica 26
@@ -119,7 +161,7 @@ class CffFovea :
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
-        self.freques_frame = tk.Frame(self.content_frame,bg="black")
+        self.freques_frame = CurvedFrame(self.content_frame,bg="black",corner_radius=2)
 
   
     def handleuserButton(self,switch):
