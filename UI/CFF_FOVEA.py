@@ -217,7 +217,7 @@ class CffFovea :
         # cfflabel.place (x=420, y=50)
         self.cffValue_min.place (x=100, y=50)
         self.cffValue_max.place (x=140, y=50)
-        self.cffValue_frq.place (x=620, y=50)        
+        self.cffValue_frq.place (x=600, y=35)        
         self.patentActionflabel.place (x=380, y=180)
         self.trialList.place (x=200, y=120)
         self.setup_header()
