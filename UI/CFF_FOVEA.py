@@ -9,6 +9,8 @@ from globalvar import globaladc
 from PIL import Image, ImageTk
 import RPi.GPIO as GPIO
 from globalvar import currentPatientInfo
+from tkinter import font
+
 
 switch = 20
 contt_fva = 34.5
@@ -19,6 +21,36 @@ intervel = globaladc.get_cff_delay()
 select = 1
 cffValue_frq_x =820
 cffValue_frq_y = 40
+
+
+class CustomLabel(tk.Label):
+    def __init__(self, parent, **kwargs):
+        # Create custom font matching Helvetica 26
+        custom_font = font.Font(
+            family="Helvetica",
+            size=26
+        )
+        
+        # Default styling matching the PyQt label
+        default_style = {
+            'font': custom_font,
+            'bg': 'black',
+            'fg': 'white',
+            'width': 11,  # Approximate width to match 111 pixels
+            'height': 2,  # Approximate height to match 51 pixels
+            'borderwidth': 2,
+            'relief': 'solid',
+            'justify': 'center'
+        }
+        
+        # Update default styling with any provided kwargs
+        default_style.update(kwargs)
+        
+        # Initialize the label with our styling
+        super().__init__(parent, **default_style)
+        
+        # Place the label (matching QRect(580, 30, 111, 51))
+        self.place(x=580, y=30)
 
 def hardware():
         CffFovea.handleuserButton()
@@ -41,7 +73,7 @@ class CffFovea :
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.cffValue_min = tk.Label (self.content_frame, text='    ', font=Font,bg='white')
         self.cffValue_max = tk.Label (self.content_frame, text='    ', font=Font,bg='white') 
-        self.cffValue_frq = tk.Label (self.content_frame, text='    ', font=Font,bg='#F7F442')  
+        self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
         self.freques_frame = tk.Frame(self.content_frame,bg="black")
