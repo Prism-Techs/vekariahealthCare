@@ -257,7 +257,7 @@ class CffFovea :
         self.response_array = [0,0,0,0,0]
         # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
         # cfflabel.place (x=420, y=50)
-        self.cffValue_min.place (x=100, y=50)
+        self.cffValue_min.place (x=80, y=50)
         self.cffValue_max.place (x=140, y=50)
         self.cffValue_frq.place (x=600, y=35)        
         self.patentActionflabel.place (x=380, y=180)
