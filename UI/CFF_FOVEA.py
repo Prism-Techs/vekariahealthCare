@@ -36,7 +36,7 @@ class CustomLabel(tk.Label):
             'font': custom_font,
             'bg': 'black',
             'fg': 'white',
-            'width': 5,  # Approximate width to match 111 pixels
+            'width': 4,  # Approximate width to match 111 pixels
             'height': 1,  # Approximate height to match 51 pixels
             'borderwidth': 2,
             'relief': 'solid',
@@ -50,7 +50,7 @@ class CustomLabel(tk.Label):
         super().__init__(parent, **default_style)
         
         # Place the label (matching QRect(580, 30, 111, 51))
-        self.place(x=580, y=30)
+        self.place(x=620, y=30)
 
 def hardware():
         CffFovea.handleuserButton()
