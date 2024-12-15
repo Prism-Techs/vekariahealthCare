@@ -6,6 +6,7 @@ from  BRK_FOVEA_1 import BrkFovea_1
 import PatientInfo
 from globalvar import pageDisctonary
 from globalvar import globaladc
+from PIL import Image, ImageTk
 import RPi.GPIO as GPIO
 from globalvar import currentPatientInfo
 
@@ -39,7 +40,11 @@ class CffFovea :
         self.cffValue_min = tk.Label (frame, text='    ', font=Font,bg='white')
         self.cffValue_max = tk.Label (frame, text='    ', font=Font,bg='white') 
         self.cffValue_frq = tk.Label (frame, text='    ', font=Font,bg='#F7F442')  
-    
+        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
+        
+
+
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
@@ -119,6 +124,33 @@ class CffFovea :
             globaladc.get_print('patient_switch_desable')
             GPIO.remove_event_detect(switch)
    
+
+    def setup_header(self):
+        """Setup header section with logo and title."""
+        self.header_frame.pack(fill='x')
+
+        try:
+            logo = Image.open("VHC Logo.png")
+            logo = logo.resize((44, 23))
+            self.logo_img = ImageTk.PhotoImage(logo)
+            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
+            self.logo_label.place(x=0, y=10)
+        except:
+            print("Logo image not found")
+
+        # Header labels
+        tk.Label(self.header_frame, text="Vekaria Healthcare", 
+                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
+        tk.Label(self.header_frame, text="V1.0",
+                font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
+
+        # Main title
+        tk.Label(self.frame, 
+                text="Macular Densitometer                                                          CFF Fovea Test",
+                font=Font2, bg='black', fg='white').place(x=0, y=40)
+
+
+
     def Load(self):
         self.response_count = 0  
         self.skip_event =True
@@ -136,7 +168,7 @@ class CffFovea :
         self.cffValue_frq.place (x=810, y=30)        
         self.patentActionflabel.place (x=380, y=100)
         self.trialList.place (x=800, y=60)
-        
+        self.setup_header()
         
         #         userButton = tk.Button (self.frame,
 #                                  text="User",
