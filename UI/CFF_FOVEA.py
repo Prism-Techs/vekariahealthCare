@@ -182,7 +182,7 @@ class CffFovea :
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
-        self.freques_frame = CurvedFrame(self.content_frame,bg="black",corner_radius=2)
+        self.freques_frame = tk.Frame(self.content_frame,bg="black")
 
   
     def handleuserButton(self,switch):
