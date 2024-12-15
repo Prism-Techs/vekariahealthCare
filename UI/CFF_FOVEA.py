@@ -36,14 +36,14 @@ class CffFovea :
         self.min_apr = 0
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
-        self.trialList = tk.Listbox (frame,font=Font1,width=6)
-        self.patentActionflabel = tk.Label (frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.cffValue_min = tk.Label (frame, text='    ', font=Font,bg='white')
-        self.cffValue_max = tk.Label (frame, text='    ', font=Font,bg='white') 
-        self.cffValue_frq = tk.Label (frame, text='    ', font=Font,bg='#F7F442')  
-        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        
+        self.trialList = tk.Listbox (self.content_frame,font=Font1,width=6)
+        self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
+        self.cffValue_min = tk.Label (self.content_frame, text='    ', font=Font,bg='white')
+        self.cffValue_max = tk.Label (self.content_frame, text='    ', font=Font,bg='white') 
+        self.cffValue_frq = tk.Label (self.content_frame, text='    ', font=Font,bg='#F7F442')  
+        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+
 
 
     def handleuserButton(self,switch):
