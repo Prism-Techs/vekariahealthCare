@@ -162,22 +162,15 @@ class CffFovea :
         self.min_apr = 0
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
-        cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
-        cfflabel.place (x=420, y=50)
+        # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
+        # cfflabel.place (x=420, y=50)
         self.cffValue_min.place (x=430, y=80)
         self.cffValue_max.place (x=500, y=80)
         self.cffValue_frq.place (x=810, y=50)        
-        self.patentActionflabel.place (x=380, y=100)
-        self.trialList.place (x=800, y=60)
+        self.patentActionflabel.place (x=380, y=120)
+        self.trialList.place (x=800, y=80)
         self.setup_header()
         
-        #         userButton = tk.Button (self.frame,
-#                                  text="User",
-#                                  command=handleuserButton, font=Font,
-#                                  width=10)
-
-# 
-#         userButton.place (x=100, y=300) 
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
