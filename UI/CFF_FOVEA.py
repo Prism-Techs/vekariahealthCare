@@ -266,7 +266,7 @@ class CffFovea :
         self.setup_header()
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
-        self.freques_frame.place(x=140,y=20,width=10,height=5)
+        self.freques_frame.place(x=170,y=10,width=291,height=126)
         
 
         def onfw():
