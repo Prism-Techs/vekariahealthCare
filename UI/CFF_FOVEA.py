@@ -175,15 +175,15 @@ class CffFovea :
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
+        self.freques_frame = tk.Frame(self.content_frame,bg="black")
         self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.cffValue_min = tk.Label (self.content_frame, text='    ', font=Font,bg='white')
-        self.cffValue_max = tk.Label (self.content_frame, text='    ', font=Font,bg='white') 
+        self.cff_label = tk.Label(self.freques_frame, text="CFF Fovea", font=Font, bg="black", fg="white")
+        self.cffValue_min = tk.Label (self.cff_label, text='    ', font=Font,bg='white')
+        self.cffValue_max = tk.Label (self.cff_label, text='    ', font=Font,bg='white') 
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
-        self.freques_frame = tk.Frame(self.content_frame,bg="black")
-        self.cff_label = tk.Label(self.freques_frame, text="CFF Fovea", font=Font, bg="black", fg="white")
 
   
     def handleuserButton(self,switch):
