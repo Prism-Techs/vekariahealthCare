@@ -330,7 +330,7 @@ class CffFovea :
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(x=170,y=10,width=291,height=126)
-        self.cff_label.place_configure(x=100, y=10)
+        self.cff_label.place(x=100, y=10)
         self.cffValue_min.place (x=50, y=50)
         self.cffValue_max.place (x=80, y=50)
 
