@@ -26,6 +26,7 @@ def hardware():
 class CffFovea :
     def __init__(self, frame):
         self.frame = frame
+        self.frame.config(bg='black')
         self.response_count = 0  
         self.skip_event =True
         self.threadCreated =False
@@ -162,10 +163,10 @@ class CffFovea :
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
         cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
-        cfflabel.place (x=420, y=10)
-        self.cffValue_min.place (x=430, y=40)
-        self.cffValue_max.place (x=500, y=40)
-        self.cffValue_frq.place (x=810, y=30)        
+        cfflabel.place (x=420, y=50)
+        self.cffValue_min.place (x=430, y=80)
+        self.cffValue_max.place (x=500, y=80)
+        self.cffValue_frq.place (x=810, y=50)        
         self.patentActionflabel.place (x=380, y=100)
         self.trialList.place (x=800, y=60)
         self.setup_header()
