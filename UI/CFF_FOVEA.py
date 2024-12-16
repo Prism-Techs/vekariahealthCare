@@ -119,7 +119,9 @@ class CffFovea :
         self.freques_frame = tk.Frame(self.content_frame,bg="black")
         self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.cff_label = tk.Label(self.freques_frame, text="CFF Fovea", font=Font, bg="black", fg="white")
+        self.cff_label =tk.Label(self.cff_frame, text="CFF Fovea",
+                                font=('Helvetica Neue', 22),
+                                bg='black', fg='white')
         self.cffValue_min =tk.Label(self.freques_frame, text="23.5",
                                  font=('Helvetica Neue', 28),
                                  bg='black', fg='white')
@@ -278,8 +280,8 @@ class CffFovea :
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(relx=0.3, rely=0.1, width=291, height=126)
         self.cff_label.place(x=100, y=10)
-        self.cffValue_min.pack(side='left', padx=10)
-        self.cffValue_max.pack(side='right', padx=10)
+        self.cffValue_min.pack(side='left',pady=10 ,padx=10)
+        self.cffValue_max.pack(side='right',pady=10 ,padx=10)
         # self.cff_value1.pack(side='left', padx=10)
 
         def onfw():
