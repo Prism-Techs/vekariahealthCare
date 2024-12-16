@@ -132,8 +132,7 @@ class CffFovea :
                                 text="📶",  # WiFi symbol
                                 font=('Arial', 16),
                                 bg='#1f2836',
-                                fg='white',
-                                bd=0
+                                fg='white'
                                 )
 
 
