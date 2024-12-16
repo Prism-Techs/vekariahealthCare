@@ -263,6 +263,7 @@ class CffFovea :
                     currentPatientInfo.log_update(log_data)                    
                     time.sleep(1)
                     globaladc.buzzer_3()
+                    print("end2")
                     globaladc.get_print('done')
                     pageDisctonary['CffFovea'].hide()
                     pageDisctonary['BrkFovea_1'].show()
@@ -345,7 +346,10 @@ class CffFovea :
         self.response_array = [0,0,0,0,0]
         # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
         # cfflabel.place (x=420, y=50)
-
+        try:
+            self.stop_blinking()
+        except:
+            pass
         self.cffValue_frq.place (x=600, y=35)        
         self.patentActionflabel.place (x=200, y=180)
         self.trialList.place (x=604, y=100)
@@ -438,6 +442,7 @@ class CffFovea :
                 self.freq_val = self.freq_val_start
                 self.cffValue_frq.config(text = self.freq_val)
                 globaladc.buzzer_3()
+                print("end")
             globaladc.put_cff_fovea_frq(self.freq_val)
         else :
             globaladc.put_cff_fovea_frq(35)
