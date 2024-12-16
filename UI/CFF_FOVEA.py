@@ -120,14 +120,16 @@ class CffFovea :
         self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.cff_label = tk.Label(self.freques_frame, text="CFF Fovea", font=Font, bg="black", fg="white")
-        self.cffValue_min = tk.Label (self.freques_frame, text='    ', font=Font,bg='white')
-        self.cffValue_max = tk.Label (self.freques_frame, text='    ', font=Font,bg='white') 
+        self.cffValue_min =tk.Label(self.freques_frame, text="23.5",
+                                 font=('Helvetica Neue', 28),
+                                 bg='black', fg='white')
+        self.cffValue_max = tk.Label(self.cff_value_frame, text="23.5",
+                                 font=('Helvetica Neue', 28),
+                                 bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
-        self.cff_value1 = tk.Label(self.freques_frame, text="23.5",
-                                 font=('Helvetica Neue', 28),
-                                 bg='black', fg='white')
+
 
 
   
@@ -274,11 +276,11 @@ class CffFovea :
         self.setup_header()
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
-        self.freques_frame.place(x=170,y=10,width=291,height=126)
+        self.freques_frame.place(relx=0.3, rely=0.1, width=291, height=126)
         self.cff_label.place(x=100, y=10)
-        self.cffValue_min.place (x=50, y=65)
-        self.cffValue_max.place (x=100, y=65)
-        self.cff_value1.pack(side='left', padx=10)
+        self.cffValue_min.pack(side='left', padx=10)
+        self.cffValue_max.pack(side='left', padx=10)
+        # self.cff_value1.pack(side='left', padx=10)
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
