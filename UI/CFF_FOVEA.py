@@ -169,13 +169,12 @@ class CffFovea :
             ("Flicker Visible", "#4d1f1f", "#ff4444")
         ]
         
-        for text, bg, fg in status_buttons:
-            btn = tk.Button(self.status_frame, text=text,
+        
+        self.btn_ready = tk.Button(self.status_frame, text="Machine Ready",
                           font=('Arial', 14, 'bold'),
-                          bg=bg, fg=fg,
+                          bg="#1a472a", fg='#4CAF50',
                           width=15, height=1,
                           relief='raised')
-            btn.pack(pady=5)
 
 
     def handleuserButton(self,switch):
@@ -185,6 +184,7 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             self.patentActionflabel.place_forget()
+            
             self.threadCreated=True
             if self.response_count == 0:
                 self.freq_val_start = self.freq_val_start
@@ -327,6 +327,8 @@ class CffFovea :
         self.cffValue_max.pack(side='right',pady=10 ,padx=10)
         # self.cff_value1.pack(side='left', padx=10)
         self.wifi_label.place(x=868, y=5)
+        self.btn_ready.pack(pady=5)
+
 
 
         def onfw():
