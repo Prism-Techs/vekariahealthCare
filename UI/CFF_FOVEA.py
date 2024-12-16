@@ -192,7 +192,7 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             self.patentActionflabel.place_forget()
-            
+            self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
             self.threadCreated=True
             if self.response_count == 0:
                 self.freq_val_start = self.freq_val_start
