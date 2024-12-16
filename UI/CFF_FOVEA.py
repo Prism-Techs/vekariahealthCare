@@ -216,7 +216,6 @@ class CffFovea :
             button.configure(bg="#4d3319", fg="#FFA500")
 
     def handleuserButton(self,switch):
-        self.blink_button(self.btn_ready)
         globaladc.get_print('handle to be implemented')
         jmp = False
         self.patient_switch_desable()
@@ -301,6 +300,8 @@ class CffFovea :
     def patient_switch_desable(self) :
             globaladc.get_print('patient_switch_desable')
             GPIO.remove_event_detect(switch)
+            self.blink_button(self.btn_ready)
+
    
 
     def setup_header(self):
