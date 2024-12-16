@@ -123,7 +123,7 @@ class CffFovea :
         self.cffValue_min =tk.Label(self.freques_frame, text="23.5",
                                  font=('Helvetica Neue', 28),
                                  bg='black', fg='white')
-        self.cffValue_max = tk.Label(self.cff_value_frame, text="23.5",
+        self.cffValue_max = tk.Label(self.freques_frame, text="23.5",
                                  font=('Helvetica Neue', 28),
                                  bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
