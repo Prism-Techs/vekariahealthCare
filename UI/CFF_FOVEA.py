@@ -163,16 +163,24 @@ class CffFovea :
                                    bg='#1f2836', fg='white')
         self.status_label.pack(pady=10)
 
-        status_buttons = [
-            ("Machine Ready", "#1a472a", "#4CAF50"),
-            ("Flicker Start", "#4d3319", "#FFA500"),
-            ("Flicker Visible", "#4d1f1f", "#ff4444")
-        ]
+
         
         
         self.btn_ready = tk.Button(self.status_frame, text="Machine Ready",
                           font=('Arial', 14, 'bold'),
                           bg="#1a472a", fg='#4CAF50',
+                          width=15, height=1,
+                          relief='raised')
+        
+        self.btn_flicker_start = tk.Button(self.status_frame, text="Flicker Start",
+                          font=('Arial', 14, 'bold'),
+                          bg="#4d3319", fg='#FFA500',
+                          width=15, height=1,
+                          relief='raised')
+        
+        self.btn_flicker_visible = tk.Button(self.status_frame, text="Flicker Visible",
+                          font=('Arial', 14, 'bold'),
+                          bg="#4d1f1f", fg='#ff4444',
                           width=15, height=1,
                           relief='raised')
 
@@ -328,6 +336,8 @@ class CffFovea :
         # self.cff_value1.pack(side='left', padx=10)
         self.wifi_label.place(x=868, y=5)
         self.btn_ready.pack(pady=5)
+        self.btn_flicker_start.pack(pady=5)
+        self.btn_flicker_visible.pack(pady=5)
 
 
 
