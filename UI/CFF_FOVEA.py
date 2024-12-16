@@ -136,7 +136,7 @@ class CffFovea :
                                 bd=0,
                                 activebackground='#1f2836',
                                 activeforeground='#4CAF50',
-                                command=self.toggle_wifi)
+                                )
 
 
     def handleuserButton(self,switch):
