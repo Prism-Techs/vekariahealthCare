@@ -185,6 +185,28 @@ class CffFovea :
                           relief='raised')
 
 
+    def blink_button(self, button, original_bg, original_fg, interval=500):
+        current_bg = button.cget('bg')
+        current_fg = button.cget('fg')
+        
+        # Toggle colors
+        if current_bg == original_bg:
+            button.configure(bg=original_fg, fg=original_bg)
+        else:
+            button.configure(bg=original_bg, fg=original_fg)
+        
+        self.blink_id = self.root.after(interval, 
+                                    lambda: self.blink_button(button, 
+                                                            original_bg, 
+                                                            original_fg, 
+                                                            interval))
+
+    def stop_blinking(self):
+        if hasattr(self, 'blink_id'):
+            self.root.after_cancel(self.blink_id)
+            # Reset to original colors
+            self.btn_flicker_start.configure(bg="#4d3319", fg="#FFA500")
+
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
@@ -192,7 +214,8 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             self.patentActionflabel.place_forget()
-            self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
+            # self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
+            self.blink_button(self.btn_flicker_start, '#2a1d0e', '#7F5200')
             self.threadCreated=True
             if self.response_count == 0:
                 self.freq_val_start = self.freq_val_start
