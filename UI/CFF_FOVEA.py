@@ -223,7 +223,7 @@ class CffFovea :
         if self.skip_event:
             self.patentActionflabel.place_forget()
             try:
-                self.blink_button(self.btn_ready)
+                self.stop_specific_blink(self.btn_ready)
             except:
                 pass
             # self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
