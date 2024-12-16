@@ -222,6 +222,10 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             self.patentActionflabel.place_forget()
+            try:
+                self.blink_button(self.btn_ready)
+            except:
+                pass
             # self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
             self.blink_button(self.btn_flicker_start)
             self.threadCreated=True
@@ -354,10 +358,7 @@ class CffFovea :
         self.response_array = [0,0,0,0,0]
         # cfflabel = tk.Label (self.frame, text='CFF FOVEA :',font=Font)
         # cfflabel.place (x=420, y=50)
-        try:
-            self.stop_blinking()
-        except:
-            pass
+
         self.cffValue_frq.place (x=600, y=35)        
         self.patentActionflabel.place (x=200, y=180)
         self.trialList.place (x=604, y=100)
@@ -373,6 +374,7 @@ class CffFovea :
         self.btn_ready.pack(pady=5)
         self.btn_flicker_start.pack(pady=5)
         self.btn_flicker_visible.pack(pady=5)
+        self.blink_button(self.btn_ready)
 
 
 
@@ -450,10 +452,11 @@ class CffFovea :
                 self.freq_val = self.freq_val_start
                 self.cffValue_frq.config(text = self.freq_val)
                 globaladc.buzzer_3()
-                print("end")
+                self.blink_button(self.btn_flicker_visible)
             globaladc.put_cff_fovea_frq(self.freq_val)
         else :
             globaladc.put_cff_fovea_frq(35)
+            self.stop_specific_blink(self.btn_flicker_visible)
             globaladc.get_print('CF')            
             
 
