@@ -23,6 +23,22 @@ cffValue_frq_x =820
 cffValue_frq_y = 40
 
 
+class ClickableLabel(tk.Label):
+    """Custom Label class that can handle click events"""
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.bind('<Button-1>', self._on_click)
+        self.callback = None
+    
+    def _on_click(self, event):
+        if self.callback:
+            self.callback()
+    
+    def on_click(self, callback):
+        """Set the callback function for click event"""
+        self.callback = callback
+
+
 class CustomLabel(tk.Label):
     def __init__(self, parent, **kwargs):
         # Create custom font matching Helvetica 26
@@ -128,12 +144,16 @@ class CffFovea :
                                  bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
-        self.wifi_btn = tk.Button(self.header_frame,
-                                text="📶",  # WiFi symbol
-                                font=('Arial', 16),
-                                bg='#1f2836',
-                                fg='white'
-                                )
+        wifi_image = Image.open("wifi_logo.png")
+        wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)  # Resize to match Qt dimensions
+        self.wifi_icon = ImageTk.PhotoImage(wifi_image)
+                    
+                    # Create the clickable WiFi icon label
+        self.wifi_label = ClickableLabel(
+                        self.header_frame,
+                        image=self.wifi_icon,
+                        bg='#1f2836'
+                    )
 
 
     def handleuserButton(self,switch):
@@ -285,6 +305,8 @@ class CffFovea :
         self.cffValue_max.pack(side='right',pady=10 ,padx=10)
         # self.cff_value1.pack(side='left', padx=10)
         self.wifi_btn.place(x=870, y=5)
+        self.wifi_label.place(x=868, y=5)
+
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
