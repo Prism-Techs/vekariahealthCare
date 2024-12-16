@@ -23,66 +23,7 @@ cffValue_frq_x =820
 cffValue_frq_y = 40
 
 
-class CurvedFrame(tk.Frame):
-    def __init__(self, parent, width=200, height=100, corner_radius=15, padding=3, color="black", bg=None, **kwargs):
-        super().__init__(parent, **kwargs)
-        
-        self.background = bg if bg else parent.cget('bg')
-        
-        # Create a canvas for the border
-        self.canvas = tk.Canvas(
-            self,
-            width=width,
-            height=height,
-            bg=self.background,
-            highlightthickness=0
-        )
-        self.canvas.pack(fill='both', expand=True)
-        
-        # Create rounded rectangle
-        self.canvas.create_rounded_rectangle(
-            padding,
-            padding,
-            width-padding,
-            height-padding,
-            radius=corner_radius,
-            fill=color,
-            outline='grey',
-            width=2
-        )
-        
-        # Create an inner frame for content
-        self.inner_frame = tk.Frame(
-            self,
-            bg=color,
-            width=width-padding*2,
-            height=height-padding*2
-        )
-        self.inner_frame.place(
-            relx=0.5,
-            rely=0.5,
-            anchor='center'
-        )
 
-
-
-def create_rounded_rectangle(self, x1, y1, x2, y2, radius=25, **kwargs):
-    """Create a rounded rectangle on the canvas"""
-    points = [
-        x1 + radius, y1,
-        x2 - radius, y1,
-        x2, y1,
-        x2, y1 + radius,
-        x2, y2 - radius,
-        x2, y2,
-        x2 - radius, y2,
-        x1 + radius, y2,
-        x1, y2,
-        x1, y2 - radius,
-        x1, y1 + radius,
-        x1, y1
-    ]
-    return self.create_polygon(points, smooth=True, **kwargs)
 
 class CustomLabel(tk.Label):
     def __init__(self, parent, **kwargs):
@@ -113,10 +54,10 @@ class CustomLabel(tk.Label):
         # Place the label (matching QRect(580, 30, 111, 51))
         self.place(x=700, y=30)
 
-tk.Canvas.create_rounded_rectangle = create_rounded_rectangle
+
 
 class CustomListbox(tk.Listbox):
-    def __init__(self, parent, font_family="Helvetica", font_size=18, **kwargs):
+    def __init__(self, parent, font_family="Helvetica", font_size=20, **kwargs):
         # Create custom font
         custom_font = font.Font(
             family=font_family,
@@ -183,6 +124,10 @@ class CffFovea :
         self.cffValue_max = tk.Label (self.freques_frame, text='    ', font=Font,bg='white') 
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+
+        self.cff_value1 = tk.Label(self.freques_frame, text="23.5",
+                                 font=('Helvetica Neue', 28),
+                                 bg='black', fg='white')
 
 
   
@@ -333,7 +278,7 @@ class CffFovea :
         self.cff_label.place(x=100, y=10)
         self.cffValue_min.place (x=50, y=65)
         self.cffValue_max.place (x=100, y=65)
-
+        self.cff_value1.pack(side='left', padx=10)
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
