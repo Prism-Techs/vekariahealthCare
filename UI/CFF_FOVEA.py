@@ -154,6 +154,28 @@ class CffFovea :
                         image=self.wifi_icon,
                         bg='#1f2836'
                     )
+        
+        self.status_frame = tk.Frame(self.content_frame, bg='#1f2836')
+        self.status_frame.place(relx=0.1, rely=0.5)
+        
+        self.status_label = tk.Label(self.status_frame, text="Test Status",
+                                   font=('Helvetica Neue', 18),
+                                   bg='#1f2836', fg='white')
+        self.status_label.pack(pady=10)
+
+        status_buttons = [
+            ("Machine Ready", "#1a472a", "#4CAF50"),
+            ("Flicker Start", "#4d3319", "#FFA500"),
+            ("Flicker Visible", "#4d1f1f", "#ff4444")
+        ]
+        
+        for text, bg, fg in status_buttons:
+            btn = tk.Button(self.status_frame, text=text,
+                          font=('Arial', 14, 'bold'),
+                          bg=bg, fg=fg,
+                          width=15, height=1,
+                          relief='raised')
+            btn.pack(pady=5)
 
 
     def handleuserButton(self,switch):
