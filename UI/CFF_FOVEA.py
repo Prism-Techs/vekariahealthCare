@@ -133,9 +133,7 @@ class CffFovea :
                                 font=('Arial', 16),
                                 bg='#1f2836',
                                 fg='white',
-                                bd=0,
-                                activebackground='#1f2836',
-                                activeforeground='#4CAF50',
+                                bd=0
                                 )
 
 
