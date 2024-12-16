@@ -202,14 +202,14 @@ class CffFovea :
             self.blink_ids = {}
         
         # Schedule next blink and store its ID
-        self.blink_ids[button_name] = self.root.after(interval, lambda: self.blink_button(button, interval))
+        self.blink_ids[button_name] = self.frame.after(interval, lambda: self.blink_button(button, interval))
 
 
     def stop_specific_blink(self, button):
         button_name = str(button)
         if hasattr(self, 'blink_ids') and button_name in self.blink_ids:
             # Cancel the specific button's blinking
-            self.root.after_cancel(self.blink_ids[button_name])
+            self.frame.after_cancel(self.blink_ids[button_name])
             # Remove the blink ID from dictionary
             del self.blink_ids[button_name]
             # Reset to original colors
