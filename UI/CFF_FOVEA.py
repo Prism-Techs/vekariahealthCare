@@ -38,7 +38,7 @@ class CustomLabel(tk.Label):
             'font': custom_font,
             'bg': 'black',
             'fg': 'white',
-            'width': 6,  # Approximate width to match 111 pixels
+            'width': 5,  # Approximate width to match 111 pixels
             'height': 1,  # Approximate height to match 51 pixels
             'borderwidth': 2,
             'relief': 'solid',
