@@ -273,7 +273,7 @@ class CffFovea :
         # cfflabel.place (x=420, y=50)
 
         self.cffValue_frq.place (x=600, y=35)        
-        self.patentActionflabel.place (x=200, y=100)
+        self.patentActionflabel.place (x=200, y=180)
         self.trialList.place (x=604, y=100)
         self.setup_header()
         self.create_side_buttons()
@@ -312,7 +312,7 @@ class CffFovea :
         self.cffValue_frq.config(text = '     ')
         self.trialList.delete(0,tk.END)
         self.frame.place(width=1024,height=600)
-        self.patentActionflabel.place(x=200, y=100)
+        self.patentActionflabel.place(x=200, y=180)
         globaladc.cff_Fovea_Prepair() # run this while loding cff Fovea screen        
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
