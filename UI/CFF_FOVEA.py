@@ -128,6 +128,15 @@ class CffFovea :
                                  bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+        self.wifi_btn = tk.Button(self.header_frame,
+                                text="📶",  # WiFi symbol
+                                font=('Arial', 16),
+                                bg='#1f2836',
+                                fg='white',
+                                bd=0,
+                                activebackground='#1f2836',
+                                activeforeground='#4CAF50',
+                                command=self.toggle_wifi)
 
 
     def handleuserButton(self,switch):
@@ -278,6 +287,7 @@ class CffFovea :
         self.cffValue_min.pack(side='left',pady=10 ,padx=10)
         self.cffValue_max.pack(side='right',pady=10 ,padx=10)
         # self.cff_value1.pack(side='left', padx=10)
+        self.wifi_btn.place(x=870, y=5)
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
