@@ -279,7 +279,7 @@ class CffFovea :
         self.freques_frame.place(relx=0.3, rely=0.1, width=291, height=126)
         self.cff_label.place(x=100, y=10)
         self.cffValue_min.pack(side='left', padx=10)
-        self.cffValue_max.pack(side='left', padx=10)
+        self.cffValue_max.pack(side='right', padx=10)
         # self.cff_value1.pack(side='left', padx=10)
 
         def onfw():
