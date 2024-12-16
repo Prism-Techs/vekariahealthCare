@@ -195,7 +195,7 @@ class CffFovea :
         else:
             button.configure(bg=original_bg, fg=original_fg)
         
-        self.blink_id = self.root.after(interval, 
+        self.blink_id = self.frame.after(interval, 
                                     lambda: self.blink_button(button, 
                                                             original_bg, 
                                                             original_fg, 
@@ -203,7 +203,7 @@ class CffFovea :
 
     def stop_blinking(self):
         if hasattr(self, 'blink_id'):
-            self.root.after_cancel(self.blink_id)
+            self.frame.after_cancel(self.blink_id)
             # Reset to original colors
             self.btn_flicker_start.configure(bg="#4d3319", fg="#FFA500")
 
