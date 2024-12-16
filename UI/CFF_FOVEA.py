@@ -31,12 +31,12 @@ class ClickableLabel(tk.Label):
         self.callback = None
     
     def _on_click(self, event):
+        globaladc.buzzer_3()  # Call the buzzer function first
         if self.callback:
             self.callback()
     
     def on_click(self, callback):
-        """Set the callback function for click event"""
-        globaladc.buzzer_3()
+        self.callback = callback
 
 
 class CustomLabel(tk.Label):
