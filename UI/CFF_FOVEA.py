@@ -251,9 +251,9 @@ class CffFovea :
 
         # Header labels
         tk.Label(self.header_frame, text="Vekaria Healthcare", 
-                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=0)
+                font=('Helvetica Neue', 16, ), bg='#1f2836', fg='white').place(x=60, y=10)
         tk.Label(self.header_frame, text="V1.0",
-                font=('Helvetica Neue', 14), bg='#1f2836', fg='white').place(x=930, y=0)
+                font=('Helvetica Neue', 14,'bold'), bg='#1f2836', fg='white').place(x=930, y=10)
 
         # Main title
         tk.Label(self.frame, 
