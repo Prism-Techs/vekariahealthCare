@@ -312,7 +312,7 @@ class CffFovea :
         self.cffValue_frq.config(text = '     ')
         self.trialList.delete(0,tk.END)
         self.frame.place(width=1024,height=600)
-        self.patentActionflabel.place (x=380, y=100)
+        self.patentActionflabel.place(x=200, y=100)
         globaladc.cff_Fovea_Prepair() # run this while loding cff Fovea screen        
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
