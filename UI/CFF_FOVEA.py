@@ -38,7 +38,7 @@ class CustomLabel(tk.Label):
             'font': custom_font,
             'bg': 'black',
             'fg': 'white',
-            'width': 4,  # Approximate width to match 111 pixels
+            'width': 6,  # Approximate width to match 111 pixels
             'height': 1,  # Approximate height to match 51 pixels
             'borderwidth': 2,
             'relief': 'solid',
@@ -73,7 +73,6 @@ class CustomListbox(tk.Listbox):
             'selectmode': 'single',
             'selectbackground': '#3d3d3d',  # Darker grey for selection
             'selectforeground': 'red',      # Keep text red when selected
-            'borderwidth': 1,
             'relief': 'solid',
             'highlightthickness': 0,        # Remove focus highlight
             'activestyle': 'none',  
@@ -96,7 +95,7 @@ class CustomListbox(tk.Listbox):
     
     def on_leave(self, event):
         """Reset border on mouse leave"""
-        self.configure(borderwidth=1)
+        self.configure(borderwidth=0)
 
 
 def hardware():
