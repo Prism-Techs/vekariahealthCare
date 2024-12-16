@@ -36,7 +36,7 @@ class ClickableLabel(tk.Label):
     
     def on_click(self, callback):
         """Set the callback function for click event"""
-        self.callback = callback
+        globaladc.buzzer_3()
 
 
 class CustomLabel(tk.Label):
