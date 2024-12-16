@@ -75,7 +75,7 @@ class CustomListbox(tk.Listbox):
             'highlightthickness': 0,        # Remove focus highlight
             'activestyle': 'none',  
             'justify': 'center',   
-            "borderwidth":"2"                # Remove active item underline
+            "borderwidth":2                # Remove active item underline
         }
         
         # Update default styling with any provided kwargs
@@ -90,7 +90,7 @@ class CustomListbox(tk.Listbox):
     
     def on_enter(self, event):
         """Optional hover effect"""
-        self.configure(borderwidth=2)
+        self.configure(borderwidth=0)
     
     def on_leave(self, event):
         """Reset border on mouse leave"""
