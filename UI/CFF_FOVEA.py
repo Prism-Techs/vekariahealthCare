@@ -23,8 +23,6 @@ cffValue_frq_x =820
 cffValue_frq_y = 40
 
 
-
-
 class CustomLabel(tk.Label):
     def __init__(self, parent, **kwargs):
         # Create custom font matching Helvetica 26
@@ -76,7 +74,8 @@ class CustomListbox(tk.Listbox):
             'relief': 'solid',
             'highlightthickness': 0,        # Remove focus highlight
             'activestyle': 'none',  
-            'justify': 'center'           # Remove active item underline
+            'justify': 'center',   
+            "borderwidth":"2"                # Remove active item underline
         }
         
         # Update default styling with any provided kwargs
@@ -131,9 +130,6 @@ class CffFovea :
         self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
 
 
-
-
-  
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
         jmp = False
