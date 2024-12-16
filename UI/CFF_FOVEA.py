@@ -185,27 +185,35 @@ class CffFovea :
                           relief='raised')
 
 
-    def blink_button(self, button, original_bg, original_fg, interval=500):
+    def blink_button(self, button, interval=500):
+        # Create a unique ID for each button's blinking
+        button_name = str(button)
         current_bg = button.cget('bg')
         current_fg = button.cget('fg')
         
         # Toggle colors
-        if current_bg == original_bg:
-            button.configure(bg=original_fg, fg=original_bg)
+        if current_bg == "#4d3319":
+            button.configure(bg=current_fg, fg=current_bg)
         else:
-            button.configure(bg=original_bg, fg=original_fg)
+            button.configure(bg="#4d3319", fg="#FFA500")
         
-        self.blink_id = self.frame.after(interval, 
-                                    lambda: self.blink_button(button, 
-                                                            original_bg, 
-                                                            original_fg, 
-                                                            interval))
+        # Store the blink ID with the button name
+        if not hasattr(self, 'blink_ids'):
+            self.blink_ids = {}
+        
+        # Schedule next blink and store its ID
+        self.blink_ids[button_name] = self.root.after(interval, lambda: self.blink_button(button, interval))
 
-    def stop_blinking(self):
-        if hasattr(self, 'blink_id'):
-            self.frame.after_cancel(self.blink_id)
+
+    def stop_specific_blink(self, button):
+        button_name = str(button)
+        if hasattr(self, 'blink_ids') and button_name in self.blink_ids:
+            # Cancel the specific button's blinking
+            self.root.after_cancel(self.blink_ids[button_name])
+            # Remove the blink ID from dictionary
+            del self.blink_ids[button_name]
             # Reset to original colors
-            self.btn_flicker_start.configure(bg="#4d3319", fg="#FFA500")
+            button.configure(bg="#4d3319", fg="#FFA500")
 
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
@@ -215,7 +223,7 @@ class CffFovea :
         if self.skip_event:
             self.patentActionflabel.place_forget()
             # self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
-            self.blink_button(self.btn_flicker_start, '#2a1d0e', '#7F5200')
+            self.blink_button(self.btn_flicker_start)
             self.threadCreated=True
             if self.response_count == 0:
                 self.freq_val_start = self.freq_val_start
@@ -263,7 +271,6 @@ class CffFovea :
                     currentPatientInfo.log_update(log_data)                    
                     time.sleep(1)
                     globaladc.buzzer_3()
-                    print("end2")
                     globaladc.get_print('done')
                     pageDisctonary['CffFovea'].hide()
                     pageDisctonary['BrkFovea_1'].show()
@@ -273,7 +280,8 @@ class CffFovea :
         if not jmp:
             if self.skip_event:
                 time.sleep(0.2) 
-                globaladc.buzzer_3()            
+                globaladc.buzzer_3()  
+                self.stop_specific_blink(self.btn_flicker_start)          
             self.patient_switch_enable() 
 
 
