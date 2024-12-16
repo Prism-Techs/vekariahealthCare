@@ -119,7 +119,7 @@ class CffFovea :
         self.freques_frame = tk.Frame(self.content_frame,bg="black")
         self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (self.content_frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.cff_label =tk.Label(self.cff_frame, text="CFF Fovea",
+        self.cff_label =tk.Label(self.freques_frame, text="CFF Fovea",
                                 font=('Helvetica Neue', 22),
                                 bg='black', fg='white')
         self.cffValue_min =tk.Label(self.freques_frame, text="23.5",
