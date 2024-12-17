@@ -439,7 +439,7 @@ class CffFovea :
         self.cffValue_min.pack(side='left',pady=10 ,padx=10)
         self.cffValue_max.pack(side='right',pady=10 ,padx=10)
         # self.cff_value1.pack(side='left', padx=10)
-        self.wifi_label.place(x=868, y=5)
+        # self.wifi_label.place(x=868, y=5)
         self.btn_ready.pack(pady=5)
         self.btn_flicker_start.pack(pady=5)
         self.btn_flicker_visible.pack(pady=5)
