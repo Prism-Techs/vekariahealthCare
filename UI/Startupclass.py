@@ -22,6 +22,21 @@ Font =  ("Arial",20)
 Font2 = ("Arial",10)
 x = 80
 
+class ClickableLabel(tk.Label):
+    """Custom Label class that can handle click events"""
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.bind('<Button-1>', self._on_click)
+        self.callback = None
+    
+    def _on_click(self, event):
+        globaladc.buzzer_3()  # Call the buzzer function first
+        if self.callback:
+            self.callback()
+    
+    def on_click(self, callback):
+        self.callback = callback
+
 class StatrupClass:
     def HideStartButton(self):
         self.StartButton.place_forget()
@@ -66,11 +81,17 @@ class StatrupClass:
         tk.Label(self.header_frame, text="V1.0",
                 font=('Helvetica Neue', 14,'bold'), bg='#1f2836', fg='white').place(x=930, y=10)
 
-        # Main title
-        tk.Label(self.frame, 
-                text="Macular Densitometer                                                          CFF Fovea Test",
-                font=Font2, bg='black', fg='white').place(x=0, y=40)
 
+        wifi_image = Image.open("wifi_logo.png")
+        wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)  # Resize to match Qt dimensions
+        self.wifi_icon = ImageTk.PhotoImage(wifi_image)
+                    
+                    # Create the clickable WiFi icon label
+        self.wifi_label = ClickableLabel(
+                        self.header_frame,
+                        image=self.wifi_icon,
+                        bg='#1f2836'
+                    )
 
 
     def __init__(self) -> None:        
