@@ -30,7 +30,7 @@ class mainWindow:
             self.frame,
             "Macular Densitometer                                                          Patient Info"
         )
-        
+        self.header.set_wifi_callback(self.wifi_page)
     def Load(self):
         kb = KeyBoard()
         a=50
@@ -97,7 +97,7 @@ class mainWindow:
 #         bwButton.place (x=420, y=500)
                #Button start the test
         
-        self.header.set_wifi_callback(self.wifi_page)
+        
 
         def handleStart():
             CffFovea.Open ()
