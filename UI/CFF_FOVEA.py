@@ -309,7 +309,9 @@ class CffFovea :
                 self.min_apr = globaladc.get_cff_f_min_cal(self.response_count, self.freq_val)  
                 self.response_count = self.response_count + 1
                 #self.min_apr = globaladc.cff_min(self.min_apr,self.freq_val)                    
-                self.cffValue_min.config(text = self.min_apr)                
+                self.cffValue_min.config(text = self.min_apr)  
+                self.stop_all_blinking()
+                self.blink_button(self.btn_flicker_visible)              
                 if self.response_count == 5 :
                     self.max_apr =  globaladc.get_cff_f_max_cal()                        
                     self.cffValue_max.config(text = self.max_apr)                    
@@ -423,7 +425,7 @@ class CffFovea :
         self.wifi_label.place(x=868, y=5)
         self.btn_ready.pack(pady=5)
         self.btn_flicker_start.pack(pady=5)
-        # self.btn_flicker_visible.pack(pady=5)
+        self.btn_flicker_visible.pack(pady=5)
         self.blink_button(self.btn_ready)
 
     def hide(self):
