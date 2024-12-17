@@ -274,7 +274,8 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             # self.patentActionflabel.place_forget()
-            self.stop_specific_blink(self.btn_ready)
+            self.stop_specific_blink(self.btn_ready,200)
+
             self.blink_button(self.btn_flicker_start)
             self.threadCreated=True
             if self.response_count == 0:
@@ -350,7 +351,6 @@ class CffFovea :
     def patient_switch_desable(self) :
             globaladc.get_print('patient_switch_desable')
             GPIO.remove_event_detect(switch)
-            self.blink_button(self.btn_ready)
 
    
 
@@ -510,11 +510,9 @@ class CffFovea :
                 self.freq_val = self.freq_val_start
                 self.cffValue_frq.config(text = self.freq_val)
                 globaladc.buzzer_3()
-                self.blink_button(self.btn_flicker_visible)
             globaladc.put_cff_fovea_frq(self.freq_val)
         else :
             globaladc.put_cff_fovea_frq(35)
-            self.stop_specific_blink(self.btn_flicker_visible)
             globaladc.get_print('CF')            
             
 
