@@ -102,7 +102,7 @@ class mainWindow:
         def handleStart():
             CffFovea.Open ()
 
-    def wifi_page():
+    def wifi_page(self):
         globaladc.buzzer_3()
 
     def updateDateTime(self):
