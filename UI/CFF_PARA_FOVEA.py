@@ -37,7 +37,7 @@ class CffParaFovea :
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
         self.content_frame = tk.Frame(self.frame, bg='#1f2836')
-        self.trialList = CustomListbox(self.frame,font=Font1,width=6)
+        self.trialList = CustomListbox(self.content_frame)
         self.patentActionflabel = tk.Label (frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.patentActionflabel_2 = tk.Label (frame, text='Increment Patient in\n Parafoveal Viewing.\n\n Press RESUME when done',font=Font1,bg='white')
 
