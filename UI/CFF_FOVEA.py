@@ -23,20 +23,7 @@ cffValue_frq_x =820
 cffValue_frq_y = 40
 
 
-class ClickableLabel(tk.Label):
-    """Custom Label class that can handle click events"""
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.bind('<Button-1>', self._on_click)
-        self.callback = None
-    
-    def _on_click(self, event):
-        globaladc.buzzer_3()  # Call the buzzer function first
-        if self.callback:
-            self.callback()
-    
-    def on_click(self, callback):
-        self.callback = callback
+
 
 
 class CustomLabel(tk.Label):
@@ -143,20 +130,7 @@ class CffFovea :
                                  font=('Helvetica Neue', 28),
                                  bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
-        # self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
-        # wifi_image = Image.open("wifi_logo.png")
-        # wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)  # Resize to match Qt dimensions
-        # self.wifi_icon = ImageTk.PhotoImage(wifi_image)
-                    
-        #             # Create the clickable WiFi icon label
-        # self.wifi_label = ClickableLabel(
-        #                 self.header_frame,
-        #                 image=self.wifi_icon,
-        #                 bg='#1f2836'
-        #             )
 
-
-       
 
         self.status_frame = tk.Frame(self.content_frame, bg='#1f2836')
         self.status_frame.place(relx=0.1, rely=0.5)
@@ -276,7 +250,6 @@ class CffFovea :
         self.patient_switch_desable()
         time.sleep(0.15)        
         if self.skip_event:
-            # self.patentActionflabel.place_forget()
             self.stop_all_blinking()  # Clear any existing blinks
             self.blink_button(self.btn_flicker_start)  # Start blinking flicker start button
             self.threadCreated=True
@@ -338,7 +311,7 @@ class CffFovea :
                     jmp = True          
                 else:
                     # Prepare for next trial
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     self.stop_all_blinking()
                     self.blink_button(self.btn_ready)  # Show machine ready for next trial   
                 self.cffValue_frq.config(text = self.freq_val)  
@@ -364,29 +337,6 @@ class CffFovea :
 
    
 
-    # def setup_header(self):
-    #     """Setup header section with logo and title."""
-    #     self.header_frame.pack(fill='x')
-
-    #     try:
-    #         logo = Image.open("logo.png")
-    #         logo = logo.resize((44, 23))
-    #         self.logo_img = ImageTk.PhotoImage(logo)
-    #         self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
-    #         self.logo_label.place(x=0, y=10)
-    #     except:
-    #         print("Logo image not found")
-
-    #     # Header labels
-    #     tk.Label(self.header_frame, text="Vekaria Healthcare", 
-    #             font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=10)
-    #     tk.Label(self.header_frame, text="V1.0",
-    #             font=('Helvetica Neue', 14,'bold'), bg='#1f2836', fg='white').place(x=930, y=10)
-
-    #     # Main title
-    #     tk.Label(self.frame, 
-    #             text="Macular Densitometer                                                          CFF Fovea Test",
-    #             font=Font2, bg='black', fg='white').place(x=0, y=40)
 
 
     def create_side_buttons(self):
@@ -430,7 +380,7 @@ class CffFovea :
             "Macular Densitometer                                                          CFF Fovea Test"
         )
         
-        self.header.set_wifi_callback(lambda _: globaladc.buzzer_3())
+        self.header.set_wifi_callback(lambda _ : globaladc.buzzer_3())
 
         self.create_side_buttons()
         self.content_frame.place(x=280, y=110, width=711, height=441)
@@ -445,13 +395,7 @@ class CffFovea :
         self.btn_flicker_visible.pack(pady=5)
         self.blink_button(self.btn_ready)
 
-    def hide(self):
-        """
-        Modified hide method to ensure cleanup of blinking buttons
-        """
-        self.stop_all_blinking()
-        self.stop_therad()
-        self.frame.place_forget()
+
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
