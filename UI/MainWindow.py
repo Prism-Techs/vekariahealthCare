@@ -36,9 +36,9 @@ class mainWindow:
         a=50
         # time label
         #x=datetime.datetime.now () 
-        # self.timelabel = tk.Label (self.frame,font=Font)
-        # self.updateDateTime()
-        self.timelabel.place(x=550, y=10)
+        self.timelabel = tk.Label (self.frame,font=Font)
+        self.updateDateTime()
+        # self.timelabel.place(x=550, y=10)
         
         #Name amd name text
         self.Namelabel = tk.Label (self.frame,font=Font, text="Name")
