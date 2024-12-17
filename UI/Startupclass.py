@@ -228,7 +228,6 @@ class StatrupClass:
         pageDisctonary["BrkparaFovea"] = self.brkf_2    
         pageDisctonary["Admin"] = self.admin
 
-        self.setup_header()
         self.mw.Load()
         self.fw.Load()
         self.cff.Load()

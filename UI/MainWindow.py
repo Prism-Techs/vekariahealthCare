@@ -11,6 +11,7 @@ from globalvar import currentPatientInfo
 from Splash import Splash
 from globalvar import globaladc
 import tkinter.font as tkfont
+from header import HeaderComponent
 
 FONT_SIZE = 10
 Font = ("Arial",30)
@@ -25,6 +26,10 @@ class mainWindow:
         self.frame = frame
         self.selectedGen = "M"
         self.selectedEye = "R" 
+        self.header = HeaderComponent(
+            self.frame,
+            "Macular Densitometer                                                          Patient Info"
+        )
         
     def Load(self):
         kb = KeyBoard()

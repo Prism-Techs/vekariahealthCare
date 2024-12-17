@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 import RPi.GPIO as GPIO
 from globalvar import currentPatientInfo
 from tkinter import font
-
+from header import HeaderComponent
 
 switch = 20
 contt_fva = 34.5
@@ -143,18 +143,26 @@ class CffFovea :
                                  font=('Helvetica Neue', 28),
                                  bg='black', fg='white')
         self.cffValue_frq = CustomLabel(self.content_frame, text='    ')  
-        self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
-        wifi_image = Image.open("wifi_logo.png")
-        wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)  # Resize to match Qt dimensions
-        self.wifi_icon = ImageTk.PhotoImage(wifi_image)
+        # self.header_frame = tk.Frame(self.frame, bg='#1f2836', height=41)
+        # wifi_image = Image.open("wifi_logo.png")
+        # wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)  # Resize to match Qt dimensions
+        # self.wifi_icon = ImageTk.PhotoImage(wifi_image)
                     
-                    # Create the clickable WiFi icon label
-        self.wifi_label = ClickableLabel(
-                        self.header_frame,
-                        image=self.wifi_icon,
-                        bg='#1f2836'
-                    )
+        #             # Create the clickable WiFi icon label
+        # self.wifi_label = ClickableLabel(
+        #                 self.header_frame,
+        #                 image=self.wifi_icon,
+        #                 bg='#1f2836'
+        #             )
+
+
+        self.header = HeaderComponent(
+            self.frame,
+            "Macular Densitometer                                                          CFF Fovea Test"
+        )
         
+        self.header.set_wifi_callback(lambda _: globaladc.buzzer_3())
+
         self.status_frame = tk.Frame(self.content_frame, bg='#1f2836')
         self.status_frame.place(relx=0.1, rely=0.5)
         
