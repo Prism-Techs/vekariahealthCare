@@ -27,6 +27,7 @@ class CffParaFovea :
     def __init__(self, frame):
         self.frame = frame
         self.response_count = 0  
+        self.frame.config(bg='black')
         self.skip_event =True
         self.threadCreated =False
         self.worker_cff = PerodicThread.PeriodicThread(intervel,self)
@@ -35,11 +36,11 @@ class CffParaFovea :
         self.min_apr = 0
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
-        self.trialList = CustomListbox(frame,font=Font1,width=6)
+        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
+        self.trialList = CustomListbox(self.frame,font=Font1,width=6)
         self.patentActionflabel = tk.Label (frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.patentActionflabel_2 = tk.Label (frame, text='Increment Patient in\n Parafoveal Viewing.\n\n Press RESUME when done',font=Font1,bg='white')
 
-        self.content_frame = tk.Frame(self.frame, bg='#1f2836')
         self.freques_frame = tk.Frame(self.content_frame,bg="black")
 
 
@@ -300,7 +301,7 @@ class CffParaFovea :
         self.create_side_buttons()
 
 
-        self.cfflabel = tk.Label (self.frame, text='CFF PARA FOVEA :',font=Font)
+        # self.cfflabel = tk.Label (self.frame, text='CFF PARA FOVEA :',font=Font)
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.freques_frame.place(relx=0.3, rely=0.1, width=291, height=126)
         self.cffpara_label.pack(pady=10)
