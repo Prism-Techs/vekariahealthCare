@@ -14,6 +14,7 @@ from globalvar import pageDisctonary
 from globalvar import globaladc
 from globalvar import currentPatientInfo
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import os.path
 import subprocess as sp
 
@@ -46,6 +47,32 @@ class StatrupClass:
     def HideHomeButton(self):
         self.HomeScreenButton.place_forget()        
 
+    def setup_header(self):
+        """Setup header section with logo and title."""
+        self.header_frame.pack(fill='x')
+
+        try:
+            logo = Image.open("logo.png")
+            logo = logo.resize((44, 23))
+            self.logo_img = ImageTk.PhotoImage(logo)
+            self.logo_label = tk.Label(self.header_frame, image=self.logo_img, bg='#1f2836')
+            self.logo_label.place(x=0, y=10)
+        except:
+            print("Logo image not found")
+
+        # Header labels
+        tk.Label(self.header_frame, text="Vekaria Healthcare", 
+                font=('Helvetica Neue', 16, 'bold'), bg='#1f2836', fg='white').place(x=60, y=10)
+        tk.Label(self.header_frame, text="V1.0",
+                font=('Helvetica Neue', 14,'bold'), bg='#1f2836', fg='white').place(x=930, y=10)
+
+        # Main title
+        tk.Label(self.frame, 
+                text="Macular Densitometer                                                          CFF Fovea Test",
+                font=Font2, bg='black', fg='white').place(x=0, y=40)
+
+
+
     def __init__(self) -> None:        
         self.window = tk.Tk ()
         self.window.attributes('-fullscreen', True) 
@@ -76,6 +103,7 @@ class StatrupClass:
         self.cff = CffFovea(self.cffFoveaFrame)
         self.cffP =CffParaFovea(self.CffParaFoveaFrame)
         self.admin = Admin(self.adminFrame)
+        self.setup_header()
         
    
         #intialize the buttons
@@ -176,6 +204,7 @@ class StatrupClass:
         pageDisctonary["CffParaFovea"] = self.cffP
         pageDisctonary["BrkparaFovea"] = self.brkf_2    
         pageDisctonary["Admin"] = self.admin
+
         self.mw.Load()
         self.fw.Load()
         self.cff.Load()
