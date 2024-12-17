@@ -165,11 +165,6 @@ class CffFovea :
         self.is_blinking = False
 
 
-        self.reStartButton = tk.Button (self.content_frame,
-                                 text="RESUME", font=Font,
-                                 width=10,bg='#a0f291')
-
-        self.reStartButton.place (x=285, y=200)
 
     def blink_button(self, button, interval=500):
         """

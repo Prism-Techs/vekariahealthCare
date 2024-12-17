@@ -336,7 +336,7 @@ class CffParaFovea :
                                  command=handleReStart, font=Font,
                                  width=10,bg='#a0f291')
 
-        self.reStartButton.place (x=300, y=400)
+        self.reStartButton.place (x=285, y=200)
 
         def onfw():
             pageDisctonary['CffParaFovea'].hide()
