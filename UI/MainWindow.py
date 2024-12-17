@@ -97,10 +97,13 @@ class mainWindow:
 #         bwButton.place (x=420, y=500)
                #Button start the test
         
-        self.header.set_wifi_callback()
+        self.header.set_wifi_callback(self.wifi_page)
 
         def handleStart():
             CffFovea.Open ()
+
+    def wifi_page():
+        globaladc.buzzer_3()
 
     def updateDateTime(self):
        raw_dt = datetime.datetime.now()
