@@ -89,7 +89,6 @@ class HeaderComponent:
     def set_wifi_callback(self, callback):
         """Set callback for wifi icon click"""
         self.wifi_label.callback = callback
-        globaladc.buzzer_3()
         
 
     def update_page_title(self, new_title):
