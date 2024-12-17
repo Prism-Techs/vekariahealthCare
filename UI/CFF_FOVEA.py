@@ -184,36 +184,85 @@ class CffFovea :
                           width=15, height=1,
                           relief='raised')
 
+        self.blinking_buttons = {}
+        self.is_blinking = False
+
 
     def blink_button(self, button, interval=500):
-        # Create a unique ID for each button's blinking
-        button_name = str(button)
-        current_bg = button.cget('bg')
-        current_fg = button.cget('fg')
-        
-        # Toggle colors
-        if current_bg == "#4d3319":
-            button.configure(bg=current_fg, fg=current_bg)
-        else:
-            button.configure(bg="#4d3319", fg="#FFA500")
-        
-        # Store the blink ID with the button name
-        if not hasattr(self, 'blink_ids'):
-            self.blink_ids = {}
-        
-        # Schedule next blink and store its ID
-        self.blink_ids[button_name] = self.frame.after(interval, lambda: self.blink_button(button, interval))
+            """
+            Improved button blinking with better state management
+            """
+            button_id = str(id(button))  # Use unique ID based on button's memory address
+            
+            # If button is already blinking, don't start a new blink
+            if button_id in self.blinking_buttons:
+                return
+                
+            def toggle_colors():
+                if button_id not in self.blinking_buttons:
+                    return
+                    
+                current_bg = button.cget('bg')
+                current_fg = button.cget('fg')
+                
+                # Store original colors if not already stored
+                if 'original_colors' not in self.blinking_buttons[button_id]:
+                    self.blinking_buttons[button_id]['original_colors'] = (current_bg, current_fg)
+                
+                # Toggle between original and alternate colors
+                if current_bg == self.blinking_buttons[button_id]['original_colors'][0]:
+                    button.configure(bg=current_fg, fg=current_bg)
+                else:
+                    button.configure(
+                        bg=self.blinking_buttons[button_id]['original_colors'][0],
+                        fg=self.blinking_buttons[button_id]['original_colors'][1]
+                    )
+                
+                # Schedule next blink only if button is still in blinking state
+                if button_id in self.blinking_buttons:
+                    self.blinking_buttons[button_id]['after_id'] = self.frame.after(interval, toggle_colors)
+            
+            # Initialize blinking state for this button
+            self.blinking_buttons[button_id] = {
+                'button': button,
+                'after_id': None,
+                'original_colors': None
+            }
+            
+            # Start the blinking
+            toggle_colors()
 
 
     def stop_specific_blink(self, button):
-        button_name = str(button)
-        if hasattr(self, 'blink_ids') and button_name in self.blink_ids:
-            # Cancel the specific button's blinking
-            self.frame.after_cancel(self.blink_ids[button_name])
-            # Remove the blink ID from dictionary
-            del self.blink_ids[button_name]
-            # Reset to original colors
-            button.configure(bg="#4d3319", fg="#FFA500")
+        """
+        Improved method to stop specific button blinking
+        """
+        button_id = str(id(button))
+        
+        if button_id in self.blinking_buttons:
+            # Cancel the scheduled after event
+            if self.blinking_buttons[button_id]['after_id']:
+                self.frame.after_cancel(self.blinking_buttons[button_id]['after_id'])
+            
+            # Restore original colors
+            if self.blinking_buttons[button_id]['original_colors']:
+                orig_bg, orig_fg = self.blinking_buttons[button_id]['original_colors']
+                button.configure(bg=orig_bg, fg=orig_fg)
+            
+            # Remove button from blinking dictionary
+            del self.blinking_buttons[button_id]
+
+    def stop_all_blinking(self):
+        """
+        New method to stop all button blinking
+        """
+        # Create a copy of keys since we'll be modifying the dictionary
+        button_ids = list(self.blinking_buttons.keys())
+        for button_id in button_ids:
+            button = self.blinking_buttons[button_id]['button']
+            self.stop_specific_blink(button)
+
+
 
     def handleuserButton(self,switch):
         globaladc.get_print('handle to be implemented')
@@ -222,11 +271,7 @@ class CffFovea :
         time.sleep(0.15)        
         if self.skip_event:
             self.patentActionflabel.place_forget()
-            try:
-                self.stop_specific_blink(self.btn_ready)
-            except:
-                pass
-            # self.btn_flicker_start.configure(state='disabled',bg='#2a1d0e',fg='#7F5200')
+            self.stop_specific_blink(self.btn_ready)
             self.blink_button(self.btn_flicker_start)
             self.threadCreated=True
             if self.response_count == 0:
@@ -285,7 +330,7 @@ class CffFovea :
             if self.skip_event:
                 time.sleep(0.2) 
                 globaladc.buzzer_3()  
-                self.stop_specific_blink(self.btn_flicker_start)          
+                self.stop_specific_blink(self.btn_flicker_start) 
             self.patient_switch_enable() 
 
 
@@ -378,7 +423,13 @@ class CffFovea :
         self.btn_flicker_visible.pack(pady=5)
         self.blink_button(self.btn_ready)
 
-
+    def hide(self):
+        """
+        Modified hide method to ensure cleanup of blinking buttons
+        """
+        self.stop_all_blinking()
+        self.stop_therad()
+        self.frame.place_forget()
 
         def onfw():
             pageDisctonary['CffFovea'].hide()
