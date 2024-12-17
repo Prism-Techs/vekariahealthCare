@@ -273,7 +273,7 @@ class CffFovea :
         self.patient_switch_desable()
         time.sleep(0.15)        
         if self.skip_event:
-            self.patentActionflabel.place_forget()
+            # self.patentActionflabel.place_forget()
             self.stop_specific_blink(self.btn_ready)
             self.blink_button(self.btn_flicker_start)
             self.threadCreated=True
@@ -410,7 +410,7 @@ class CffFovea :
         # cfflabel.place (x=420, y=50)
 
         self.cffValue_frq.place (x=600, y=35)        
-        self.patentActionflabel.place (x=200, y=180)
+        # self.patentActionflabel.place (x=200, y=180)
         self.trialList.place (x=604, y=100)
         self.setup_header()
         self.create_side_buttons()
@@ -423,7 +423,7 @@ class CffFovea :
         self.wifi_label.place(x=868, y=5)
         self.btn_ready.pack(pady=5)
         self.btn_flicker_start.pack(pady=5)
-        self.btn_flicker_visible.pack(pady=5)
+        # self.btn_flicker_visible.pack(pady=5)
         self.blink_button(self.btn_ready)
 
     def hide(self):
@@ -462,7 +462,7 @@ class CffFovea :
         self.cffValue_frq.config(text = '     ')
         self.trialList.delete(0,tk.END)
         self.frame.place(width=1024,height=600)
-        self.patentActionflabel.place(x=200, y=180)
+        # self.patentActionflabel.place(x=200, y=180)
         globaladc.cff_Fovea_Prepair() # run this while loding cff Fovea screen        
         self.freq_val_start = 34.5
         self.freq_val = self.freq_val_start
