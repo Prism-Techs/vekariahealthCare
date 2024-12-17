@@ -189,48 +189,52 @@ class CffFovea :
 
 
     def blink_button(self, button, interval=500):
-            """
-            Improved button blinking with better state management
-            """
-            button_id = str(id(button))  # Use unique ID based on button's memory address
+        """
+        Fixed button blinking implementation
+        """
+        button_id = str(id(button))
+        
+        # If button is already blinking, don't start a new blink
+        if button_id in self.blinking_buttons:
+            return
             
-            # If button is already blinking, don't start a new blink
-            if button_id in self.blinking_buttons:
+        # Store initial colors immediately
+        initial_bg = button.cget('bg')
+        initial_fg = button.cget('fg')
+        
+        # Initialize blinking state for this button with original colors
+        self.blinking_buttons[button_id] = {
+            'button': button,
+            'after_id': None,
+            'original_colors': (initial_bg, initial_fg),
+            'is_original': True  # Track whether showing original colors
+        }
+        
+        def toggle_colors():
+            if button_id not in self.blinking_buttons:
                 return
                 
-            def toggle_colors():
-                if button_id not in self.blinking_buttons:
-                    return
-                    
-                current_bg = button.cget('bg')
-                current_fg = button.cget('fg')
-                
-                # Store original colors if not already stored
-                if 'original_colors' not in self.blinking_buttons[button_id]:
-                    self.blinking_buttons[button_id]['original_colors'] = (current_bg, current_fg)
-                
-                # Toggle between original and alternate colors
-                if current_bg == self.blinking_buttons[button_id]['original_colors'][0]:
-                    button.configure(bg=current_fg, fg=current_bg)
-                else:
-                    button.configure(
-                        bg=self.blinking_buttons[button_id]['original_colors'][0],
-                        fg=self.blinking_buttons[button_id]['original_colors'][1]
-                    )
-                
-                # Schedule next blink only if button is still in blinking state
-                if button_id in self.blinking_buttons:
-                    self.blinking_buttons[button_id]['after_id'] = self.frame.after(interval, toggle_colors)
+            if self.blinking_buttons[button_id]['is_original']:
+                # Switch to alternate colors
+                button.configure(
+                    bg=self.blinking_buttons[button_id]['original_colors'][1],
+                    fg=self.blinking_buttons[button_id]['original_colors'][0]
+                )
+            else:
+                # Switch back to original colors
+                button.configure(
+                    bg=self.blinking_buttons[button_id]['original_colors'][0],
+                    fg=self.blinking_buttons[button_id]['original_colors'][1]
+                )
             
-            # Initialize blinking state for this button
-            self.blinking_buttons[button_id] = {
-                'button': button,
-                'after_id': None,
-                'original_colors': None
-            }
+            # Toggle the state
+            self.blinking_buttons[button_id]['is_original'] = not self.blinking_buttons[button_id]['is_original']
             
-            # Start the blinking
-            toggle_colors()
+            # Schedule next blink
+            self.blinking_buttons[button_id]['after_id'] = self.frame.after(interval, toggle_colors)
+        
+        # Start the blinking
+        toggle_colors()
 
 
     def stop_specific_blink(self, button):
@@ -254,9 +258,8 @@ class CffFovea :
 
     def stop_all_blinking(self):
         """
-        New method to stop all button blinking
+        Stop all buttons from blinking
         """
-        # Create a copy of keys since we'll be modifying the dictionary
         button_ids = list(self.blinking_buttons.keys())
         for button_id in button_ids:
             button = self.blinking_buttons[button_id]['button']
