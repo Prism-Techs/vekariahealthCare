@@ -169,7 +169,7 @@ class CffFovea :
                                  text="RESUME", font=Font,
                                  width=10,bg='#a0f291')
 
-        self.reStartButton.place (x=300, y=200)
+        self.reStartButton.place (x=385, y=200)
 
     def blink_button(self, button, interval=500):
         """
