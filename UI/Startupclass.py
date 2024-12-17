@@ -126,13 +126,13 @@ class StatrupClass:
         self.cff = CffFovea(self.cffFoveaFrame)
         self.cffP =CffParaFovea(self.CffParaFoveaFrame)
         self.admin = Admin(self.adminFrame)
-        self.setup_header()
         
    
         #intialize the buttons
         def handleAdmin():
             globaladc.get_print ("tobe implemented")
             globaladc.buzzer_1()
+            self.setup_header()
             self.ShowHomeButton()
             self.admin.show()
             self.HideAdminButton()
@@ -228,6 +228,7 @@ class StatrupClass:
         pageDisctonary["BrkparaFovea"] = self.brkf_2    
         pageDisctonary["Admin"] = self.admin
 
+        self.setup_header()
         self.mw.Load()
         self.fw.Load()
         self.cff.Load()
@@ -239,6 +240,7 @@ class StatrupClass:
         self.ShowMainScreen()
         self.window.mainloop()
         globaladc.buzzer_1()
+
         # globaladc.main_Prepair() # run this while loading main Screen
         #Main Window Application
         
