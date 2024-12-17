@@ -97,7 +97,7 @@ class mainWindow:
 #         bwButton.place (x=420, y=500)
                #Button start the test
         
-        self.header.set_wifi_callback(lambda _ : globaladc.buzzer_3())
+        self.header.set_wifi_callback()
 
         def handleStart():
             CffFovea.Open ()
