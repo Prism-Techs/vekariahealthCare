@@ -78,6 +78,8 @@ class StatrupClass:
         self.window.attributes('-fullscreen', True) 
         self.window.geometry ("1024x600")
         self.window.resizable (0, 0)
+        self.header_frame = tk.Frame(self.window, bg='#1f2836', height=41)
+
         self.window.configure(background='#64edb4')
         self.mainFrame = Frame(self.window) 
         self.flikerFrame = Frame(self.window)
