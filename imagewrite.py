@@ -12,8 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QFont
-from wifi_update import WifiStatusLabel
-from wifi_final import WifiPage
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
