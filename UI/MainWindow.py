@@ -382,15 +382,18 @@ class mainWindow:
         self.selectedGen =self.GenderSel['text']
                
    
-    def eyeSelected(self):
-         if(self.EyeSel['text'] == 'R'):
-            self.EyeSel['text'] = 'L'
-            self.EyeSel['bg']='#f58787'    
-         else :
-            self.EyeSel['text'] = 'R'
-            self.EyeSel['bg']='#87aaf5'    
-  
-         self.selectedEye=self.EyeSel['text']
+    def eyeSelected(self, value):
+        """Handle eye selection"""
+        self.eye_side_var.set(value)  # Update the eye side variable
+        currentPatientInfo.eye = value  # Update the current patient info
+        
+        # Update visual feedback in radio buttons
+        for rb in self.main_frame.winfo_children():
+            if isinstance(rb, tk.Radiobutton) and rb['value'] in ['R', 'L']:
+                if rb['value'] == value:
+                    rb.configure(bg='#87aaf5')  # Blue for selected
+                else:
+                    rb.configure(bg='black')  # Black for unselected
 
     def show(self):        
         self.frame.place(width=1024,height=600)
@@ -404,24 +407,27 @@ class mainWindow:
         return "MainScreen"    
     
     def loadValues(self):
-        currentPatientInfo.Age = self.AgeText.get()
-        currentPatientInfo.Name = self.NameText.get()
-        currentPatientInfo.eye = self.selectedEye
-        currentPatientInfo.Gender = self.selectedGen
-        currentPatientInfo.date = self.timelabel.cget("text")
+        currentPatientInfo.Name = f"{self.get_entry_value('1st', '_name_entry')} {self.get_entry_value('mid', '_name_entry')} {self.get_entry_value('surname', '_entry')}"
+        currentPatientInfo.Age = self.get_entry_value('dob', '_entry')  # Using DOB field for age
+        currentPatientInfo.eye = self.eye_side_var.get()  # Get selected eye side (R/L)
+        currentPatientInfo.Gender = "M" if self.gender_var.get() == "Male" else "F"  # Convert gender to M/F format
+        
+            # Get current date/time
+        current_datetime = datetime.datetime.now().strftime("%d/%m/%Y %I:%M:%S %p")
+        currentPatientInfo.date = current_datetime
 
     def ValidateUserInput(self):
         valid = True
-        # enable this
-
-        # verify if any of the fields are missing
-        if not self.AgeText.get(): valid = False
-        if not self.NameText.get(): valid = False
-        if not self.selectedEye : valid = False
-        if not self.selectedGen : valid = False  
-        if valid :
-            self.loadValues()        
+        
+        # Check required fields
+        if not self.get_entry_value('1st', '_name_entry'): valid = False  # First name
+        if not self.get_entry_value('dob', '_entry'): valid = False      # DOB/Age
+        if not self.eye_side_var.get(): valid = False                    # Eye side
+        if not self.gender_var.get(): valid = False                      # Gender
+        
+        if valid:
+            self.loadValues()
+        
         return valid
-    
         
         
