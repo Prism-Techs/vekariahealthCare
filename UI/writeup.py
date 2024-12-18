@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from header import HeaderComponent
 import os
-from .login import LoginApp  # Import the LoginApp class
+from login import LoginApp  # Import the LoginApp class
 
 class MacularInfoPage:
     def __init__(self, root):
