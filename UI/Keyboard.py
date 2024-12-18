@@ -73,7 +73,7 @@ class KeyBoard:
 
                 tk.Button(window, text=text, width=width,
                           command=lambda value=text: self.select(entry, window,root,value),
-                          padx=3, pady=3, bd=12, bg="black", fg="white"
+                           bg="black", fg="white"
                          ).grid(row=y, column=x, columnspan=columnspan)
 
                 x += columnspan
