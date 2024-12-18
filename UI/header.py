@@ -4,72 +4,50 @@ from tkinter import font
 import os
 
 class HeaderComponent:
-    def __init__(self, parent_frame, page_title=""):
-        # Create header frame
-        self.header_frame = tk.Frame(parent_frame, bg='#1f2836', height=41)
-        self.header_frame.pack(fill='x')
-        
-        # Keep reference of the image to prevent garbage collection
-        self.images = {}
-        
-        # Setup company logo
-        try:
-            logo = Image.open("logo.png")  # Updated path
-            logo = logo.resize((44, 23))
-            self.images['logo'] = ImageTk.PhotoImage(logo)
-            self.logo_label = tk.Label(
-                self.header_frame, 
-                image=self.images['logo'],
+        def __init__(self, parent_frame, page_title=""):
+            # Create header frame
+            self.header_frame = tk.Frame(parent_frame, bg='#1f2836', height=41)
+            self.header_frame.pack(fill='x')
+            
+            # Keep reference of the image to prevent garbage collection
+            self.images = {}
+            
+            # Get current directory and construct absolute paths
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            logo_path = os.path.join(current_dir,  "logo.png")
+            wifi_path = os.path.join(current_dir, "wifi_logo.png")
+            
+            # Setup company logo
+            try:
+                logo = Image.open(logo_path)
+                logo = logo.resize((44, 23))
+                self.images['logo'] = ImageTk.PhotoImage(logo)
+                self.logo_label = tk.Label(
+                    self.header_frame, 
+                    image=self.images['logo'],
+                    bg='#1f2836'
+                )
+                self.logo_label.place(x=0, y=10)
+            except Exception as e:
+                print(f"Logo image not found: {e}")
+                print(f"Attempted path: {logo_path}")
+                
+            # Setup WiFi icon
+            self.wifi_label = self.create_clickable_label(
+                self.header_frame,
                 bg='#1f2836'
             )
-            self.logo_label.place(x=0, y=10)
-        except Exception as e:
-            print(f"Logo image not found: {e}")
+            self.wifi_label.place(x=868, y=5)
             
-        # Setup WiFi icon - Create the label even if image fails
-        self.wifi_label = self.create_clickable_label(
-            self.header_frame,
-            bg='#1f2836'
-        )
-        self.wifi_label.place(x=868, y=5)
-        
-        try:
-            wifi_image = Image.open("wifi_logo.png")  # Updated path
-            wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)
-            self.images['wifi'] = ImageTk.PhotoImage(wifi_image)
-            self.wifi_label.configure(image=self.images['wifi'])
-        except Exception as e:
-            print(f"WiFi logo not found: {e}")
-            # Set a fallback text if image fails
-            self.wifi_label.configure(text="WiFi", fg='white')
-
-        # Company name label
-        tk.Label(
-            self.header_frame, 
-            text="Vekaria Healthcare",
-            font=('Helvetica Neue', 16, 'bold'),
-            bg='#1f2836',
-            fg='white'
-        ).place(x=60, y=10)
-
-        # Version label
-        tk.Label(
-            self.header_frame,
-            text="V1.0",
-            font=('Helvetica Neue', 14, 'bold'),
-            bg='#1f2836',
-            fg='white'
-        ).place(x=930, y=10)
-
-        # Page title
-        if page_title:
-            tk.Label(
-                parent_frame,
-                text=page_title,
-                font=("Arial", 20),
-                bg='black',
-                fg='white'
-            ).place(x=0, y=40)
+            try:
+                wifi_image = Image.open(wifi_path)
+                wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)
+                self.images['wifi'] = ImageTk.PhotoImage(wifi_image)
+                self.wifi_label.configure(image=self.images['wifi'])
+            except Exception as e:
+                print(f"WiFi logo not found: {e}")
+                print(f"Attempted path: {wifi_path}")
+                self.wifi_label.configure(text="WiFi", fg='white')
 
     def create_clickable_label(self, master, **kwargs):
         """Create a clickable label with callback functionality"""
