@@ -63,7 +63,7 @@ class KeyBoard:
                     columnspan = 2
                 elif text == 'Space':
                     width = 80
-                    columnspan = 16
+                    columnspan = 10
                 elif text == 'Enter':
                     width = 10
                     columnspan = 1
