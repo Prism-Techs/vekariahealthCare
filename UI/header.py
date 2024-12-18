@@ -1,3 +1,8 @@
+import tkinter as tk
+from PIL import Image, ImageTk
+from tkinter import font
+import os
+
 class HeaderComponent:
     def __init__(self, parent_frame, page_title=""):
         # Create header frame
