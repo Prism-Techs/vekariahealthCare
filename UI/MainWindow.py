@@ -38,8 +38,11 @@ class mainWindow:
         a=50
         # time label
         #x=datetime.datetime.now () 
-        app = PatientRegistrationForm(self.frame)
-        app.show()
+        root = tk.Tk()
+
+        app = PatientRegistrationForm(root)
+        root.mainloop()
+        
 
         # self.timelabel = tk.Label (self.frame,font=Font)
         # self.updateDateTime()
