@@ -88,12 +88,7 @@ class StatrupClass:
         self.wifi_icon = ImageTk.PhotoImage(wifi_image)
                     
                     # Create the clickable WiFi icon label
-        self.wifi_label = ClickableLabel(
-                        self.header_frame,
-                        image=self.wifi_icon,
-                        bg='#1f2836'
-                    )
-
+  
 
     def __init__(self) -> None:        
         self.window = tk.Tk ()
