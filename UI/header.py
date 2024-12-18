@@ -4,7 +4,7 @@ from tkinter import font
 import os
 
 class HeaderComponent:
-        def __init__(self, parent_frame, page_title=""):
+    def __init__(self, parent_frame, page_title=""):
             # Create header frame
             self.header_frame = tk.Frame(parent_frame, bg='#1f2836', height=41)
             self.header_frame.pack(fill='x')
