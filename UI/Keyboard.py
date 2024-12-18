@@ -37,11 +37,11 @@ class KeyBoard:
     def createAlphaKey(self, root, entry, number=False):
         # Define layout with lowercase by default
         alphabets = [
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
-        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
-        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
-        ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
-        ['Space', 'Enter']
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
+            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
+            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
+            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
+            ['Space', 'Enter']
         ]
         
         window = tk.Toplevel(root)
@@ -53,36 +53,47 @@ class KeyBoard:
         window.configure(background="black")
         window.wm_attributes("-alpha", 0.7)
 
+        # Reduce these values to make keyboard smaller
+        button_config = {
+            'padx': 1,        # Reduced from 3
+            'pady': 1,        # Reduced from 3
+            'bd': 1,         # Reduced from 12
+            'bg': "black",
+            'fg': "white"
+        }
+
         for y, row in enumerate(alphabets):
             x = 0
             for text in row:
                 if text == 'Shift':
-                    width = 12
+                    width = 8        # Reduced from 12
                     columnspan = 2
                     button = tk.Button(window, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     padx=3, pady=3, bd=12, bg="black", fg="#42A5F5")  # Different color for Shift
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    fg="#42A5F5",  # Different color for Shift
+                                    **button_config)
                 elif text == 'Space':
-                    width = 80
-                    columnspan = 16
+                    width = 30       # Reduced from 80
+                    columnspan = 8
                     button = tk.Button(window, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     padx=3, pady=3, bd=12, bg="black", fg="white")
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
                 elif text == 'Enter':
-                    width = 10
+                    width = 8        # Reduced from 10
                     columnspan = 1
                     button = tk.Button(window, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     padx=3, pady=3, bd=12, bg="black", fg="white")
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
                 else:
-                    width = 8
+                    width = 4        # Reduced from 8
                     columnspan = 1
                     button = tk.Button(window, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     padx=3, pady=3, bd=12, bg="black", fg="white")
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
 
-                button.grid(row=y, column=x, columnspan=columnspan)
+                button.grid(row=y, column=x, columnspan=columnspan, padx=1, pady=1)  # Added small grid padding
                 x += columnspan
+
 
     def createNumaKey(self, root, entry, number=False):
         # Numeric keyboard remains unchanged
