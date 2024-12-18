@@ -42,7 +42,7 @@ class PatientRegistrationForm:
         self.create_text_field("Surname", 670, 20, "Surname")
         self.create_text_field("DOB", 0, 80, "Date of Birth")
         self.create_text_field("Aadhaar", 346, 80, "Aadhaar No")
-        self.create_text_field("Mobile", 676, 80, "+91XXXXXXXXXX")
+        self.create_text_field("Mobile", 676, 80, "91XXXXXXXXXX")
         self.create_text_field("Nationality", 450, 320, "Enter Nationality")
         
         # Radio button groups

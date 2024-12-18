@@ -3,6 +3,24 @@ from globalvar import globaladc
 
 class KeyBoard:
 
+    def __init__(self):
+        self.shift_active = False
+        self._drag_data = {"x": 0, "y": 0}  # For dragging
+
+
+    def on_drag_start(self, event, window):
+        """Begin drag of the window"""
+        self._drag_data["x"] = event.x
+        self._drag_data["y"] = event.y
+
+    def on_drag_motion(self, event, window):
+        """Handle dragging of the window"""
+        delta_x = event.x - self._drag_data["x"]
+        delta_y = event.y - self._drag_data["y"]
+        x = window.winfo_x() + delta_x
+        y = window.winfo_y() + delta_y
+        window.geometry(f"+{x}+{y}")
+
     def select(self, entry, window, mainwindow, value, ucase=None):        
         uppercase =ucase
         if value == "Space":
@@ -38,55 +56,69 @@ class KeyBoard:
             entry.insert('end', value)
         globaladc.buzzer_1()
 
-   # create a Alpah and numeric keyboard
-    def createAlphaKey(self, root, entry, number=False):
 
+    def createAlphaKey(self, root, entry, number=False):
         alphabets = [
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
-        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
-        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
-        ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
-        ['Space', 'Enter']
-    ]
-        
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
+            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
+            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
+            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
+            ['Space', 'Enter']
+        ]
         
         window = tk.Toplevel(root)
         x = root.winfo_x()
         y = root.winfo_y()
 
         window.geometry("+%d+%d" %(x+20, y+400))
-
-        window.overrideredirect (1)  # Don't allow the widgets inside to determine the frame's width / height
-        
+        window.overrideredirect(1)
         window.configure(background="black")
         window.wm_attributes("-alpha", 0.7)
 
+        # Add dragging to window
+        window.bind("<Button-1>", lambda e: self.on_drag_start(e, window))
+        window.bind("<B1-Motion>", lambda e: self.on_drag_motion(e, window))
+
+        # Create main frame
+        main_frame = tk.Frame(window, bg='black')
+        main_frame.pack(padx=1, pady=1)
+
         for y, row in enumerate(alphabets):
-
             x = 0
-
-            #for x, text in enumerate(row):
             for text in row:
                 if text == 'Shift':
-                    width = 12
+                    width = 6  # Smaller width
                     columnspan = 2
                 elif text == 'Space':
-                    width = 80
-                    columnspan = 10
+                    width = 30  # Smaller width for space
+                    columnspan = 8
                 elif text == 'Enter':
-                    width = 10
-                    columnspan = 1
+                    width = 6  # Smaller width
+                    columnspan = 2
+                elif text == 'Back':
+                    width = 6  # Smaller width
+                    columnspan = 2
                 else:
-                    width = 8
+                    width = 4  # Smaller width for regular keys
                     columnspan = 1
 
-                tk.Button(window, text=text, width=width,
-                          command=lambda value=text: self.select(entry, window,root,value),
-                           bg="black", fg="white"
-                         ).grid(row=y, column=x, columnspan=columnspan)
+                button = tk.Button(main_frame, 
+                                text=text, 
+                                width=width,
+                                command=lambda value=text: self.select(entry, window, root, value),
+                                bg="black", 
+                                fg="white",
+                                padx=1,  # Smaller padding
+                                pady=1,
+                                font=('Arial', 10))  # Smaller font
+                button.grid(row=y, column=x, columnspan=columnspan, padx=1, pady=1)
+
+                # Make each button draggable
+                button.bind("<Button-1>", lambda e, w=window: self.on_drag_start(e, w))
+                button.bind("<B1-Motion>", lambda e, w=window: self.on_drag_motion(e, w))
 
                 x += columnspan
-        
+
 
    #create a Numeric Keypad
     def createNumaKey(self, root, entry, number=False):
