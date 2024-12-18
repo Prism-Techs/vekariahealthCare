@@ -70,15 +70,15 @@ class LoginApp:
         # Password Toggle Button
         self.toggle_btn = tk.Button(
             self.content_frame,
-            text="👁",
-            font=('Arial', 20),  # Increased font size
-            bg='#334155',  # Same as password entry background
+            text="Show",  # Using text instead of emoji
+            font=('Arial', 12),  # Adjusted font size
+            bg='#334155',
             fg='white',
-            bd=0,  # No border
-            highlightthickness=0,  # No highlight
-            activebackground='#334155',  # Same as normal background
-            activeforeground='#42A5F5',  # Blue color on click
-            cursor="hand2",  # Hand cursor
+            bd=0,
+            highlightthickness=0,
+            activebackground='#334155',
+            activeforeground='#42A5F5',
+            cursor="hand2",
             command=self.toggle_password
         )
         self.toggle_btn.place(x=520, y=150, width=40, height=40)  # Increased width and height
@@ -240,11 +240,10 @@ class LoginApp:
         self.password_visible = not self.password_visible
         if self.password_visible:
             self.password.configure(show='')
-            self.toggle_btn.configure(text='🔒', fg='#42A5F5')  # Blue color when password is visible
+            self.toggle_btn.configure(text='Hide', fg='#42A5F5')
         else:
             self.password.configure(show='*')
-            self.toggle_btn.configure(text='👁', fg='white')  # White color when password is hidden
-            
+            self.toggle_btn.configure(text='Show', fg='white')
     def open_wifi_page(self):
         """Open WiFi settings window"""
         print("Opening WiFi page")
