@@ -13,7 +13,7 @@ class PatientRegistrationForm:
         self.root = root
         self.root.geometry("1024x600")
         self.root.configure(bg='black')
-        self.root.overrideredirect(True)
+        # self.root.overrideredirect(True)
         
         self.kb = KeyBoard()
         
