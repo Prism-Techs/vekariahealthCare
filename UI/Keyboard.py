@@ -1,5 +1,5 @@
 import tkinter as tk
-# from globalvar import globaladc
+from globalvar import globaladc
 
 class KeyBoard:
     def __init__(self):
@@ -10,7 +10,7 @@ class KeyBoard:
             value = ' '
         elif value == 'Enter':
             value = ''
-            # globaladc.get_print("enter pressed")
+            globaladc.get_print("enter pressed")
             mainwindow.focus_force()
             window.destroy()
         elif value == 'Tab':
@@ -32,7 +32,7 @@ class KeyBoard:
             if self.shift_active:
                 value = value.upper()
             entry.insert('end', value)
-        # globaladc.buzzer_1()
+        globaladc.buzzer_1()
 
     def createAlphaKey(self, root, entry, number=False):
         # Define layout with lowercase by default
@@ -118,8 +118,7 @@ if __name__ == '__main__':
     kb = KeyBoard()
 
     def callback(sv):
-        pass
-        # globaladc.get_print("call back")
+        globaladc.get_print("call back")
 
     label = tk.Label(root, text='Test Keyboard')
     label.grid(row=0, column=0, columnspan=2)
@@ -146,4 +145,4 @@ if __name__ == '__main__':
     button3 = tk.Button(root, text='Keyboard', command=lambda: kb.createNumaKey(root, text1))
     button3.grid(row=3, column=1, sticky='news')
 
-    root.mainloop()   
+    root.mainloop()
