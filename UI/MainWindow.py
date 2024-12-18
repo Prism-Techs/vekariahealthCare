@@ -27,13 +27,10 @@ class mainWindow:
 
     def __init__(self, frame):
         self.frame = frame
+        self.frame.configure(bg='black')
         self.selectedGen = "M"
         self.selectedEye = "R" 
-        self.header = HeaderComponent(
-            self.frame,
-            "Macular Densitometer                                                          Patient Info"
-        )
-        self.header.set_wifi_callback(self.wifi_page)
+
 
 
         self.kb = KeyBoard()
