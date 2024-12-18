@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QMessageBox
 from datetime import datetime
 import json
 from PyQt5.QtCore import Qt, QRect, QTimer, QDateTime
-from pages import Login_page
+# from pages import Login_page
 
 class LoadingScreen(QWidget):
     def __init__(self):

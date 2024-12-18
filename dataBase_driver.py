@@ -1,6 +1,6 @@
 # Example usage of the AuthUser database
 
-from database import DatabaseConnection
+from UI.database import DatabaseConnection
 from datetime import datetime
 
 def test_auth_user_db():
