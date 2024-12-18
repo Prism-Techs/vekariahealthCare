@@ -291,6 +291,10 @@ class LoginApp:
         password = self.password.get()
         
         if username in ["", "Username"] or password in ["", "Password"]:
+            # Center the error message
+            self.root.update()  # Update window positions
+            x = self.root.winfo_x() + self.root.winfo_width()//2 - 100
+            y = self.root.winfo_y() + self.root.winfo_height()//2 - 50
             messagebox.showerror("Error", "Please enter both username and password")
             return
         
@@ -305,8 +309,13 @@ class LoginApp:
             # Generate JSON file
             json_file = self.generate_user_json(user, self.operation_mode.get())
             if json_file:
+                # Center the success message
+                self.root.update()  # Update window positions
+                x = self.root.winfo_x() + self.root.winfo_width()//2 - 100
+                y = self.root.winfo_y() + self.root.winfo_height()//2 - 50
                 messagebox.showinfo("Success", 
-                                f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}')
+                                f'Welcome {user["title"] + " " if user["title"] else ""}{user["first_name"]} {user["last_name"]}',
+                                parent=self.root)  # Set parent window
                 
                 # Hide login window
                 self.root.withdraw()
@@ -317,9 +326,18 @@ class LoginApp:
                 home_window.protocol("WM_DELETE_WINDOW", lambda: self.on_home_close(home_window))
                 
             else:
+                # Center the warning message
+                self.root.update()
+                x = self.root.winfo_x() + self.root.winfo_width()//2 - 100
+                y = self.root.winfo_y() + self.root.winfo_height()//2 - 50
                 messagebox.showwarning("Warning", 'Login successful but failed to save user data')
         else:
+            # Center the error message
+            self.root.update()
+            x = self.root.winfo_x() + self.root.winfo_width()//2 - 100
+            y = self.root.winfo_y() + self.root.winfo_height()//2 - 50
             messagebox.showerror("Error", 'Invalid username or password')
+
 
     def on_home_close(self, home_window):
         """Handle home window closing"""
