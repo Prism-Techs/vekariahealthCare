@@ -14,7 +14,7 @@ class HeaderComponent:
         
         # Setup company logo
         try:
-            logo = Image.open("UI/logo.png")  # Updated path
+            logo = Image.open("logo.png")  # Updated path
             logo = logo.resize((44, 23))
             self.images['logo'] = ImageTk.PhotoImage(logo)
             self.logo_label = tk.Label(
@@ -34,7 +34,7 @@ class HeaderComponent:
         self.wifi_label.place(x=868, y=5)
         
         try:
-            wifi_image = Image.open("UI/wifi_logo.png")  # Updated path
+            wifi_image = Image.open("wifi_logo.png")  # Updated path
             wifi_image = wifi_image.resize((41, 31), Image.LANCZOS)
             self.images['wifi'] = ImageTk.PhotoImage(wifi_image)
             self.wifi_label.configure(image=self.images['wifi'])
