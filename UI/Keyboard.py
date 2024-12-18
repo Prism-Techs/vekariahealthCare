@@ -35,14 +35,13 @@ class KeyBoard:
         globaladc.buzzer_1()
 
     def createAlphaKey(self, root, entry, number=False):
-        # Define layout with lowercase, numbers and special characters
-        keyboard_layout = [
-            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-            ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')'],
-            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'Back'],
-            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', 'Enter'],
-            ['Space']
+        # Define layout with lowercase by default
+        alphabets = [
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
+        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
+        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
+        ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
+        ['Space', 'Enter']
         ]
         
         window = tk.Toplevel(root)
@@ -54,82 +53,36 @@ class KeyBoard:
         window.configure(background="black")
         window.wm_attributes("-alpha", 0.7)
 
-        # Common button style
-        button_style = {
-            'padx': 3,
-            'pady': 3,
-            'bd': 12,
-            'bg': "black",
-            'fg': "white"
-        }
-
-        for y, row in enumerate(keyboard_layout):
+        for y, row in enumerate(alphabets):
             x = 0
             for text in row:
                 if text == 'Shift':
                     width = 12
                     columnspan = 2
-                    button = tk.Button(
-                        window, 
-                        text=text, 
-                        width=width,
-                        fg="#42A5F5",  # Different color for Shift
-                        command=lambda value=text: self.select(entry, window, root, value),
-                        **button_style
-                    )
+                    button = tk.Button(window, text=text, width=width,
+                                     command=lambda value=text: self.select(entry, window, root, value),
+                                     padx=3, pady=3, bd=12, bg="black", fg="#42A5F5")  # Different color for Shift
                 elif text == 'Space':
                     width = 80
                     columnspan = 16
-                    button = tk.Button(
-                        window, 
-                        text=text, 
-                        width=width,
-                        command=lambda value=text: self.select(entry, window, root, value),
-                        **button_style
-                    )
-                elif text in ['Enter', 'Back']:
+                    button = tk.Button(window, text=text, width=width,
+                                     command=lambda value=text: self.select(entry, window, root, value),
+                                     padx=3, pady=3, bd=12, bg="black", fg="white")
+                elif text == 'Enter':
                     width = 10
                     columnspan = 1
-                    button = tk.Button(
-                        window, 
-                        text=text, 
-                        width=width,
-                        command=lambda value=text: self.select(entry, window, root, value),
-                        **button_style
-                    )
+                    button = tk.Button(window, text=text, width=width,
+                                     command=lambda value=text: self.select(entry, window, root, value),
+                                     padx=3, pady=3, bd=12, bg="black", fg="white")
                 else:
                     width = 8
                     columnspan = 1
-                    button = tk.Button(
-                        window, 
-                        text=text, 
-                        width=width,
-                        command=lambda value=text: self.select(entry, window, root, value),
-                        **button_style
-                    )
+                    button = tk.Button(window, text=text, width=width,
+                                     command=lambda value=text: self.select(entry, window, root, value),
+                                     padx=3, pady=3, bd=12, bg="black", fg="white")
 
                 button.grid(row=y, column=x, columnspan=columnspan)
                 x += columnspan
-
-    def update_shift(self):
-            """Update the characters when shift is pressed"""
-            shift_map = {
-                '1': '!', '2': '@', '3': '#', '4': '$', '5': '%',
-                '6': '^', '7': '&', '8': '*', '9': '(', '0': ')',
-                '!': '1', '@': '2', '#': '3', '$': '4', '%': '5',
-                '^': '6', '&': '7', '*': '8', '(': '9', ')': '0',
-                '.': '>'
-            }
-            
-            for widget in window.winfo_children():
-                if isinstance(widget, tk.Button):
-                    text = widget['text']
-                    if text not in ['Space', 'Enter', 'Back', 'Shift']:
-                        if text.isalpha():
-                            widget['text'] = text.upper() if self.shift_active else text.lower()
-                        elif text in shift_map:
-                            widget['text'] = shift_map[text] if self.shift_active else shift_map[text]
-
 
     def createNumaKey(self, root, entry, number=False):
         # Numeric keyboard remains unchanged
