@@ -21,6 +21,15 @@ class KeyBoard:
             #elif isinstance(entry, tk.Text):
             else: # tk.Text
                 entry.delete('end - 2c', 'end')
+        
+        elif value == 'Shift':
+            self.shift_active = not self.shift_active
+            for widget in window.winfo_children():
+                if isinstance(widget, tk.Frame):
+                    for btn in widget.winfo_children():
+                        if isinstance(btn, tk.Button) and btn['text'] not in ['Space', 'Enter', 'Back', 'Shift', '<-']:
+                            btn['text'] = btn['text'].upper() if self.shift_active else btn['text'].lower()
+
         elif value in ('Caps Lock', 'Shift'):
             uppercase = not uppercase # change True to False, or False to True
         else:
