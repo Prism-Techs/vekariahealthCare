@@ -120,6 +120,13 @@ class LoginApp:
                                  bg='black', fg='white')
         self.date_label.place(x=934, y=570)
         
+
+        self.username.bind('<FocusIn>', lambda e: self.on_entry_click(self.username, "Username"))
+        self.username.bind('<FocusOut>', lambda e: self.on_focus_out(self.username, "Username"))
+
+        self.password.bind('<FocusIn>', lambda e: self.on_entry_click(self.password, "Password"))
+        self.password.bind('<FocusOut>', lambda e: self.on_focus_out(self.password, "Password"))
+
         # self.username.bind("<FocusIn>",lambda event : self.kb.createAlphaKey(self.root,self.username))
         # self.password.bind("<FocusIn>", lambda event : self.kb.createAlphaKey(self.root, self.password))
         # Start time updates
