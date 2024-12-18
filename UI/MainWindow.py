@@ -356,7 +356,7 @@ class mainWindow:
         
         
 
-        def handleStart():
+    def handleStart():
             CffFovea.Open ()
 
     def wifi_page(self):
