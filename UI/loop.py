@@ -20,7 +20,7 @@ class LoadingScreen:
         
         # Load logo image
         try:
-            self.logo = Image.open('logo.png')
+            self.logo = Image.open('loop.png')
             self.photo_image = None
             self.counter = 0
             
