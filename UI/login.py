@@ -327,6 +327,7 @@ class LoginApp:
                 # Hide login window
                 self.root.withdraw()
                 
+                
                 # Create and show HomePage
                 home_window = tk.Toplevel()
                 home_app = HomePage(home_window)

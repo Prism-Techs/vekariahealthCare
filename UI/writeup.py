@@ -33,7 +33,7 @@ class MacularInfoPage:
         # Load and display macular densitometer image
         try:
             # Construct path to image in UI directory
-            image_path = os.path.join(self.current_dir, "UI", "macular_densitometer_logo.png")
+            image_path = os.path.join(self.current_dir,  "macular_densitometer_logo.png")
             img = Image.open(image_path)
             img = img.resize((391, 331))
             self.macular_photo = ImageTk.PhotoImage(img)

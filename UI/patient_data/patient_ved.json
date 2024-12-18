@@ -1,0 +1,23 @@
+{
+    "first_name": "ved",
+    "middle_name": "",
+    "surname": "",
+    "dob": "",
+    "aadhaar": "",
+    "mobile": "",
+    "gender": "Male",
+    "alcohol": "No",
+    "smoking": "No",
+    "food_habit": "Veg",
+    "bp": {
+        "has_bp": "No",
+        "value": ""
+    },
+    "diabetes": {
+        "has_diabetes": "No",
+        "value": ""
+    },
+    "eye_side": "R",
+    "is_sync": false,
+    "handler_id": 1
+}

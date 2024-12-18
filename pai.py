@@ -10,16 +10,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from  PyQt5.QtCore  import Qt
-from wifi_final import WifiPage
-from wifi_update import WifiStatusLabel
-from globalvar import globaladc as buzzer
+# from wifi_final import WifiPage
+# from wifi_update import WifiStatusLabel
+# from globalvar import globaladc as buzzer
 import json
 from datetime import datetime
 from PyQt5.QtWidgets import QMessageBox
 import os
-from flicker_demo import FlickerController
+# from flicker_demo import FlickerController
 import subprocess
-from CustomLineEdit import CustomTextEdit
+# from CustomLineEdit import QtWidgets.QTextEdit
 
 
 
@@ -57,7 +57,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_6.setFont(font)
         self.label_6.setObjectName("label_6")
-        self.textEdit = CustomTextEdit(self.frame_2)
+        self.textEdit = QtWidgets.QTextEdit(self.frame_2)
         self.frame_2.setStyleSheet("""
             
             QFrame {
@@ -129,9 +129,9 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_9.setFont(font)
         self.label_9.setObjectName("label_9")
-        self.textEdit_2 = CustomTextEdit(self.frame_2)
+        self.textEdit_2 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_2.setGeometry(QtCore.QRect(491, 20, 165, 31))
-        self.textEdit_2 = CustomTextEdit(self.frame_2)
+        self.textEdit_2 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_2.setGeometry(QtCore.QRect(491, 20, 165, 31))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
@@ -165,7 +165,7 @@ class Patient_UI(object):
 "        height: 0px;  /* This hides the horizontal scrollbar */\n"
 "    }")
         self.textEdit_2.setObjectName("textEdit_2")
-        self.textEdit_3 = CustomTextEdit(self.frame_2)
+        self.textEdit_3 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_3.setGeometry(QtCore.QRect(801, 20, 175, 31))
         self.textEdit_3.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textEdit_3.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -221,7 +221,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_7.setFont(font)
         self.label_7.setObjectName("label_7")
-        self.textEdit_4 = CustomTextEdit(self.frame_2)
+        self.textEdit_4 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_4.setGeometry(QtCore.QRect(141, 80, 190, 31))
         self.textEdit_4.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textEdit_4.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -275,7 +275,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_11.setFont(font)
         self.label_11.setObjectName("label_11")
-        self.textEdit_5 = CustomTextEdit(self.frame_2)
+        self.textEdit_5 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_5.setGeometry(QtCore.QRect(487, 80, 165, 31))
         self.textEdit_5.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textEdit_5.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -320,7 +320,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_12.setFont(font)
         self.label_12.setObjectName("label_12")
-        self.textEdit_6 = CustomTextEdit(self.frame_2)
+        self.textEdit_6 = QtWidgets.QTextEdit(self.frame_2)
         self.textEdit_6.setGeometry(QtCore.QRect(802, 80, 175, 31))
         self.textEdit_6.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textEdit_6.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -383,7 +383,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_23.setFont(font)
         self.label_23.setObjectName("label_23")
-        self.Diabetes_text = CustomTextEdit(self.frame_2)
+        self.Diabetes_text = QtWidgets.QTextEdit(self.frame_2)
         self.Diabetes_text.setGeometry(QtCore.QRect(830, 260, 141, 31))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
@@ -437,7 +437,7 @@ class Patient_UI(object):
         font.setWeight(50)
         self.label_26.setFont(font)
         self.label_26.setObjectName("label_26")
-        self.Diabetes_text_2 = CustomTextEdit(self.frame_2)
+        self.Diabetes_text_2 = QtWidgets.QTextEdit(self.frame_2)
         self.Diabetes_text_2.setGeometry(QtCore.QRect(830, 200, 141, 31))
         font = QtGui.QFont()
         font.setFamily("Helvetica Neue")
@@ -726,16 +726,16 @@ class Patient_UI(object):
         self.label_17.setPixmap(QtGui.QPixmap(":/newPrefix/Vekaria Healthcare Logo/VHC Logo.png"))
         self.label_17.setScaledContents(True)
         self.label_17.setObjectName("label_17")
-        self.wifiIcon = WifiStatusLabel(self.frame)
-        self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
-        font = QtGui.QFont()
-        font.setFamily("Times New Roman")
-        font.setPointSize(20)
-        font.setBold(True)
-        font.setWeight(75)
-        self.wifiIcon.setFont(font)
-        self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
-        self.wifiIcon.clicked.connect(self.open_wifi_page)
+        # self.wifiIcon = WifiStatusLabel(self.frame)
+        # self.wifiIcon.setGeometry(QtCore.QRect(868, 5, 41, 31))
+        # font = QtGui.QFont()
+        # font.setFamily("Times New Roman")
+        # font.setPointSize(20)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.wifiIcon.setFont(font)
+        # self.wifiIcon.setPixmap(QtGui.QPixmap(":/vlogo/logo12.png"))
+        # self.wifiIcon.clicked.connect(self.open_wifi_page)
         
 
         #gender group
@@ -786,15 +786,16 @@ class Patient_UI(object):
         text_edit.original_focusOutEvent(event) if hasattr(text_edit, 'original_focusOutEvent') else None
 
     def open_wifi_page(self):
-        buzzer.buzzer_1()
-        if self.wifi_window is None:
-            self.wifi_window = WifiPage()
-            self.wifi_window.show()
-        else:
-            self.wifi_window.activateWindow()
+        # buzzer.buzzer_1()
+        # if self.wifi_window is None:
+        #     self.wifi_window = WifiPage()
+        #     self.wifi_window.show()
+        # else:
+        #     self.wifi_window.activateWindow()
+        pass
 
     def save_patient_data(self):
-        buzzer.buzzer_1()
+        # buzzer.buzzer_1()
         try:
                 
                 patient_data = {
@@ -840,8 +841,8 @@ class Patient_UI(object):
 
                 self.form.hide()
                 # self.flickerCon_window = QtWidgets.QWidget()
-                self.flickerCon = FlickerController()  
-                self.flickerCon.show()
+                # self.flickerCon = FlickerController()  
+                # self.flickerCon.show()
                 
                 QMessageBox.information(None, "Success", "Patient data saved successfully!")
                 
@@ -897,11 +898,11 @@ import vekarialogo_rc
 import wifi_rc
 
 
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     Form = QtWidgets.QWidget()
-#     ui = Ui_Form()
-#     ui.setupUi(Form)
-#     Form.show()
-#     sys.exit(app.exec_())
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Patient_UI()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
