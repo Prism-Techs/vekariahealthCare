@@ -12,6 +12,8 @@ from Splash import Splash
 from globalvar import globaladc
 import tkinter.font as tkfont
 from header import HeaderComponent
+import os,json
+from tkinter import messagebox
 
 
 FONT_SIZE = 10
@@ -96,7 +98,7 @@ class mainWindow:
                 json.dump(patient_data, f, indent=4)
 
             messagebox.showinfo("Success", "Patient data saved successfully!")
-            self.root.withdraw()  # Hide current window
+            self.frame.withdraw()  # Hide current window
             
         except Exception as e:
             messagebox.showerror("Error", f"Error saving patient data: {str(e)}")
@@ -130,7 +132,7 @@ class mainWindow:
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             entry.config(fg='white')
-        self.kb.createAlphaKey(self.root, entry)
+        self.kb.createAlphaKey(self.frame, entry)
 
     def on_entry_focus_out(self, entry, placeholder):
         if entry.get() == '':
@@ -141,10 +143,10 @@ class mainWindow:
 
     def setup_ui(self):
         # Header
-        self.header = HeaderComponent(self.root, "Patient-Registration")
+        self.header = HeaderComponent(self.frame, "Patient-Registration")
         
         # Main Container
-        self.main_frame = tk.Frame(self.root, bg='black')
+        self.main_frame = tk.Frame(self.frame, bg='black')
         self.main_frame.place(x=20, y=120, width=981, height=460)
         
         # Create form fields with labels
