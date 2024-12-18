@@ -16,10 +16,11 @@ class LoginApp:
         self.root.title("Vekaria Healthcare")
         self.root.configure(bg='black')
         self.kb = KeyBoard()
+        self.root.attributes('-fullscreen', True) 
 
         
         # Remove window decorations
-        self.root.overrideredirect(True)
+        # self.root.overrideredirect(True)
         
         # Initialize variables
         self.wifi_window = None
