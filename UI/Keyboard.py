@@ -55,8 +55,8 @@ class KeyBoard:
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
             ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '#'],
             ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/', '*'],
-            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],
-            ['Space', 'Enter']
+            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '!', 'Back'],  # Fixed this row
+            ['Space', 'Enter']  # Fixed this row
         ]
         
         window = tk.Toplevel(root)
@@ -67,61 +67,53 @@ class KeyBoard:
         window.overrideredirect(1)
         window.configure(background="black")
         window.wm_attributes("-alpha", 0.7)
-        
-        # Add drag bindings to window
-        window.bind("<Button-1>", lambda e: self.on_drag_start(e, window))
-        window.bind("<B1-Motion>", lambda e: self.on_drag_motion(e, window))
 
-        # Common button configuration
         button_config = {
             'padx': 1,
             'pady': 1,
             'bd': 1,
             'bg': "black",
             'fg': "white",
-            'font': ('Arial', 10)  # Smaller font size
+            'font': ('Arial', 10)
         }
-
-        # Create a frame for the buttons
-        button_frame = tk.Frame(window, bg='black')
-        button_frame.pack(padx=2, pady=2)
 
         for y, row in enumerate(alphabets):
             x = 0
             for text in row:
                 if text == 'Shift':
-                    width = 8
+                    width = 8  # Width for Shift
                     columnspan = 2
-                    button = tk.Button(button_frame, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     fg="#42A5F5",
-                                     **button_config)
+                    button = tk.Button(window, text=text, width=width,
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    fg="#42A5F5",
+                                    **button_config)
                 elif text == 'Space':
-                    width = 30
-                    columnspan = 8
-                    button = tk.Button(button_frame, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     **button_config)
+                    width = 30  # Width for Space
+                    columnspan = 6  # Adjusted columnspan
+                    button = tk.Button(window, text=text, width=width,
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
                 elif text == 'Enter':
-                    width = 8
-                    columnspan = 1
-                    button = tk.Button(button_frame, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     **button_config)
+                    width = 12  # Width for Enter
+                    columnspan = 3  # Adjusted columnspan
+                    button = tk.Button(window, text=text, width=width,
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
+                elif text == 'Back':
+                    width = 8  # Width for Back
+                    columnspan = 2
+                    button = tk.Button(window, text=text, width=width,
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
                 else:
-                    width = 4
+                    width = 4  # Width for regular keys
                     columnspan = 1
-                    button = tk.Button(button_frame, text=text, width=width,
-                                     command=lambda value=text: self.select(entry, window, root, value),
-                                     **button_config)
+                    button = tk.Button(window, text=text, width=width,
+                                    command=lambda value=text: self.select(entry, window, root, value),
+                                    **button_config)
 
-                button.grid(row=y, column=x, columnspan=columnspan, padx=1, pady=1, sticky='nsew')
+                button.grid(row=y, column=x, columnspan=columnspan, padx=1, pady=1)
                 x += columnspan
-
-                # Make each button draggable too
-                button.bind("<Button-1>", lambda e, w=window: self.on_drag_start(e, w))
-                button.bind("<B1-Motion>", lambda e, w=window: self.on_drag_motion(e, w))
-
     def createNumaKey(self, root, entry, number=False):
         numbers = [
             ['1', '2', '3'],
