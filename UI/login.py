@@ -120,8 +120,8 @@ class LoginApp:
                                  bg='black', fg='white')
         self.date_label.place(x=934, y=570)
         
-        self.username.bind("<FocusIn>",lambda event : self.kb.createAlphaKey(self.root,self.username))
-        self.password.bind("<FocusIn>", lambda event : self.kb.createAlphaKey(self.root, self.password))
+        # self.username.bind("<FocusIn>",lambda event : self.kb.createAlphaKey(self.root,self.username))
+        # self.password.bind("<FocusIn>", lambda event : self.kb.createAlphaKey(self.root, self.password))
         # Start time updates
         self.update_datetime()
 
@@ -222,19 +222,23 @@ class LoginApp:
         
     def on_entry_click(self, entry, default_text):
         """Handle entry field focus in"""
-        if entry.get() == default_text:
-            entry.delete(0, tk.END)
-            entry.configure(fg='white')
-            if entry == self.password:
-                entry.configure(show='*')
+        current_text = entry.get().strip()
+        if current_text == default_text:
+            entry.delete(0, tk.END)  # Clear the entire text
+            entry.configure(fg='white')  # Change text color
+            if entry == self.password and current_text != "Password":
+                entry.configure(show='*')  # Show asterisks for password
+                self.kb.createAlphaKey(self.root, entry)  # Show keyboard
                 
     def on_focus_out(self, entry, default_text):
         """Handle entry field focus out"""
-        if entry.get() == '':
-            entry.insert(0, default_text)
-            entry.configure(fg='#94a3b8')
+        current_text = entry.get().strip()
+        if current_text == '':  # Only if field is empty
+            entry.delete(0, tk.END)  # Clear any spaces
+            entry.insert(0, default_text)  # Add placeholder
+            entry.configure(fg='#94a3b8')  # Set placeholder color
             if entry == self.password:
-                entry.configure(show='')
+                entry.configure(show='')  # Show actual text for placeholder
                 
     def toggle_password(self):
         """Toggle password visibility"""
