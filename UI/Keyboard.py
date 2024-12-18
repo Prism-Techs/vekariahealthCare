@@ -57,6 +57,7 @@ class KeyBoard:
         globaladc.buzzer_1()
 
 
+
     def createAlphaKey(self, root, entry, number=False):
         alphabets = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],
@@ -81,37 +82,43 @@ class KeyBoard:
 
         # Create main frame
         main_frame = tk.Frame(window, bg='black')
-        main_frame.pack(padx=1, pady=1)
+        main_frame.pack(padx=2, pady=2)  # Slightly more padding
+
+        # Common button style
+        button_style = {
+            'bg': "black",
+            'fg': "white",
+            'padx': 2,  # Increased padding
+            'pady': 2,
+            'font': ('Arial', 12),  # Bigger font
+            'bd': 1  # Border width
+        }
 
         for y, row in enumerate(alphabets):
             x = 0
             for text in row:
                 if text == 'Shift':
-                    width = 6  # Smaller width
+                    width = 8  # Bigger width
                     columnspan = 2
                 elif text == 'Space':
-                    width = 30  # Smaller width for space
+                    width = 40  # Bigger space bar
                     columnspan = 8
                 elif text == 'Enter':
-                    width = 6  # Smaller width
+                    width = 8  # Bigger width
                     columnspan = 2
                 elif text == 'Back':
-                    width = 6  # Smaller width
+                    width = 8  # Bigger width
                     columnspan = 2
                 else:
-                    width = 4  # Smaller width for regular keys
+                    width = 5  # Bigger width for regular keys
                     columnspan = 1
 
                 button = tk.Button(main_frame, 
                                 text=text, 
                                 width=width,
                                 command=lambda value=text: self.select(entry, window, root, value),
-                                bg="black", 
-                                fg="white",
-                                padx=1,  # Smaller padding
-                                pady=1,
-                                font=('Arial', 10))  # Smaller font
-                button.grid(row=y, column=x, columnspan=columnspan, padx=1, pady=1)
+                                **button_style)
+                button.grid(row=y, column=x, columnspan=columnspan, padx=2, pady=2, sticky='nsew')
 
                 # Make each button draggable
                 button.bind("<Button-1>", lambda e, w=window: self.on_drag_start(e, w))
