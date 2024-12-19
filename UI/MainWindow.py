@@ -192,33 +192,35 @@ class mainWindow:
         self.submit_btn.bind('<Enter>', lambda e: self.on_button_hover(e, self.submit_btn))
         self.submit_btn.bind('<Leave>', lambda e: self.on_button_leave(e, self.submit_btn))
 
-
     def create_text_field(self, label_text, x, y, placeholder):
-        # Label
-        label = tk.Label(
-            self.main_frame,
-            text=label_text,
-            font=('Helvetica Neue', 16),
-            bg='black',
-            fg='white'
-        )
-        label.place(x=x, y=y)
-        
-        # Text Entry
-        entry = tk.Entry(
-            self.main_frame,
-            font=('Helvetica', 14),
-            bg='#334155',
-            fg='#94a3b8',
-            insertbackground='white'
-        )
-        entry.place(x=x+140, y=y, width=190, height=31)
-        entry.insert(0, placeholder)
-        entry.bind('<FocusIn>', lambda e: self.on_entry_focus_in(entry, placeholder))
-        entry.bind('<FocusOut>', lambda e: self.on_entry_focus_out(entry, placeholder))
-        
-        # Store entry widget reference
-        setattr(self, f"{label_text.lower().replace(' ', '_')}_entry", entry)
+            # Label
+            label = tk.Label(
+                self.main_frame,
+                text=label_text,
+                font=('Helvetica Neue', 16),
+                bg='black',
+                fg='white'
+            )
+            label.place(x=x, y=y)
+            
+            # Text Entry
+            entry = tk.Entry(
+                self.main_frame,
+                font=('Helvetica', 14),
+                bg='#334155',
+                fg='#94a3b8',
+                insertbackground='white'
+            )
+            entry.place(x=x+140, y=y, width=190, height=31)
+            entry.insert(0, placeholder)
+            
+            # Update bindings to use instance methods
+            entry.bind('<FocusIn>', lambda e: self.on_entry_focus_in(entry, placeholder))
+            entry.bind('<FocusOut>', lambda e: self.on_entry_focus_out(entry, placeholder))
+            
+            # Store entry widget reference
+            setattr(self, f"{label_text.lower().replace(' ', '_')}_entry", entry)
+
 
     def create_radio_group(self, label_text, x, y, variable, options):
             # Label
