@@ -35,8 +35,7 @@ class mainWindow:
 
 
 
-        self.kb = KeyBoard()
-        self.current_keyboard = None
+        self.kb = None
         
         # Variables for radio buttons
         self.gender_var = tk.StringVar(value="Male")
