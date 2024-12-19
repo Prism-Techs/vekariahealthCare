@@ -8,13 +8,14 @@ class KeyBoard:
         self.current_window = None  # Track current keyboard window
         
     def cleanup_keyboard(self):
-        """Destroy current keyboard window if it exists"""
         if self.current_window and self.current_window.winfo_exists():
             try:
                 self.current_window.destroy()
                 self.current_window = None
+                self.current_entry = None
             except tk.TclError:
                 self.current_window = None
+                self.current_entry = None
 
     def on_drag_start(self, event, window):
         """Begin drag of the window"""
@@ -75,7 +76,13 @@ class KeyBoard:
 
     def createAlphaKey(self, root, entry, number=False):
         """Create alphabetic keyboard"""
-        self.cleanup_keyboard()  # Clean up any existing keyboard
+        # Don't recreate keyboard if it's already showing for this entry
+        if self.current_window and self.current_window.winfo_exists() and self.current_entry == entry:
+            self.current_window.lift()
+            return self.current_window
+
+        self.cleanup_keyboard()
+        self.current_entry = entry
         
         alphabets = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@'],

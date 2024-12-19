@@ -132,14 +132,26 @@ class mainWindow:
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             entry.config(fg='white')
+        
+        # Create keyboard on focus in
         self.kb.createAlphaKey(self.frame, entry)
 
     def on_entry_focus_out(self, entry, placeholder):
-        if entry.get() == '':
-            entry.insert(0, placeholder)
-            entry.config(fg='#94a3b8')
-        # Add slight delay before cleanup to handle focus changes
-        self.frame.after(100, self.kb.cleanup_keyboard)
+        # Get the currently focused widget
+        focused = self.frame.focus_get()
+        
+        # Only cleanup keyboard if focus is not on the keyboard window or its children
+        if not (self.kb.current_window and 
+                focused and 
+                (focused == self.kb.current_window or 
+                 focused.winfo_toplevel() == self.kb.current_window)):
+            
+            if entry.get() == '':
+                entry.insert(0, placeholder)
+                entry.config(fg='#94a3b8')
+            
+            # Add longer delay for cleanup
+            self.frame.after(200, self.check_focus_and_cleanup, entry)
 
 
     def cleanup_keyboard(self):
@@ -153,6 +165,18 @@ class mainWindow:
                     self.kb = None
                 except:
                     pass
+
+    def check_focus_and_cleanup(self, original_entry):
+        """Check if focus has moved away from entry and keyboard before cleanup"""
+        focused = self.frame.focus_get()
+        
+        # Only cleanup if focus is not on original entry or keyboard
+        if (focused != original_entry and 
+            not (self.kb.current_window and 
+                 focused and 
+                 (focused == self.kb.current_window or 
+                  focused.winfo_toplevel() == self.kb.current_window))):
+            self.kb.cleanup_keyboard()
 
     def setup_ui(self):
         # Header
