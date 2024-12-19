@@ -14,6 +14,8 @@ import tkinter.font as tkfont
 from header import HeaderComponent
 import os,json
 from tkinter import messagebox
+from Startupclass import StatrupClass
+
 
 
 FONT_SIZE = 10
@@ -95,6 +97,7 @@ class mainWindow:
                 json.dump(patient_data, f, indent=4)
 
             messagebox.showinfo("Success", "Patient data saved successfully!")
+            StatrupClass.handleStart()
             self.frame.withdraw()  # Hide current window
             
         except Exception as e:
@@ -357,7 +360,7 @@ class mainWindow:
         
 
     def handleStart():
-            CffFovea.Open ()
+            CffFovea.Open()
 
     def wifi_page(self):
         globaladc.buzzer_3()

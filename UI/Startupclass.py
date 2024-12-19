@@ -193,10 +193,10 @@ class StatrupClass:
             self.ShowTestRunScreen()
             
 
-        self.StartButton = tk.Button (self.window,
-                                    text="Start", font=Font,
-                                    command=handleStart, bg='Green',
-                                    width=10)
+        # self.StartButton = tk.Button (self.window,
+        #                             text="Start", font=Font,
+        #                             command=handleStart, bg='Green',
+        #                             width=10)
 
         
             
@@ -237,12 +237,12 @@ class StatrupClass:
         pageDisctonary["Admin"] = self.admin
 
         self.mw.Load()
-        self.fw.Load()
+        # self.fw.Load()
         self.cff.Load()
         self.cffP.Load()
         self.brkf_1.Load()
         self.brkf_2.Load()
-        self.admin.Load()  
+        # self.admin.Load()  
         globaladc.buzzer_1()      
         self.ShowMainScreen()
         self.window.mainloop()
