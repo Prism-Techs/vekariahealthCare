@@ -35,7 +35,7 @@ class mainWindow:
 
 
 
-        self.kb = None
+        self.kb = KeyBoard()
         
         # Variables for radio buttons
         self.gender_var = tk.StringVar(value="Male")
@@ -129,24 +129,17 @@ class mainWindow:
         )
 
     def on_entry_focus_in(self, entry, placeholder):
-        # First cleanup any existing keyboard
-        self.cleanup_keyboard()
-        
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             entry.config(fg='white')
-        
-        # Create new keyboard instance
-        self.kb = KeyBoard()
         self.kb.createAlphaKey(self.frame, entry)
 
     def on_entry_focus_out(self, entry, placeholder):
         if entry.get() == '':
             entry.insert(0, placeholder)
             entry.config(fg='#94a3b8')
-        
-        # Cleanup keyboard with slight delay to allow for focus changes
-        self.frame.after(100, self.cleanup_keyboard)
+        # Add slight delay before cleanup to handle focus changes
+        self.frame.after(100, self.kb.cleanup_keyboard)
 
 
     def cleanup_keyboard(self):
