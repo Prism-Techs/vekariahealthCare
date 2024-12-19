@@ -1,4 +1,3 @@
-Complete Keyboard Implementation
 
 import tkinter as tk
 from globalvar import globaladc
