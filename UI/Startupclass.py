@@ -237,12 +237,12 @@ class StatrupClass:
         pageDisctonary["Admin"] = self.admin
 
         self.mw.Load()
-        # self.fw.Load()
+        self.fw.Load()
         self.cff.Load()
         self.cffP.Load()
         self.brkf_1.Load()
         self.brkf_2.Load()
-        # self.admin.Load()  
+        self.admin.Load()  
         globaladc.buzzer_1()      
         self.ShowMainScreen()
         self.window.mainloop()
@@ -297,10 +297,10 @@ class StatrupClass:
             #intial work flow show Main Screen
     def ShowMainScreen(self):  
         #globaladc.buzzer_1()
-        self.ShowAdminButton()
+        # self.ShowAdminButton()
         self.ShowStartButton()
-        self.ShowFlikerButton()
-        self.HideHomeButton()
+        # self.ShowFlikerButton()
+        # self.HideHomeButton()
         self.fw.hide()
         self.cff.hide()
         self.cffP.hide()
