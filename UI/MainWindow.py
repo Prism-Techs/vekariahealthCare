@@ -130,23 +130,37 @@ class mainWindow:
         )
 
     def on_entry_focus_in(self, entry, placeholder):
+        # First cleanup any existing keyboard
+        self.cleanup_keyboard()
+        
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             entry.config(fg='white')
-        # Store reference to created keyboard
-        self.current_keyboard = self.kb.createAlphaKey(self.frame, entry)
+        
+        # Create new keyboard instance
+        self.kb = KeyBoard()
+        self.kb.createAlphaKey(self.frame, entry)
 
     def on_entry_focus_out(self, entry, placeholder):
         if entry.get() == '':
             entry.insert(0, placeholder)
             entry.config(fg='#94a3b8')
         
-        # Remove keyboard if it exists
-        if self.current_keyboard:
-            self.current_keyboard.destroy()
-            self.current_keyboard = None
+        # Cleanup keyboard with slight delay to allow for focus changes
+        self.frame.after(100, self.cleanup_keyboard)
 
 
+    def cleanup_keyboard(self):
+            """Remove existing keyboard if it exists"""
+            if hasattr(self, 'kb') and self.kb is not None:
+                try:
+                    # Find and destroy the keyboard frame
+                    for widget in self.frame.winfo_children():
+                        if isinstance(widget, tk.Frame) and widget.winfo_name().startswith('keyboard'):
+                            widget.destroy()
+                    self.kb = None
+                except:
+                    pass
 
     def setup_ui(self):
         # Header
