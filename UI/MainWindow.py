@@ -14,7 +14,7 @@ import tkinter.font as tkfont
 from header import HeaderComponent
 import os,json
 from tkinter import messagebox
-from Startupclass import StatrupClass
+
 
 
 
@@ -97,7 +97,7 @@ class mainWindow:
                 json.dump(patient_data, f, indent=4)
 
             messagebox.showinfo("Success", "Patient data saved successfully!")
-            StatrupClass.handleStart()
+            # StatrupClass.handleStart()
             self.frame.withdraw()  # Hide current window
             
         except Exception as e:
@@ -172,14 +172,14 @@ class mainWindow:
         # Submit Button
         self.submit_btn = tk.Button(
             self.main_frame,
-            text="SUBMIT",
+            text="SAVE",
             font=('Arial', 24, 'bold'),
             bg='#1f2836',
             fg='white',
             bd=1,
             command=self.save_patient_data
         )
-        self.submit_btn.place(x=410, y=390, width=161, height=51)
+        self.submit_btn.place(x=650, y=390, width=161, height=51)
         
         # Bind hover effects
         self.submit_btn.bind('<Enter>', lambda e: self.on_button_hover(e, self.submit_btn))

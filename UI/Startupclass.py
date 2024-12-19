@@ -193,10 +193,10 @@ class StatrupClass:
             self.ShowTestRunScreen()
             
 
-        # self.StartButton = tk.Button (self.window,
-        #                             text="Start", font=Font,
-        #                             command=handleStart, bg='Green',
-        #                             width=10)
+        self.StartButton = tk.Button (self.window,
+                                    text="Start", font=Font,
+                                    command=handleStart, bg='Green',
+                                    width=10)
 
         
             
