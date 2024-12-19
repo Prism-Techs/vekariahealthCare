@@ -36,6 +36,7 @@ class mainWindow:
 
 
         self.kb = KeyBoard()
+        self.current_keyboard = None
         
         # Variables for radio buttons
         self.gender_var = tk.StringVar(value="Male")
@@ -132,12 +133,18 @@ class mainWindow:
         if entry.get() == placeholder:
             entry.delete(0, tk.END)
             entry.config(fg='white')
-        self.kb.createAlphaKey(self.frame, entry)
+        # Store reference to created keyboard
+        self.current_keyboard = self.kb.createAlphaKey(self.frame, entry)
 
     def on_entry_focus_out(self, entry, placeholder):
         if entry.get() == '':
             entry.insert(0, placeholder)
             entry.config(fg='#94a3b8')
+        
+        # Remove keyboard if it exists
+        if self.current_keyboard:
+            self.current_keyboard.destroy()
+            self.current_keyboard = None
 
 
 
