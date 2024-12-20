@@ -41,7 +41,6 @@ class BrkFovea_1 :
         self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
         self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
         self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
-        self.frame = frame
         self.depthVal = tk.IntVar()
         self.brk_min = tk.IntVar()
         self.brk_max = tk.IntVar()
@@ -445,43 +444,3 @@ class BrkFovea_1 :
 
 
 
-def execute_brk_test():
-    """Main function to execute BRK test"""
-    try:
-        # Initialize test
-        app = tk.Tk()
-
-
-
-        brk_test = BrkFovea_1(app)
-        brk_test.Load()
-
-
-        app.mainloop()
-        
-
-        
-        # Main test loop
-        while not brk_test.test_complete:
-            # Update LED frequency based on current_frequency
-            current_freq = brk_test.get_current_frequency()
-            # Here you would add code to control actual LED hardware
-            time.sleep(0.1)  # Small delay to prevent CPU overload
-            
-            if GPIO.event_detected(brk_test.SWITCH_PIN):
-                # Patient response detected
-                continue
-                
-        # Get final results
-        results = brk_test.calculate_final_results()
-        print("BRK Test Results:", results)
-        
-    except KeyboardInterrupt:
-        print("Test interrupted by user")
-    # finally:
-        # brk_test.cleanup()
-
-
-
-if __name__ == "__main__":
-    execute_brk_test()

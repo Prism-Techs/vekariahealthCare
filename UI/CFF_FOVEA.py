@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import  ttk       
 import PerodicThread 
 import time
-from  BRK_FOVEA_1 import BrkFovea_1 
+# from  BRK_FOVEA_1 import BrkFovea_1 
 import PatientInfo
 from globalvar import pageDisctonary
 from globalvar import globaladc
