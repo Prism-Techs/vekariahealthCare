@@ -453,7 +453,8 @@ class CffParaFovea :
         self.patentActionflabel.place_forget()
         # self.patentActionflabel_2.place(x=380,y=200)
         # self.cfflabel.place (x=400, y=10) 
-        self.trialList.place (x=800, y=60)
+        self.trialList.place (x=604, y=100)
+
         self.run_therad()
         self.reStartButton.place (x=300, y=400)
         globaladc.cff_Para_Fovea_Prepair()    # run this while loding cff Fovea screen 
