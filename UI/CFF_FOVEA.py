@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import  ttk       
 import PerodicThread 
 import time
-# from  BRK_FOVEA_1 import BrkFovea_1 
+from  BRK_FOVEA_1 import BrkFovea_1 
 import PatientInfo
 from globalvar import pageDisctonary
 from globalvar import globaladc
@@ -312,7 +312,7 @@ class CffFovea :
                     jmp = True          
                 else:
                     # Prepare for next trial
-                    time.sleep(0.3)
+                    time.sleep(0.5)
                     self.stop_all_blinking()
                     self.blink_button(self.btn_ready)  # Show machine ready for next trial   
                 self.cffValue_frq.config(text = self.freq_val)  
@@ -483,7 +483,7 @@ class CffFovea :
             globaladc.put_cff_fovea_frq(self.freq_val)
         else :
             globaladc.put_cff_fovea_frq(35)
-            globaladc.get_print('CF')            
+            globaladc.get_print('CF')   
             
 
     def getName():
