@@ -176,7 +176,8 @@ class mainWindow:
                  focused and 
                  (focused == self.kb.current_window or 
                   focused.winfo_toplevel() == self.kb.current_window))):
-            self.kb.cleanup_keyboard()
+            # self.kb.cleanup_keyboard()
+            pass
 
     def setup_ui(self):
         # Header
