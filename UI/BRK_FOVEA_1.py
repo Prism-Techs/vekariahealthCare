@@ -440,3 +440,39 @@ class BrkFovea_1 :
 
     def getName():
         return "BrkFovea_1"  
+    
+
+
+
+
+def execute_brk_test():
+    """Main function to execute BRK test"""
+    try:
+        # Initialize test
+        brk_test = BrkFovea_1()
+        brk_test.Load()
+        
+        # Main test loop
+        while not brk_test.test_complete:
+            # Update LED frequency based on current_frequency
+            current_freq = brk_test.get_current_frequency()
+            # Here you would add code to control actual LED hardware
+            time.sleep(0.1)  # Small delay to prevent CPU overload
+            
+            if GPIO.event_detected(brk_test.SWITCH_PIN):
+                # Patient response detected
+                continue
+                
+        # Get final results
+        results = brk_test.calculate_final_results()
+        print("BRK Test Results:", results)
+        
+    except KeyboardInterrupt:
+        print("Test interrupted by user")
+    finally:
+        brk_test.cleanup()
+
+
+
+if __name__ == "__main__":
+    execute_brk_test()
