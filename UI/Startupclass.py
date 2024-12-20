@@ -300,7 +300,7 @@ class StatrupClass:
         # self.ShowAdminButton()
         self.ShowStartButton()
         # self.ShowFlikerButton()
-        # self.HideHomeButton()
+        self.HideHomeButton()
         self.fw.hide()
         self.cff.hide()
         self.cffP.hide()
