@@ -37,10 +37,10 @@ class BrkFovea_1 :
 
         self.frame = frame
         self.frame.configure(background='black')
-        content_frame = tk.Frame(frame, bg='#1f2836').place(x=280, y=110, width=711, height=441)
-        self.trialList_min = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_mid = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_max = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
+        self.content_frame = tk.Frame(frame, bg='#1f2836')
+        self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
         self.frame = frame
         self.depthVal = tk.IntVar()
         self.brk_min = tk.IntVar()
@@ -48,7 +48,7 @@ class BrkFovea_1 :
         self.depthVal_2 = tk.DoubleVar()        
         self.depthVal.set(defaultdepth)  
         self.threadCreated =False
-        self.save_enable_text = tk.Label (frame,font=Font1,bg='white')
+        self.save_enable_text = tk.Label (self.content_frame,font=Font1,bg='white')
         self.process = 0 
             # with open('textfile.txt','a') as s:
             #   for i in range(self.listView.model().rowCount()):
@@ -288,6 +288,7 @@ class BrkFovea_1 :
         self.patentActionflabel_3 = tk.Label (self.frame, text='IF Require\nVary NULL settings until\npatient reports on flicker',font=Font1,bg='white')
         self.brk_parf_label = tk.Label(self.frame,text='BRK FOVEA',bg="yellow", font= Font, width=12)  
         self.null_box = tk.Label(self.frame,text='NULL',bg="white", font= Font, width=12)        
+        self.content_frame.place(x=280, y=110, width=711, height=441)
         self.patentActionflabel_2 = tk.Label (self.frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.trialList_min.place (x=750, y=40)
         self.null_box.place (x=100,y=20)
