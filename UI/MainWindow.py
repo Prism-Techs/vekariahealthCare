@@ -181,7 +181,7 @@ class mainWindow:
 
     def setup_ui(self):
         # Header
-        self.header = HeaderComponent(self.frame, "Patient-Registration")
+        self.header = HeaderComponent(self.frame, "Macular Densitometer                                                  Patient-Registration")
         
         # Main Container
         self.main_frame = tk.Frame(self.frame, bg='black')
