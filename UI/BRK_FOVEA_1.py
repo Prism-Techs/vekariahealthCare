@@ -37,10 +37,11 @@ class BrkFovea_1 :
 
         self.frame = frame
         self.frame.configure(background='black')
-        self.content_frame = tk.Frame(self.frame, bg='#1f2836').place(x=280, y=110, width=711, height=441)
-        self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
+        content_frame = tk.Frame(frame, bg='#1f2836').place(x=280, y=110, width=711, height=441)
+        self.trialList_min = tk.Listbox (content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.trialList_mid = tk.Listbox (content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.trialList_max = tk.Listbox (content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.frame = frame
         self.depthVal = tk.IntVar()
         self.brk_min = tk.IntVar()
         self.brk_max = tk.IntVar()
@@ -440,7 +441,5 @@ class BrkFovea_1 :
     def getName():
         return "BrkFovea_1"  
     
-
-
 
 
