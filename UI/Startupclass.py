@@ -152,7 +152,7 @@ class StatrupClass:
                 globaladc.buzzer_1()
                 messagebox.showerror("USB Error","Please check USB Drive\n(Name:-\“USB_DEVICE\”)\nInserted Properly \nif not, insert \nif inserted, remove and Re-insert")
                 return
-            globaladc.buzzer_1()
+            # globaladc.buzzer_1()
             try:
                 # Get the latest patient data from JSON
                 filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
@@ -174,7 +174,7 @@ class StatrupClass:
                     if 'bp' in patient_data and 'value' in patient_data['bp']:
                         currentPatientInfo.bp_value = patient_data['bp']['value']
 
-                    globaladc.buzzer_3()
+                    # globaladc.buzzer_3()
                     currentPatientInfo.log_update("Start_pressed")
                     self.ShowTestRunScreen()
 
