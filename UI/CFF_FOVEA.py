@@ -330,8 +330,16 @@ class CffFovea :
         GPIO.setwarnings(False) # Ignore warning for now
         GPIO.setmode(GPIO.BCM) # Use physical pin numbering
         GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(switch,GPIO.RISING,callback=self.handleuserButton) #CffFovea
-                
+
+        try:
+            GPIO.add_event_detect(switch, GPIO.RISING, callback=self.handleuserButton)
+        except RuntimeError:
+            # Event detection is already set up, so you can either ignore or log this
+            print("GPIO event detection already set up")
+
+        # GPIO.add_event_detect(switch,GPIO.RISING,callback=self.handleuserButton) #CffFovea
+
+
     def patient_switch_desable(self) :
             globaladc.get_print('patient_switch_desable')
             GPIO.remove_event_detect(switch)
