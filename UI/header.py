@@ -8,9 +8,6 @@ class HeaderComponent:
             # Create header frame
             self.header_frame = tk.Frame(parent_frame, bg='#1f2836', height=41)
             self.header_frame.pack(fill='x')
-
-                    # Create header frame
-
             
             # Keep reference of the image to prevent garbage collection
             self.images = {}
