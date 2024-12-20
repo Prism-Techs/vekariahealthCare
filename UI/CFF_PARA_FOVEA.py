@@ -48,7 +48,7 @@ class CustomLabel(tk.Label):
         super().__init__(parent, **default_style)
         
         # Place the label (matching QRect(580, 30, 111, 51))
-        self.place(x=700, y=30)
+        # self.place(x=700, y=30)
 
 
 
@@ -132,12 +132,12 @@ class CffParaFovea :
 
 
         self.status_frame = tk.Frame(self.content_frame, bg='#1f2836')
-        self.status_frame.place(relx=0.1, rely=0.5)
+        
         
         self.status_label = tk.Label(self.status_frame, text="Test Status",
                                    font=('Helvetica Neue', 18),
                                    bg='#1f2836', fg='white')
-        self.status_label.pack(pady=10)
+        
 
 
         
@@ -367,6 +367,8 @@ class CffParaFovea :
         self.min_apr = 0
         self.max_apr = 0 
         self.response_array = [0,0,0,0,0]
+        self.status_frame.place(relx=0.1, rely=0.5)
+        self.status_label.pack(pady=10)
         self.header = HeaderComponent(
             self.frame,
             "Macular Densitometer                                                          CFF-Para Fovea Test"
@@ -449,8 +451,8 @@ class CffParaFovea :
         self.skip_event = True
         self.threadCreated=False
         self.patentActionflabel.place_forget()
-        self.patentActionflabel_2.place(x=380,y=200)
-        self.cfflabel.place (x=400, y=10) 
+        # self.patentActionflabel_2.place(x=380,y=200)
+        # self.cfflabel.place (x=400, y=10) 
         self.trialList.place (x=800, y=60)
         self.run_therad()
         self.reStartButton.place (x=300, y=400)

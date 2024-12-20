@@ -56,10 +56,7 @@ class BrkFovea_1 :
             # # globaladc.get_print(i, text)
             # s.write(text) 
 
-        self.header = HeaderComponent(
-            self.frame,
-            "Macular Densitometer                                                          BRK Fovea Test"
-        )
+
             
         def UpButtonClicked():
             globaladc.buzzer_1()
@@ -298,6 +295,11 @@ class BrkFovea_1 :
         self.patentActionflabel.place(x=350, y=20)    
         self.trialList_mid.insert(0,160)
         self.create_side_buttons()
+
+        self.header = HeaderComponent(
+            self.frame,
+            "Macular Densitometer                                                          BRK Fovea Test"
+        )
         
 
         self.inc_dec_1 = False 
