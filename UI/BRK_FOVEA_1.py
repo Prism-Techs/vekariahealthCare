@@ -449,8 +449,17 @@ def execute_brk_test():
     """Main function to execute BRK test"""
     try:
         # Initialize test
-        brk_test = BrkFovea_1()
+        app = tk.Tk()
+
+
+
+        brk_test = BrkFovea_1(app)
         brk_test.Load()
+
+
+        app.mainloop()
+        
+
         
         # Main test loop
         while not brk_test.test_complete:
