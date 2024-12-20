@@ -469,8 +469,8 @@ def execute_brk_test():
         
     except KeyboardInterrupt:
         print("Test interrupted by user")
-    finally:
-        brk_test.cleanup()
+    # finally:
+        # brk_test.cleanup()
 
 
 
