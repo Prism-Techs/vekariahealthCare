@@ -98,7 +98,7 @@ class mainWindow:
 
             messagebox.showinfo("Success", "Patient data saved successfully!")
             # StatrupClass.handleStart()
-            self.frame.withdraw()  # Hide current window
+            
             
         except Exception as e:
             messagebox.showerror("Error", f"Error saving patient data: {str(e)}")
