@@ -48,7 +48,7 @@ class BrkFovea_1 :
         self.depthVal_2 = tk.DoubleVar()        
         self.depthVal.set(defaultdepth)  
         self.threadCreated =False
-        self.save_enable_text = tk.Label (self.content_frame,font=Font1,bg='white')
+        self.save_enable_text = tk.Label (content_frame,font=Font1,bg='white')
         self.process = 0 
             # with open('textfile.txt','a') as s:
             #   for i in range(self.listView.model().rowCount()):
