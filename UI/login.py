@@ -35,7 +35,7 @@ class LoginApp:
         
     def setup_ui(self):
         # Add the header component
-        self.header = HeaderComponent(self.root, "                                           Macular Densitometer")
+        self.header = HeaderComponent(self.root, "                                                       Macular Densitometer")
         self.header.set_wifi_callback(self.open_wifi_page)
         
         # Main Content Frame
@@ -138,7 +138,7 @@ class LoginApp:
         content_width = 624  # Width of content frame
         x_start = (content_width - frame_width) // 2  # Center position
         
-        self.radio_frame.place(x=x_start, y=270, width=frame_width, height=41)
+        self.radio_frame.place(x=x_start, y=270, width=frame_width, height=49)
         
         # Dictionary to keep track of radio button widgets
         self.radio_buttons = {}
