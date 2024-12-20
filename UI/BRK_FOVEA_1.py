@@ -7,6 +7,7 @@ from globalvar import currentPatientInfo
 import PerodicThread
 import RPi.GPIO as GPIO
 import time
+from header import HeaderComponent
 
 switch = 20
 Font = ("Arial",15)
@@ -35,6 +36,8 @@ class BrkFovea_1 :
            globaladc.get_print('increment call back') 
 
         self.frame = frame
+        self.frame.configure(background='black')
+        self.content_frame = tk.Frame(self.frame, bg='#1f2836').place(x=280, y=110, width=711, height=441)
         self.trialList_min = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
         self.trialList_mid = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
         self.trialList_max = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
@@ -52,6 +55,11 @@ class BrkFovea_1 :
             #    text = self.listView.item(i).text()
             # # globaladc.get_print(i, text)
             # s.write(text) 
+
+        self.header = HeaderComponent(
+            self.frame,
+            "Macular Densitometer                                                          BRK Fovea Test"
+        )
             
         def UpButtonClicked():
             globaladc.buzzer_1()
@@ -254,7 +262,26 @@ class BrkFovea_1 :
         self.patentActionflabel_2.place (x=375, y=120)
         #self.userButton.place (x=375, y=440)
         self.patient_switch_enable()       
-        
+
+
+    def create_side_buttons(self):
+        """Create side navigation buttons."""
+        buttons = [
+            ("Flicker Demo", 150, 'black'),
+            ("CFF Fovea", 210, 'black'),
+            ("BRK Fovea", 270, 'white'),
+            ("CFF Para-Fovea", 330, 'black'),
+            ("BRK Para-Fovea", 390, 'black'),
+            ("Test Result", 450, 'black')
+        ]
+
+        for text, y, bg_color in buttons:
+            btn = tk.Button(self.frame, text=text, font=Font,
+                          width=20, bg=bg_color,
+                          fg='white' if bg_color == 'black' else 'black',
+                          relief='solid', bd=2)
+            btn.place(x=10, y=y)
+
         
     def Load(self):
         self.patentActionflabel = tk.Label (self.frame, text='Increment Null Setting untill \nPatient Reports no fliker,\nPress resume when done',font=Font1,bg='white')
@@ -269,7 +296,9 @@ class BrkFovea_1 :
         self.trialList_max.place (x=850, y=40)
         self.patentActionflabel.place(x=350, y=20)    
         self.trialList_mid.insert(0,160)
+        self.create_side_buttons()
         
+
         self.inc_dec_1 = False 
         self.inc_dec_2 = False  
         self.process_chainge = 0       
