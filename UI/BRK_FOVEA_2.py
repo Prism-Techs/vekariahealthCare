@@ -7,6 +7,7 @@ from globalvar import currentPatientInfo
 import PerodicThread
 import RPi.GPIO as GPIO
 import time
+from header import HeaderComponent
 
 switch = 20
 Font = ("Arial",15)
@@ -17,8 +18,9 @@ defaultdepth = 11
 maxdepth_1 = 225
 maxdepth_2 = 2.00
 intervel = globaladc.get_brk_delay()   #0.128
-resume_spot_x = 450
+resume_spot_x = 550
 resume_spot_y = 240
+
 
 class BrkparaFovea :
     def __init__(self, frame):        
@@ -30,9 +32,10 @@ class BrkparaFovea :
         self.threadCreated =False
         self.pre_brk_mid = 11     
         self.frame = frame
-        self.trialList_min = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_mid = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_max = tk.Listbox (frame,font=Font1,width=5, bg='white',justify='center')
+        self.content_frame = tk.Frame(frame, bg='#1f2836')
+        self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
+        self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
+        self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
         self.frame = frame
         self.depthVal = tk.IntVar()
         self.brk_min = tk.IntVar()
@@ -40,7 +43,8 @@ class BrkparaFovea :
         self.depthVal_2 = tk.DoubleVar()        
         self.depthVal.set(defaultdepth)  
         self.threadCreated =False
-        self.save_enable_text = tk.Label (frame,font=Font1,bg='white')
+        self.save_enable_text = tk.Label (self.content_frame,font=Font1,bg='white')
+
         self.process = 0 
 
         def UpButtonClicked():
@@ -66,9 +70,12 @@ class BrkparaFovea :
                     globaladc.put_cff_para_fovea_frq(round((cff_fovea_frq+0.5)+0.00555555,1))
 
 
-        self.UPButton = tk.Button (self.frame,
-                                  text="^", bg="#a0f291", font=12,  
-                                  width=10, command=UpButtonClicked)
+        self.UPButton =tk.Button(self.content_frame, text="+",
+                                 font=('Helvetica', 30, 'bold'),
+                                 width=2, height=1,
+                                 bg='black', fg='white',
+                                 command=UpButtonClicked,
+                                 relief='solid', borderwidth=1)
 
         def DownButtonClicked():
             globaladc.buzzer_1()
@@ -91,9 +98,12 @@ class BrkparaFovea :
                     self.depthVal_2.set(x)
                     globaladc.put_cff_para_fovea_frq(round((cff_fovea_frq-0.5)+0.00555555,1))            
                    
-        self.DownButton = tk.Button (self.frame,
-                                  text="v", bg="#a0f291",font=12,  
-                                  width=10, command=DownButtonClicked)
+        self.DownButton = tk.Button(self.content_frame, text="-",
+                                   font=('Helvetica', 30, 'bold'),
+                                   width=2, height=1,
+                                   bg='black', fg='white',
+                                   command=DownButtonClicked,
+                                   relief='solid', borderwidth=1)   
 #         def non ():
 #             globaladc.get_print('non')
             
@@ -112,6 +122,25 @@ class BrkparaFovea :
             # # globaladc.get_print(i, text)
             # s.write(text)   
         
+    def create_side_buttons(self):
+        """Create side navigation buttons."""
+        buttons = [
+            ("Flicker Demo", 150, 'black'),
+            ("CFF Fovea", 210, 'black'),
+            ("BRK Fovea", 270, 'black'),
+            ("CFF Para-Fovea", 330, 'black'),
+            ("BRK Para-Fovea", 390, 'white'),
+            ("Test Result", 450, 'black')
+        ]
+
+        for text, y, bg_color in buttons:
+            btn = tk.Button(self.frame, text=text, font=Font,
+                          width=20, bg=bg_color,
+                          fg='white' if bg_color == 'black' else 'black',
+                          relief='solid', bd=2)
+            btn.place(x=10, y=y)
+
+
     def handleuserButton(self,switch):
             self.patient_switch_desable()            
             time.sleep(0.2)
@@ -253,23 +282,36 @@ class BrkparaFovea :
     def Load(self):
         self.patentActionflabel = tk.Label (self.frame, text='Increment Null Setting untill \nPatient Reports no fliker,\nPress resume when done',font=Font1,bg='white')
         self.patentActionflabel_3 = tk.Label (self.frame, text='IF Require\nVary NULL settings until\npatient reports on flicker',font=Font1,bg='white')
-        self.brk_parf_label = tk.Label(self.frame,text='BRK PARA FOVEA',bg="yellow", font= Font, width=18)  
-        self.null_box = tk.Label(self.frame,text='NULL',bg="white", font= Font, width=12)        
+        self.brk_parf_label = tk.Label(self.content_frame,text='BRK PARA FOVEA',bg="yellow", font= Font, width=18)  
+        self.null_box = tk.Label(self.content_frame, text="NULL",
+                                 font=('Helvetica', 24, 'bold'),
+                                 bg='black', fg='#1210FF')
         self.patentActionflabel_2 = tk.Label (self.frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.trialList_min.place (x=750, y=40)
         self.null_box.place (x=100,y=20)
-        self.brk_parf_label.place (x=725,y=10)
-        self.trialList_mid.place (x=800, y=40)
-        self.trialList_max.place (x=850, y=40)
+        self.trialList_min.place (x=450, y=60)
+        self.brk_parf_label.place (x=500,y=10)
+        self.trialList_mid.place (x=520, y=60)
+        self.trialList_max.place (x=590, y=60)
         self.patentActionflabel.place(x=350, y=20)    
         self.trialList_mid.insert(0,defaultdepth)
+        self.create_side_buttons()
         
+        self.header = HeaderComponent(
+            self.frame,
+            "Macular Densitometer                                                          BRK Fovea Test"
+        )
+        
+
         self.inc_dec_1 = False 
         self.inc_dec_2 = False  
         self.process_chainge = True       
 
-        self.DepthVal = tk.Label(self.frame,textvariable=str(self.depthVal),justify="center", font=Font, bg='white') 
-        self.DepthVal.place(x=120,y=130)
+        self.DepthVal = tk.Label(self.content_frame, text="15",
+                                   font=('Helvetica Rounded', 28, 'bold'),
+                                   width=3, height=1,
+                                   bg='#1f2836', fg='white',
+                                   textvariable=str(self.depthVal))
+        self.DepthVal.place(x=110,y=142)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
         self.saveButton.place_forget()
