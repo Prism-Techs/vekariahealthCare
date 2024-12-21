@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import time
 from login import LoginApp  # Your login implementation
+from Patient_checker import run_in_thread
 
 class LoadingScreen:
     def __init__(self, root):
@@ -12,6 +13,7 @@ class LoadingScreen:
         
         # Center the window
         self.center_window()
+        run_in_thread('patient_data','http://vhcbeta-api.prismtechs.in/patient/sync/','wifi_status.json')
         
         # Create canvas for logo
         self.canvas = tk.Canvas(root, width=1024, height=600, 

@@ -72,7 +72,11 @@ class mainWindow:
                 },
                 "eye_side": self.eye_side_var.get(),
                 "is_sync": False,
-                "handler_id": 0
+                "handler_id": 0,
+                "CFF_F":'',
+                "CFF_P":'',
+                "f_mpod":'',
+                "f-sd":'',
             }
 
             # Helper method to safely get entry values
@@ -87,7 +91,12 @@ class mainWindow:
             patient_data['handler_id'] = user_data['user_id']
 
             # Save patient data
-            filename = f"patient_{patient_data['first_name']}.json"
+            filename = f"patient_latest.json"
+            filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                "patient_data", filename)
+            
+
+            filename = f"patient_{self.get_entry_value("1st", "_name_entry")}.json"
             filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                 "patient_data", filename)
 
