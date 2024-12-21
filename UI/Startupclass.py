@@ -190,8 +190,8 @@ class StatrupClass:
 
             globaladc.buzzer_3()
             currentPatientInfo.log_update("Start_pressed")
-            # self.ShowTestRunScreen()
-            pageDisctonary['BrkFovea_1'].show()
+            self.ShowTestRunScreen()
+            # pageDisctonary['BrkFovea_1'].show()
             
 
         self.StartButton = tk.Button (self.window,
