@@ -312,7 +312,12 @@ class BrkFovea_1 :
         self.inc_dec_2 = False  
         self.process_chainge = 0       
 
-        self.DepthVal = tk.Label(self.content_frame,justify="center", font=Font, bg='white')
+        self.DepthVal = tk.Label(self.content_frame, text="15",
+                                   font=('Helvetica Rounded', 28, 'bold'),
+                                   width=3, height=1,
+                                   bg='black', fg='white',
+                                   textvariable=str(self.depthVal),
+                                   relief='solid', borderwidth=2)
         self.DepthVal.place(x=120,y=130)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
