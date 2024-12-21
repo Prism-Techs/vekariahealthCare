@@ -318,7 +318,7 @@ class BrkFovea_1 :
                                    bg='black', fg='white',
                                    textvariable=str(self.depthVal),
                                    relief='solid', borderwidth=2)
-        self.DepthVal.place(x=200,y=180)
+        self.DepthVal.place(x=130,y=145)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
         self.saveButton.place_forget()
@@ -387,7 +387,7 @@ class BrkFovea_1 :
         self.trialList_mid.delete(0,leng-1)
         self.trialList_mid.insert(0,160)
         self.DepthVal.config(textvariable=str(self.depthVal))
-        self.DepthVal.place(x=150,y=150)
+        self.DepthVal.place(x=130,y=145)
 
         self.resumeButton.place(x=resume_spot_x,y=resume_spot_y)
         #self.userButton.place_forget()
