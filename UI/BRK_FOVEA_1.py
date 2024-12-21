@@ -17,7 +17,7 @@ Font2 = ("Arial",20)
 defaultdepth = 1
 maxdepth_1 = 19
 maxdepth_2 = 2.00
-resume_spot_x = 650
+resume_spot_x = 550
 resume_spot_y = 240
 
 class BrkFovea_1 :
@@ -318,7 +318,7 @@ class BrkFovea_1 :
                                    bg='black', fg='white',
                                    textvariable=str(self.depthVal),
                                    relief='solid', borderwidth=2)
-        self.DepthVal.place(x=100,y=100)
+        self.DepthVal.place(x=120,y=80)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
         self.saveButton.place_forget()
