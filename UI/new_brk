@@ -1,144 +1,313 @@
 import tkinter as tk
-from tkinter import font as tkfont
+from tkinter import font as tkfont, messagebox
 from PIL import Image, ImageTk
 import os
+from typing import List, Tuple
+from dataclasses import dataclass
+import json
+from datetime import datetime
+
+@dataclass
+class TestResult:
+    """Data class to store test results"""
+    timestamp: str
+    test_type: str
+    values: List[float]
+    average: float
 
 class MacularDensitometer:
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk):
+        """Initialize the Macular Densitometer application"""
         self.root = root
+        self.setup_window()
+        self.create_fonts()
+        self.create_styles()
+        self.initialize_variables()
+        self.create_widgets()
+        self.bind_shortcuts()
+        
+    def setup_window(self):
+        """Configure the main window settings"""
         self.root.geometry("1024x604")
         self.root.title("Macular Densitometer")
         self.root.configure(bg='black')
+        self.root.minsize(1024, 604)  # Prevent window from being too small
         
-        # Create fonts
-        self.helvetica_18 = tkfont.Font(family="Helvetica", size=18, weight="bold")
-        self.helvetica_16 = tkfont.Font(family="Helvetica", size=16)
-        self.helvetica_24 = tkfont.Font(family="Helvetica", size=24, weight="bold")
-        self.helvetica_28 = tkfont.Font(family="Helvetica", size=28)
+    def create_fonts(self):
+        """Create and store font configurations"""
+        self.fonts = {
+            'header': tkfont.Font(family="Helvetica", size=18, weight="bold"),
+            'menu': tkfont.Font(family="Helvetica", size=16),
+            'display': tkfont.Font(family="Helvetica", size=24, weight="bold"),
+            'value': tkfont.Font(family="Helvetica", size=28),
+            'button': tkfont.Font(family="Helvetica", size=40, weight="bold"),
+            'results': tkfont.Font(family="Helvetica", size=20)
+        }
         
-        # Create top frame
+    def create_styles(self):
+        """Define color schemes and styles"""
+        self.styles = {
+            'bg': 'black',
+            'fg': 'white',
+            'header_bg': '#1f2836',
+            'button_bg': '#B8C9D9',
+            'active_menu_bg': 'white',
+            'active_menu_fg': 'black',
+            'inactive_menu_bg': 'black',
+            'inactive_menu_fg': 'white',
+            'null_color': '#1210FF',
+            'results_color': 'brown'
+        }
+        
+    def initialize_variables(self):
+        """Initialize application state variables"""
+        self.current_value = tk.IntVar(value=15)
+        self.current_test = tk.StringVar(value="BRK Fovea")
+        self.test_results = []
+        self.is_paused = False
+        self.load_saved_results()
+        
+    def create_widgets(self):
+        """Create all GUI widgets"""
         self.create_top_frame()
-        
-        # Create header
         self.create_header()
-        
-        # Create left menu buttons
         self.create_left_menu()
-        
-        # Create center controls
         self.create_center_controls()
-        
-        # Create right section
         self.create_right_section()
-        
-        # Create bottom buttons
         self.create_bottom_buttons()
-
+        
     def create_top_frame(self):
-        top_frame = tk.Frame(self.root, bg='#1f2836', height=40)
+        """Create the top frame with logo and version information"""
+        top_frame = tk.Frame(self.root, bg=self.styles['header_bg'], height=40)
         top_frame.pack(fill='x', side='top')
         
-        # Logo placeholder
-        logo_label = tk.Label(top_frame, text="VHC", bg='#1f2836', fg='white', font=self.helvetica_16)
-        logo_label.pack(side='left', padx=5)
+        # Logo and company name
+        tk.Label(top_frame, text="VHC", bg=self.styles['header_bg'],
+                fg=self.styles['fg'], font=self.fonts['menu']).pack(side='left', padx=5)
         
-        # Company name
-        company_label = tk.Label(top_frame, text="Vekaria Healthcare", 
-                               bg='#1f2836', fg='white', font=self.helvetica_16)
-        company_label.pack(side='left', padx=10)
+        tk.Label(top_frame, text="Vekaria Healthcare",
+                bg=self.styles['header_bg'], fg=self.styles['fg'],
+                font=self.fonts['menu']).pack(side='left', padx=10)
         
         # Version number
-        version_label = tk.Label(top_frame, text="V1.0", 
-                               bg='#1f2836', fg='white', font=("Helvetica", 14))
-        version_label.pack(side='right', padx=20)
-
+        tk.Label(top_frame, text="V1.1",
+                bg=self.styles['header_bg'], fg=self.styles['fg'],
+                font=("Helvetica", 14)).pack(side='right', padx=20)
+        
     def create_header(self):
-        header_label = tk.Label(self.root, 
-                              text="Macular Densitometer                                                  BRK Fovea Test",
-                              bg='black', fg='white', font=self.helvetica_18)
-        header_label.pack(pady=20)
-
+        """Create the main header with test type"""
+        header_text = f"Macular Densitometer                                                  {self.current_test.get()}"
+        self.header_label = tk.Label(self.root, text=header_text,
+                                   bg=self.styles['bg'], fg=self.styles['fg'],
+                                   font=self.fonts['header'])
+        self.header_label.pack(pady=20)
+        
     def create_left_menu(self):
-        left_frame = tk.Frame(self.root, bg='black')
+        """Create the left menu with test type buttons"""
+        left_frame = tk.Frame(self.root, bg=self.styles['bg'])
         left_frame.pack(side='left', padx=20, fill='y')
         
-        menu_buttons = [
-            ("Flicker Demo", 'white', 'black'),
-            ("CFF Fovea", 'black', 'white'),
-            ("BRK Fovea", 'black', 'white'),
-            ("CFF Para-Fovea", 'black', 'white'),
-            ("BRK Para-Fovea", 'black', 'white'),
-            ("Test Result", 'black', 'white')
+        self.menu_buttons = []
+        menu_items = [
+            "Flicker Demo", "CFF Fovea", "BRK Fovea",
+            "CFF Para-Fovea", "BRK Para-Fovea", "Test Result"
         ]
         
-        for text, bg, fg in menu_buttons:
-            btn = tk.Button(left_frame, text=text, font=self.helvetica_16,
-                          bg=bg, fg=fg, width=20, height=1,
-                          relief='solid', borderwidth=2)
+        for item in menu_items:
+            btn = tk.Button(left_frame, text=item, font=self.fonts['menu'],
+                          width=20, height=1, relief='solid', borderwidth=2,
+                          command=lambda x=item: self.change_test(x))
             btn.pack(pady=5)
-
+            self.menu_buttons.append(btn)
+            
+        self.update_menu_buttons()
+        
     def create_center_controls(self):
-        center_frame = tk.Frame(self.root, bg='black')
+        """Create the central control panel"""
+        center_frame = tk.Frame(self.root, bg=self.styles['bg'])
         center_frame.pack(expand=True)
         
-        # NULL label
-        null_label = tk.Label(center_frame, text="NULL", 
-                            font=self.helvetica_24, bg='black', fg='#1210FF')
-        null_label.pack(pady=20)
+        # NULL indicator
+        self.null_label = tk.Label(center_frame, text="NULL",
+                                 font=self.fonts['display'],
+                                 bg=self.styles['bg'],
+                                 fg=self.styles['null_color'])
+        self.null_label.pack(pady=20)
         
-        # Plus button
-        plus_btn = tk.Button(center_frame, text="+", font=("Helvetica", 40, "bold"),
-                           bg='black', fg='white', width=2, height=1,
-                           relief='solid', borderwidth=1)
-        plus_btn.pack(pady=10)
+        # Value controls
+        tk.Button(center_frame, text="+", font=self.fonts['button'],
+                 bg=self.styles['bg'], fg=self.styles['fg'],
+                 width=2, height=1, relief='solid', borderwidth=1,
+                 command=self.increment_value).pack(pady=10)
         
-        # Number display
-        number_label = tk.Label(center_frame, text="15", 
-                              font=("Helvetica", 28, "bold"),
-                              bg='black', fg='white', width=4, height=1,
-                              relief='solid', borderwidth=2)
-        number_label.pack(pady=10)
+        tk.Label(center_frame, textvariable=self.current_value,
+                font=self.fonts['value'],
+                bg=self.styles['bg'], fg=self.styles['fg'],
+                width=4, height=1, relief='solid',
+                borderwidth=2).pack(pady=10)
         
-        # Minus button
-        minus_btn = tk.Button(center_frame, text="-", font=("Helvetica", 40),
-                            bg='black', fg='white', width=2, height=1,
-                            relief='solid', borderwidth=1)
-        minus_btn.pack(pady=10)
-
+        tk.Button(center_frame, text="-", font=self.fonts['button'],
+                 bg=self.styles['bg'], fg=self.styles['fg'],
+                 width=2, height=1, relief='solid', borderwidth=1,
+                 command=self.decrement_value).pack(pady=10)
+        
     def create_right_section(self):
-        right_frame = tk.Frame(self.root, bg='black')
+        """Create the right section with result displays"""
+        right_frame = tk.Frame(self.root, bg=self.styles['bg'])
         right_frame.pack(side='right', padx=20)
         
-        # Value display
-        value_label = tk.Label(right_frame, text="24.5",
-                             font=self.helvetica_28, bg='black', fg='white',
-                             width=10, height=1)
-        value_label.pack(pady=20)
+        self.average_label = tk.Label(right_frame, text="0.0",
+                                    font=self.fonts['value'],
+                                    bg=self.styles['bg'],
+                                    fg=self.styles['fg'],
+                                    width=10, height=1)
+        self.average_label.pack(pady=20)
         
-        # Create three columns of numbers
-        for i in range(3):
-            text_widget = tk.Text(right_frame, font=("Helvetica", 20),
-                                bg='black', fg='brown', width=6, height=8)
-            text_widget.pack(side='left', padx=5)
-            text_widget.insert('1.0', "132\n156\n135\n160")
-
+        self.result_displays = []
+        for _ in range(3):
+            display = tk.Text(right_frame, font=self.fonts['results'],
+                            bg=self.styles['bg'],
+                            fg=self.styles['results_color'],
+                            width=6, height=8)
+            display.pack(side='left', padx=5)
+            self.result_displays.append(display)
+            
     def create_bottom_buttons(self):
-        bottom_frame = tk.Frame(self.root, bg='black')
+        """Create the bottom control buttons"""
+        bottom_frame = tk.Frame(self.root, bg=self.styles['bg'])
         bottom_frame.pack(side='bottom', pady=20)
         
-        # Resume button
-        resume_btn = tk.Button(bottom_frame, text="RESUME",
-                             font=self.helvetica_16, bg='#B8C9D9',
-                             width=15, height=2)
-        resume_btn.pack(side='left', padx=10)
+        self.resume_btn = tk.Button(bottom_frame, text="RESUME",
+                                  font=self.fonts['menu'],
+                                  bg=self.styles['button_bg'],
+                                  width=15, height=2,
+                                  command=self.toggle_pause)
+        self.resume_btn.pack(side='left', padx=10)
         
-        # Restart button
-        restart_btn = tk.Button(bottom_frame, text="RESTART",
-                              font=self.helvetica_16, bg='#B8C9D9',
-                              width=15, height=2)
-        restart_btn.pack(side='left', padx=10)
+        tk.Button(bottom_frame, text="RESTART",
+                 font=self.fonts['menu'],
+                 bg=self.styles['button_bg'],
+                 width=15, height=2,
+                 command=self.restart_test).pack(side='left', padx=10)
+        
+    def bind_shortcuts(self):
+        """Bind keyboard shortcuts"""
+        self.root.bind('<Up>', lambda e: self.increment_value())
+        self.root.bind('<Down>', lambda e: self.decrement_value())
+        self.root.bind('<space>', lambda e: self.toggle_pause())
+        self.root.bind('<Return>', lambda e: self.save_current_value())
+        
+    def increment_value(self):
+        """Increase the current value"""
+        if not self.is_paused:
+            self.current_value.set(min(100, self.current_value.get() + 1))
+            
+    def decrement_value(self):
+        """Decrease the current value"""
+        if not self.is_paused:
+            self.current_value.set(max(0, self.current_value.get() - 1))
+            
+    def toggle_pause(self):
+        """Toggle between pause and resume states"""
+        self.is_paused = not self.is_paused
+        self.resume_btn.config(text="RESUME" if self.is_paused else "PAUSE")
+        
+    def restart_test(self):
+        """Reset the test to initial state"""
+        if messagebox.askyesno("Restart Test", "Are you sure you want to restart the test?"):
+            self.current_value.set(15)
+            self.is_paused = False
+            self.resume_btn.config(text="PAUSE")
+            self.clear_results()
+            
+    def change_test(self, test_type: str):
+        """Change the current test type"""
+        self.current_test.set(test_type)
+        self.update_menu_buttons()
+        self.header_label.config(
+            text=f"Macular Densitometer                                                  {test_type}")
+        self.clear_results()
+        
+    def update_menu_buttons(self):
+        """Update the appearance of menu buttons based on selection"""
+        for btn in self.menu_buttons:
+            if btn['text'] == self.current_test.get():
+                btn.config(bg=self.styles['active_menu_bg'],
+                         fg=self.styles['active_menu_fg'])
+            else:
+                btn.config(bg=self.styles['inactive_menu_bg'],
+                         fg=self.styles['inactive_menu_fg'])
+                
+    def save_current_value(self):
+        """Save the current test value"""
+        if not self.is_paused:
+            value = float(self.current_value.get())
+            self.test_results.append(value)
+            self.update_results_display()
+            self.save_results()
+            
+    def clear_results(self):
+        """Clear all test results"""
+        self.test_results = []
+        self.update_results_display()
+        
+    def update_results_display(self):
+        """Update the display of test results"""
+        if self.test_results:
+            # Update average
+            avg = sum(self.test_results) / len(self.test_results)
+            self.average_label.config(text=f"{avg:.1f}")
+            
+            # Update result columns
+            chunks = [self.test_results[i:i+4] for i in range(0, len(self.test_results), 4)]
+            for i, display in enumerate(self.result_displays):
+                display.delete('1.0', tk.END)
+                if i < len(chunks):
+                    display.insert('1.0', '\n'.join(f"{val:.1f}" for val in chunks[i]))
+                    
+    def save_results(self):
+        """Save test results to a file"""
+        if self.test_results:
+            result = TestResult(
+                timestamp=datetime.now().isoformat(),
+                test_type=self.current_test.get(),
+                values=self.test_results,
+                average=sum(self.test_results) / len(self.test_results)
+            )
+            
+            try:
+                with open('test_results.json', 'a') as f:
+                    json.dump(result.__dict__, f)
+                    f.write('\n')
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save results: {str(e)}")
+                
+    def load_saved_results(self):
+        """Load previously saved test results"""
+        try:
+            if os.path.exists('test_results.json'):
+                with open('test_results.json', 'r') as f:
+                    lines = f.readlines()
+                    if lines:
+                        # Load only the most recent result for the current test
+                        for line in reversed(lines):
+                            result = json.loads(line)
+                            if result['test_type'] == self.current_test.get():
+                                self.test_results = result['values']
+                                self.update_results_display()
+                                break
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load results: {str(e)}")
+
+def main():
+    """Main entry point of the application"""
+    try:
+        root = tk.Tk()
+        app = MacularDensitometer(root)
+        root.mainloop()
+    except Exception as e:
+        messagebox.showerror("Error", f"Application error: {str(e)}")
+        raise
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = MacularDensitometer(root)
-    root.mainloop()
+    main()

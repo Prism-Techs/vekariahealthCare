@@ -87,9 +87,11 @@ class BrkFovea_1 :
                     globaladc.put_cff_fovea_frq(round((cff_fovea_frq+0.5)+0.00555555,1))
 
 
-        self.UPButton = tk.Button (self.frame,
-                                  text="^", bg="#a0f291", font=12,  
-                                  width=10, command=UpButtonClicked)
+        self.UPButton =tk.Button(self.content_frame, text="+",
+                                 font=('Helvetica', 30, 'bold'),
+                                 width=2, height=1,
+                                 bg='black', fg='white',
+                                 relief='solid', borderwidth=1)
 
         def DownButtonClicked():
             globaladc.buzzer_1()
@@ -117,9 +119,11 @@ class BrkFovea_1 :
                     self.depthVal_2.set(x)
                     globaladc.put_cff_fovea_frq(round((cff_fovea_frq-0.5)+0.00555555,1))
                     
-        self.DownButton = tk.Button (self.frame,
-                                  text="v", bg="#a0f291",font=12,  
-                                  width=10, command=DownButtonClicked)        
+        self.DownButton = tk.Button(self.content_frame, text="-",
+                                   font=('Helvetica', 30, 'bold'),
+                                   width=2, height=1,
+                                   bg='black', fg='white',
+                                   relief='solid', borderwidth=1)        
     def handleuser(self,switch):
         #globaladc.get_print('to be implemented')
         self.patient_switch_desable()
@@ -284,10 +288,12 @@ class BrkFovea_1 :
         self.patentActionflabel = tk.Label (self.frame, text='Increment Null Setting untill \nPatient Reports no fliker,\nPress resume when done',font=Font1,bg='white')
         self.patentActionflabel_3 = tk.Label (self.frame, text='IF Require\nVary NULL settings until\npatient reports on flicker',font=Font1,bg='white')
         self.brk_parf_label = tk.Label(self.frame,text='BRK FOVEA',bg="yellow", font= Font, width=12)  
-        self.null_box = tk.Label(self.frame,text='NULL',bg="white", font= Font, width=12)        
+        self.null_box =tk.Label(self.content_frame, text="NULL",
+                                 font=('Helvetica', 24, 'bold'),
+                                 bg='black', fg='#1210FF')
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.patentActionflabel_2 = tk.Label (self.frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
-        self.trialList_min.place (x=750, y=40)
+        self.trialList_min.place (x=650, y=40)
         self.null_box.place (x=100,y=20)
         self.brk_parf_label.place (x=750,y=10)
         self.trialList_mid.place (x=800, y=40)
