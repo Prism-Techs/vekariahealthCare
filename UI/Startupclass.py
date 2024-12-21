@@ -192,6 +192,7 @@ class StatrupClass:
             currentPatientInfo.log_update("Start_pressed")
             self.ShowTestRunScreen()
             # pageDisctonary['BrkFovea_1'].show()
+            pageDisctonary['BrkFovea_2'].show()
             
 
         self.StartButton = tk.Button (self.window,
