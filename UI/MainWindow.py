@@ -96,7 +96,7 @@ class mainWindow:
                                 "patient_data", filename)
             
 
-            filename = f"patient_{self.get_entry_value("1st", "_name_entry")}.json"
+            filename = f"patient_{self.get_entry_value('1st', '_name_entry')}.json"
             filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                 "patient_data", filename)
 
