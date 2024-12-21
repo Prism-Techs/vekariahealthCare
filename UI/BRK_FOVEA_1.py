@@ -17,7 +17,7 @@ Font2 = ("Arial",20)
 defaultdepth = 1
 maxdepth_1 = 19
 maxdepth_2 = 2.00
-resume_spot_x = 450
+resume_spot_x = 650
 resume_spot_y = 240
 
 class BrkFovea_1 :
