@@ -171,8 +171,8 @@ class CffParaFovea :
         self.patient_switch_desable()
         time.sleep(0.2)        
         if self.skip_event:
-            # self.stop_all_blinking()  # Clear any existing blinks
-            # self.blink_button(self.btn_flicker_start)  # Start blinking flicker start button
+            self.stop_all_blinking()  # Clear any existing blinks
+            self.blink_button(self.btn_flicker_start)  # Start blinking flicker start button
             # self.patentActionflabel.place_forget()
             self.threadCreated=True
 #             if self.response_count != 0:
@@ -205,13 +205,13 @@ class CffParaFovea :
             #globaladc.green_led_on()
             if  self.threadCreated :
                 #self.stop_therad()         
-                # self.stop_all_blinking()                                     
+                self.stop_all_blinking()                                     
                 self.response_array[self.response_count] = self.freq_val
                 self.trialList.insert(self.response_count,self.response_array[self.response_count])
                 self.min_apr = globaladc.get_cff_p_min_cal(self.response_count, self.freq_val)    
                 self.cffValue_min.config(text = self.min_apr)           
                 self.response_count = self.response_count + 1 
-                # self.blink_button(self.btn_flicker_visible)
+                self.blink_button(self.btn_flicker_visible)
                 time.sleep(1)  # Show flicker visible for a moment   
                 if self.response_count == 5 :
                     self.max_apr =  globaladc.get_cff_p_max_cal()                     
@@ -233,11 +233,11 @@ class CffParaFovea :
                     pageDisctonary['BrkparaFovea'].show()
                     self.patient_switch_desable()
                     jmp = True                
-                # else:
-                    # # Prepare for next trial
-                    # time.sleep(0.3)
-                    # self.stop_all_blinking()
-                    # self.blink_button(self.btn_ready)  # Show machine ready for next trial   
+                else:
+                    # Prepare for next trial
+                    time.sleep(0.3)
+                    self.stop_all_blinking()
+                    self.blink_button(self.btn_ready)  # Show machine ready for next trial   
                 self.cffValue_frq.config(text = self.freq_val)
                 #globaladc.buzzer_3()        
         if not jmp:                        
