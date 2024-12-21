@@ -387,7 +387,7 @@ class BrkFovea_1 :
         self.trialList_mid.delete(0,leng-1)
         self.trialList_mid.insert(0,160)
         self.DepthVal.config(textvariable=str(self.depthVal))
-        self.DepthVal.place(x=200,y=180)
+        self.DepthVal.place(x=150,y=150)
 
         self.resumeButton.place(x=resume_spot_x,y=resume_spot_y)
         #self.userButton.place_forget()
