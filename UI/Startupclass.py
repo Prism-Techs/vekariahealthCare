@@ -15,6 +15,7 @@ from globalvar import globaladc
 from globalvar import currentPatientInfo
 from tkinter import messagebox
 from PIL import Image, ImageTk
+from Patient_checker import run_in_thread
 import os.path
 import subprocess as sp
 import json
@@ -97,6 +98,9 @@ class StatrupClass:
         self.window.geometry ("1024x600")
         self.window.resizable (0, 0)
         self.header_frame = tk.Frame(self.window, bg='#1f2836', height=41)
+
+        run_in_thread('patient_data','http://vhcbeta-api.prismtechs.in/patient/sync/','wifi_status.json')
+
 
         self.window.configure(background='#64edb4')
         self.mainFrame = Frame(self.window) 
