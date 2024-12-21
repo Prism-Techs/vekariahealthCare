@@ -289,7 +289,7 @@ class BrkFovea_1 :
     def Load(self):
         self.patentActionflabel = tk.Label (self.frame, text='Increment Null Setting untill \nPatient Reports no fliker,\nPress resume when done',font=Font1,bg='white')
         self.patentActionflabel_3 = tk.Label (self.frame, text='IF Require\nVary NULL settings until\npatient reports on flicker',font=Font1,bg='white')
-        self.brk_parf_label = tk.Label(self.frame,text='BRK FOVEA',bg="yellow", font= Font, width=12)  
+        self.brk_parf_label = tk.Label(self.content_frame,text='BRK FOVEA',bg="yellow", font= Font, width=12)  
         self.null_box =tk.Label(self.content_frame, text="NULL",
                                  font=('Helvetica', 24, 'bold'),
                                  bg='black', fg='#1210FF')
@@ -299,7 +299,7 @@ class BrkFovea_1 :
         self.trialList_min.place (x=450, y=60)
         self.brk_parf_label.place (x=450,y=10)
         self.trialList_mid.place (x=520, y=60)
-        self.trialList_max.place (x=670, y=60)
+        self.trialList_max.place (x=570, y=60)
         self.patentActionflabel.place(x=350, y=20)    
         self.trialList_mid.insert(0,160)
         self.create_side_buttons()
