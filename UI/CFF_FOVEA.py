@@ -251,8 +251,8 @@ class CffFovea :
         self.patient_switch_desable()
         time.sleep(0.15)        
         if self.skip_event:
-            # self.stop_all_blinking()  # Clear any existing blinks
-            # self.blink_button(self.btn_flicker_start)  # Start blinking flicker start button
+            self.stop_all_blinking()  # Clear any existing blinks
+            self.blink_button(self.btn_flicker_start)  # Start blinking flicker start button
             self.threadCreated=True
             if self.response_count == 0:
                 self.freq_val_start = self.freq_val_start
@@ -290,7 +290,7 @@ class CffFovea :
                 self.cffValue_min.config(text = self.min_apr)  
 
                 # Blink flicker visible button
-                # self.blink_button(self.btn_flicker_visible)
+                self.blink_button(self.btn_flicker_visible)
                 time.sleep(1)  # Show flicker visible for a moment           
                 if self.response_count == 5 :
                     self.max_apr =  globaladc.get_cff_f_max_cal()                        
@@ -310,11 +310,11 @@ class CffFovea :
                     pageDisctonary['BrkFovea_1'].show()
                     self.patient_switch_desable()
                     jmp = True          
-                # else:
-                #     # Prepare for next trial
-                #     time.sleep(0.5)
-                #     self.stop_all_blinking()
-                #     self.blink_button(self.btn_ready)  # Show machine ready for next trial   
+                else:
+                    # Prepare for next trial
+                    time.sleep(0.5)
+                    self.stop_all_blinking()
+                    self.blink_button(self.btn_ready)  # Show machine ready for next trial   
                 self.cffValue_frq.config(text = self.freq_val)  
         if not jmp:
             if self.skip_event:
