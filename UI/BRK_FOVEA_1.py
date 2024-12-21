@@ -316,8 +316,7 @@ class BrkFovea_1 :
                                    font=('Helvetica Rounded', 28, 'bold'),
                                    width=3, height=1,
                                    bg='#1f2836', fg='white',
-                                   textvariable=str(self.depthVal),
-                                   relief='solid', borderwidth=2)
+                                   textvariable=str(self.depthVal))
         self.DepthVal.place(x=100,y=142)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
