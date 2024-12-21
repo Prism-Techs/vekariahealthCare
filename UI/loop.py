@@ -13,7 +13,7 @@ class LoadingScreen:
         
         # Center the window
         self.center_window()
-        run_in_thread('patient_data','http://vhcbeta-api.prismtechs.in/patient/sync/','wifi_status.json')
+        # run_in_thread('patient_data','http://vhcbeta-api.prismtechs.in/patient/sync/','wifi_status.json')
         
         # Create canvas for logo
         self.canvas = tk.Canvas(root, width=1024, height=600, 
