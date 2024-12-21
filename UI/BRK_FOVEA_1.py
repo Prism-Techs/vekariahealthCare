@@ -314,11 +314,11 @@ class BrkFovea_1 :
 
         self.DepthVal = tk.Label(self.content_frame, text="15",
                                    font=('Helvetica Rounded', 28, 'bold'),
-                                   width=3, height=1,
+                                   width=1, height=1,
                                    bg='black', fg='white',
                                    textvariable=str(self.depthVal),
                                    relief='solid', borderwidth=2)
-        self.DepthVal.place(x=120,y=130)
+        self.DepthVal.place(x=100,y=100)
         self.UPButton.place (x=110,  y=75)   
         self.DownButton.place (x=110,  y=200)
         self.saveButton.place_forget()
