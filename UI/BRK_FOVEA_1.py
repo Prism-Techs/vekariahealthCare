@@ -296,7 +296,7 @@ class BrkFovea_1 :
         self.content_frame.place(x=280, y=110, width=711, height=441)
         self.patentActionflabel_2 = tk.Label (self.frame, text='Patient\'s side Button \n Begins Traial',font=Font1,bg='white')
         self.null_box.place (x=100,y=20)
-        self.trialList_min.place (x=650, y=40)
+        self.trialList_min.place (x=450, y=60)
         self.brk_parf_label.place (x=650,y=10)
         self.trialList_mid.place (x=700, y=40)
         self.trialList_max.place (x=750, y=40)
