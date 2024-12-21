@@ -6,6 +6,7 @@ import os
 from PIL import Image, ImageTk
 from header import HeaderComponent
 from Startupclass import StatrupClass
+from loader import AnimatedWindow
 
 
 class HomePage:
@@ -181,7 +182,7 @@ class HomePage:
         # Implement test mode functionality
         self.root.withdraw()  # Hide current window
         # Launch patient info page
-
+        
         st = StatrupClass()
         st.main()
         print("Test mode clicked")

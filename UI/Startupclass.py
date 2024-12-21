@@ -39,6 +39,7 @@ class ClickableLabel(tk.Label):
         self.callback = callback
 
 class StatrupClass:
+    
     def HideStartButton(self):
         self.StartButton.place_forget()
 
@@ -122,6 +123,8 @@ class StatrupClass:
         self.cff = CffFovea(self.cffFoveaFrame)
         self.cffP =CffParaFovea(self.CffParaFoveaFrame)
         self.admin = Admin(self.adminFrame)
+        self.setup_header()
+
         
    
         #intialize the buttons
@@ -249,6 +252,8 @@ class StatrupClass:
         self.ShowMainScreen()
         self.window.mainloop()
         globaladc.buzzer_1()
+        self.setup_header()
+
 
         # globaladc.main_Prepair() # run this while loading main Screen
         #Main Window Application
