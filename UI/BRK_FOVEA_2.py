@@ -371,6 +371,8 @@ class BrkparaFovea :
 
 
     def show(self):
+        # self.Load()
+        self.frame.configration(bg='black')
         self.frame.place(width=1024,height=600)
         # globaladc.brk_para_fovea_1_screen_initialize()           # run this while loding brk fovea 1st screen
         self.skip_event = True
