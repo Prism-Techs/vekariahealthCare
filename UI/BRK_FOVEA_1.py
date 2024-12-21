@@ -314,7 +314,7 @@ class BrkFovea_1 :
 
         self.DepthVal = tk.Label(self.content_frame, text="15",
                                    font=('Helvetica Rounded', 28, 'bold'),
-                                   width=1, height=1,
+                                   width=3, height=1,
                                    bg='black', fg='white',
                                    textvariable=str(self.depthVal),
                                    relief='solid', borderwidth=2)
