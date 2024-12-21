@@ -306,7 +306,7 @@ class BrkFovea_1 :
 
         self.header = HeaderComponent(
             self.frame,
-            "Macular Densitometer                                                          BRK Fovea Test"
+            "Macular Densitometer                                                          BRK-Para Fovea Test"
         )
         
 

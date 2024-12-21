@@ -32,6 +32,7 @@ class BrkparaFovea :
         self.threadCreated =False
         self.pre_brk_mid = 11     
         self.frame = frame
+        self.frame.configure(background='black')
         self.content_frame = tk.Frame(frame, bg='#1f2836')
         self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
         self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
