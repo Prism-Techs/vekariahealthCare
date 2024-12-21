@@ -91,6 +91,7 @@ class BrkFovea_1 :
                                  font=('Helvetica', 30, 'bold'),
                                  width=2, height=1,
                                  bg='black', fg='white',
+                                 command=UpButtonClicked
                                  relief='solid', borderwidth=1)
 
         def DownButtonClicked():
@@ -123,6 +124,7 @@ class BrkFovea_1 :
                                    font=('Helvetica', 30, 'bold'),
                                    width=2, height=1,
                                    bg='black', fg='white',
+                                   command=DownButtonClicked
                                    relief='solid', borderwidth=1)        
     def handleuser(self,switch):
         #globaladc.get_print('to be implemented')
