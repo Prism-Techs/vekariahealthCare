@@ -38,9 +38,9 @@ class BrkFovea_1 :
         self.frame = frame
         self.frame.configure(background='black')
         self.content_frame = tk.Frame(frame, bg='#1f2836')
-        self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
-        self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='white',justify='center')
+        self.trialList_min = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
+        self.trialList_mid = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
+        self.trialList_max = tk.Listbox (self.content_frame,font=Font1,width=5, bg='black',fg='red',justify='center')
         self.frame = frame
         self.depthVal = tk.IntVar()
         self.brk_min = tk.IntVar()
@@ -299,7 +299,7 @@ class BrkFovea_1 :
         self.trialList_min.place (x=450, y=60)
         self.brk_parf_label.place (x=450,y=10)
         self.trialList_mid.place (x=520, y=60)
-        self.trialList_max.place (x=570, y=60)
+        self.trialList_max.place (x=590, y=60)
         self.patentActionflabel.place(x=350, y=20)    
         self.trialList_mid.insert(0,160)
         self.create_side_buttons()
