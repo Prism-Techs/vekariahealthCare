@@ -1,0 +1,54 @@
+name: PR and Deployment Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check_dev_pull_approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if pull request to dev is approved
+        run: |
+          echo "Waiting for approval..."
+    needs: []
+
+  pull_dev_to_vm:
+    runs-on: ubuntu-latest
+    needs: check_dev_pull_approval
+    steps:
+      - name: Pull dev changes to VM
+        run: |
+          echo "Deploying to VM from dev..."
+          
+  check_approval:
+    runs-on: ubuntu-latest
+    needs: pull_dev_to_vm
+    steps:
+      - name: Check if PR to main is approved
+        run: |
+          echo "Waiting for approval..."
+
+  merge_to_main:
+    runs-on: ubuntu-latest
+    needs: check_approval
+    steps:
+      - name: Merge PR to main
+        run: |
+          echo "Merging PR to main..."
+          
+  check_vm_deploy_approval:
+    runs-on: ubuntu-latest
+    needs: merge_to_main
+    steps:
+      - name: Check if VM deploy is approved
+        run: |
+          echo "Waiting for approval..."
+
+  vm_deploy:
+    runs-on: ubuntu-latest
+    needs: check_vm_deploy_approval
+    steps:
+      - name: Deploy to VM
+        run: |
+          echo "Deploying VM..."
